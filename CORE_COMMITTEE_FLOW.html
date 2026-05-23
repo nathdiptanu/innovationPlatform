@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GRIT Core Committee Flow</title>
+    <style>
+        body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; background: #f3f6f4; color: #15231f; line-height: 1.55; }
+        main { width: min(1080px, calc(100vw - 2rem)); margin: 2rem auto; padding: clamp(1rem, 3vw, 2.5rem); border: 1px solid #d8e1dd; border-radius: 8px; background: #fff; box-shadow: 0 18px 50px rgba(21,35,31,.09); }
+        h1, h2 { letter-spacing: 0; }
+        code { padding: .12rem .34rem; border-radius: 4px; background: #edf3f1; }
+        table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+        th, td { padding: .72rem; border-bottom: 1px solid #d8e1dd; text-align: left; vertical-align: top; }
+        .steps, .flow { display: grid; gap: .7rem; }
+        .flow { grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); }
+        .flow span, .steps li { border: 1px solid #d8e1dd; border-radius: 8px; padding: .85rem; background: #f7faf9; }
+        .steps { padding-left: 1.3rem; }
+    </style>
+</head>
+<body>
+<main>
+    <p>Grassroot Innovation In Technology</p>
+    <h1>GRIT Core Committee Runbook</h1>
+    <p>This page explains what the core committee does to make a cycle live, route ideas to jury panels, and close the competition safely.</p>
+    <h2>Portal URLs</h2>
+    <table>
+        <tr><th>Flow</th><th>URL</th><th>Access</th></tr>
+        <tr><td>Entrants</td><td><code>http://127.0.0.1:5000/users/</code></td><td>Public</td></tr>
+        <tr><td>Core committee</td><td><code>http://127.0.0.1:5000/core/</code></td><td>Username configured for core</td></tr>
+        <tr><td>Final winners</td><td><code>http://127.0.0.1:5000/core/final-winners</code></td><td>Username configured for core</td></tr>
+        <tr><td>Jury panel</td><td><code>http://127.0.0.1:5000/jury/</code></td><td>Username configured for jury and assigned to categories</td></tr>
+        <tr><td>Swagger</td><td><code>http://127.0.0.1:5000/api/docs</code></td><td>Core username only</td></tr>
+    </table>
+    <h2>Go Live Flow</h2>
+    <div class="flow">
+        <span>Configure Mongo and secret in <code>.env</code></span>
+        <span>For demo, keep <code>sqlite = yes</code> in <code>config.ini</code></span>
+        <span>Run <code>python start_grit.py</code></span>
+        <span>Create cycle window in core portal</span>
+        <span>Create portal logins and update <code>app/access_config.py</code></span>
+        <span>Assign jury leads and members to categories</span>
+        <span>Release, score, confirm, close, archive</span>
+    </div>
+    <h2>User Screen Overview</h2>
+    <p>The user portal is a competition workspace: entrants browse visible ideas by category tab with pagination, open only the detail they need, submit during the active cycle, preview rich/plain content, and inspect uploaded images in a larger preview.</p>
+    <h2>Core Checklist</h2>
+    <ol class="steps">
+        <li>Start the app with <code>python run.py</code> and log in to the core portal.</li>
+        <li>Choose the six-month Cycle 1 or Cycle 2 slot, year, start date/time, and expiry date/time. The app builds <code>GRIT-Cycle1-YYYY</code> or <code>GRIT-Cycle2-YYYY</code>; the user portal only accepts new submissions during that window and its countdown updates live. This one cycle window applies to every category in the cycle.</li>
+        <li>Review categories, winner target counts, and category names before entrants submit.</li>
+        <li>Create core, jury lead, and jury member logins in <code>/core/users</code>.</li>
+        <li>Add protected usernames to <code>app/access_config.py</code>: core gets <code>{"core"}</code>; jury lead and jury member accounts get <code>{"jury"}</code>.</li>
+        <li>Assign jury leads and jury members in <code>/core/categories</code>. You can create a new jury account directly from the category panel, remove old panel members, and save replacements. Each active jury panel must contain three to seven unique people.</li>
+        <li>After submissions close or the committee is ready, release the cycle to jury from the core dashboard. During pre-production testing, use Withdraw release to block jury scoring again.</li>
+        <li>After jury lead confirmation, open Final Winners to review grouped category winners with scores and lead final comments, then close jury visibility and archive the cycle.</li>
+    </ol>
+    <h2>Account Removal</h2>
+    <p>Disable the login in <code>/core/users</code>, remove the username from <code>app/access_config.py</code>, and uncheck it from category panel assignments when it should no longer review that cycle.</p>
+    <h2>Credential Handling</h2>
+    <p>Portal accounts are stored in MongoDB collection <code>users</code>. Passwords are hashed before storage. Do not grant access by putting usernames in URLs; protected views require login, the username access map, and category assignment for jury users. The seeded <code>diptanun</code> account is an intentional test account with both core and jury access.</p>
+    <p>For category-specific jury sign-in, create separate jury lead and jury member accounts per category with distinct passwords, add those usernames to <code>app/access_config.py</code>, then assign them only to the category panel they should review.</p>
+    <h2>SQLite Demo Mode</h2>
+    <p>The local approval demo uses <code>data/grit.sqlite3</code> when <code>config.ini</code> has <code>sqlite = yes</code>. The same logical collections are retained as JSON documents and survive restart. Use <code>sync_mongo_to_sqlite.py</code> to copy Mongo data into SQLite, and <code>sync_sqlite_to_mongo.py</code> to promote approved SQLite data back to Mongo later.</p>
+    <h2>Archive And Edit Rules</h2>
+    <p>Archiving marks the cycle and ideas as archived, removes them from active user/core/jury dashboards, and keeps them visible in core archive. After the due date, users cannot submit new ideas but can edit an existing idea with the edit token until core releases to jury. After jury release, idea edits and category changes are locked.</p>
+    <h2>Integrity Note</h2>
+    <p>A person may submit ideas through the public entrant portal and also have a protected core or jury portal account. Jury self-scoring is blocked when the logged-in jury username appears as a contributor username on the idea. Keep ordinary core and jury protected usernames separate unless governance explicitly approves an overlap.</p>
+    <h2>Production Hardening</h2>
+    <p>Before broad launch, add enterprise authentication, CSRF protection, audit event writes, stronger upload controls, and notification delivery if the committee wants automated handoffs.</p>
+</main>
+</body>
+</html>

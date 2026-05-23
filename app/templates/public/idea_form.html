@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}{{ "Edit" if idea else "Submit" }} GRIT Idea{% endblock %}
+{% block content %}
+<form class="editor-layout" method="post" enctype="multipart/form-data" data-preview-form>
+    <section class="panel form-stack">
+        <div class="section-head">
+            <div>
+                <p class="eyebrow">{{ cycle.name }}</p>
+                <h1>{{ "Edit idea" if idea else "Submit idea" }}</h1>
+            </div>
+            <button class="button" type="submit"><i data-lucide="save"></i>{{ "Save changes" if idea else "Submit" }}</button>
+        </div>
+        <div class="field-grid">
+            <label>Problem statement<textarea name="problem_statement" required>{{ idea.problem_statement if idea else "" }}</textarea></label>
+            <label>Solution<textarea name="solution_summary" required>{{ idea.solution_summary if idea else "" }}</textarea></label>
+            <label>Video link<input type="url" name="video_link" value="{{ idea.video_link if idea else '' }}" placeholder="https://"></label>
+            <label>Officer sponsor<input name="officer_sponsor" value="{{ idea.officer_sponsor if idea else '' }}" required></label>
+            <label>Submitter FTE name<input name="owner_name" value="{{ idea.owner_name if idea else '' }}" required></label>
+            <label>Employee ID<input name="owner_employee_id" value="{{ idea.owner_employee_id if idea else '' }}" required></label>
+            <label>Office location<input name="office_location" value="{{ idea.office_location if idea else '' }}" required></label>
+            <label>India region
+                <select name="india_region" required>
+                    <option value="">Select region</option>
+                    {% for region in config.INDIA_REGIONS %}
+                        <option value="{{ region }}" {% if idea and idea.india_region == region %}selected{% endif %}>{{ region }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>Production readiness
+                <select name="production_readiness" required>
+                    {% for value, label in [("yes", "Yes"), ("no", "No"), ("in_6_months", "In 6 months")] %}
+                        <option value="{{ value }}" {% if idea and idea.production_readiness == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>Team name<input name="team_name" value="{{ idea.team_name if idea else '' }}" placeholder="For teams above five contributors"></label>
+        </div>
+        <div class="check-row">
+            <label><input type="checkbox" name="can_be_patented" {% if idea and idea.can_be_patented %}checked{% endif %}>Can be patented</label>
+            <label><input type="checkbox" name="is_patented" {% if idea and idea.is_patented %}checked{% endif %}>Already patented</label>
+        </div>
+        <fieldset>
+            <legend>Categories</legend>
+            <div class="choice-grid" data-category-limit="2">
+                {% for category in categories %}
+                    <label class="choice"><input type="checkbox" name="category_ids" value="{{ category._id }}" {% if idea and category._id|string in idea.category_ids %}checked{% endif %}>{{ category.name }}</label>
+                {% endfor %}
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Contributors</legend>
+            <div class="contributors">
+                {% for index in range(1, 6) %}
+                    {% set contributor = idea.contributors[index - 1] if idea and idea.contributors|length >= index else {} %}
+                    <div class="contributor-row">
+                        <label>FTE name {{ index }}<input name="contributor_name_{{ index }}" value="{{ contributor.name if contributor else '' }}" {% if index == 1 %}required{% endif %}></label>
+                        <label>Username {{ index }}<input name="contributor_username_{{ index }}" value="{{ contributor.username if contributor else '' }}"></label>
+                    </div>
+                {% endfor %}
+            </div>
+        </fieldset>
+        <label>Images<input type="file" name="images" accept=".png,.jpg,.jpeg,.gif,.webp" multiple></label>
+        <label>Image names (optional)<textarea name="image_names" placeholder="One image name per line, in the same order as selected files"></textarea></label>
+    </section>
+    <aside class="panel content-studio">
+        <div class="section-head">
+            <div>
+                <p class="eyebrow">Content studio</p>
+                <h2>Solution detail</h2>
+            </div>
+            <div class="segmented">
+                <label><input type="radio" name="content_format" value="plain" {% if not idea or idea.content_format == "plain" %}checked{% endif %}>Plain</label>
+                <label><input type="radio" name="content_format" value="html" {% if idea and idea.content_format == "html" %}checked{% endif %}>HTML</label>
+            </div>
+        </div>
+        <textarea class="content-input" name="content" data-content-input required>{{ idea.content if idea else "" }}</textarea>
+        <div class="preview-head">
+            <strong>Preview</strong>
+            <span class="muted">Mongo document guard enabled</span>
+        </div>
+        <div class="preview" data-content-preview></div>
+    </aside>
+</form>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}GRIT Cycles{% endblock %}
+{% block content %}
+{% include "core/tabs.html" %}
+<section class="split-layout">
+    <form class="panel form-stack" method="post">
+        <p class="eyebrow">Cycle control</p>
+        <h1>Open a competition cycle</h1>
+        <p class="muted">Core committee members control each six-month GRIT window here by setting the cycle slot, year, start time, and expiry time.</p>
+        <div class="field-grid">
+            <label>Cycle slot
+                <select name="cycle_number" required>
+                    <option value="1">Cycle 1</option>
+                    <option value="2">Cycle 2</option>
+                </select>
+            </label>
+            <label>Year<input name="year" type="number" min="2026" max="2100" value="2026" required></label>
+        </div>
+        <div class="cycle-name-preview">Name format: <strong>GRIT-Cycle1-YYYY</strong> or <strong>GRIT-Cycle2-YYYY</strong></div>
+        <label>Start time<input type="datetime-local" name="start_at" required></label>
+        <label>Stop time<input type="datetime-local" name="end_at" required></label>
+        <button class="button" type="submit"><i data-lucide="plus"></i>Create cycle</button>
+    </form>
+    <section class="panel">
+        <div class="section-head"><div><p class="eyebrow">Windows</p><h2>Cycles</h2></div></div>
+        <div class="cycle-list">
+            {% for cycle in cycles %}
+                <article class="cycle-card">
+                    <div>
+                        <h3>{{ cycle.name }}</h3>
+                        <p>{{ cycle.start_at.strftime("%d %b %Y %H:%M UTC") }} to {{ cycle.end_at.strftime("%d %b %Y %H:%M UTC") }}</p>
+                        <span class="muted">Public submissions are visible and editable only inside this window.</span>
+                    </div>
+                    <form class="inline-form" method="post" action="{{ url_for('core.update_cycle_window', cycle_id=cycle._id) }}">
+                        <input type="datetime-local" name="start_at" value="{{ cycle.start_at.strftime('%Y-%m-%dT%H:%M') }}">
+                        <input type="datetime-local" name="end_at" value="{{ cycle.end_at.strftime('%Y-%m-%dT%H:%M') }}">
+                        <button class="icon-button" type="submit" aria-label="Save window"><i data-lucide="save"></i></button>
+                    </form>
+                </article>
+            {% else %}
+                <div class="empty-inline">No cycle created.</div>
+            {% endfor %}
+        </div>
+    </section>
+</section>
+{% endblock %}

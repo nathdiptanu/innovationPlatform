@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}GRIT Final Winners{% endblock %}
+{% block content %}
+{% include "core/tabs.html" %}
+<section class="section-head dashboard-head">
+    <div>
+        <p class="eyebrow">Core committee</p>
+        <h1>Final winners</h1>
+        <p class="muted">Confirmed ideas from jury leads, grouped by category and sorted by category score.</p>
+    </div>
+    {% if cycle %}
+    <form method="get" class="inline-form">
+        <label>Cycle
+            <select name="cycle_id" onchange="this.form.submit()">
+                {% for item in cycles %}<option value="{{ item._id }}" {% if item._id == cycle._id %}selected{% endif %}>{{ item.name }}</option>{% endfor %}
+            </select>
+        </label>
+    </form>
+    {% endif %}
+</section>
+{% if cycle %}
+<div class="winner-stack">
+    {% for group in grouped_winners %}
+        {% set category = group.category %}
+        <section class="panel winner-panel">
+            <div class="section-head">
+                <div>
+                    <p class="eyebrow">{{ cycle.name }}</p>
+                    <h2>{{ category.name }}</h2>
+                </div>
+                <strong class="metric-pill">{{ group.ideas|length }} / {{ category.top_ideas_required }} winners</strong>
+            </div>
+            {% if group.ideas %}
+                <div class="table-shell">
+                    <table>
+                        <thead><tr><th>Rank</th><th>Idea</th><th>Submitter</th><th>Team</th><th>Sponsor</th><th>Score</th><th>Jury lead final comment</th></tr></thead>
+                        <tbody>
+                        {% for idea in group.ideas %}
+                            <tr>
+                                <td><strong>#{{ loop.index }}</strong></td>
+                                <td class="idea-cell"><a href="{{ url_for('public.idea_detail', idea_id=idea.idea_id) }}">{{ idea.idea_id }}</a><span class="clamp-text">{{ idea.problem_statement|truncate(320, True) }}</span></td>
+                                <td>{{ idea.owner_name }}<span>{{ idea.owner_employee_id }}</span></td>
+                                <td>{{ idea.team_name or "Individual / named contributors" }}</td>
+                                <td>{{ idea.officer_sponsor }}</td>
+                                <td>{{ idea.average_score }}<span>{{ idea.score_count }} reviews</span></td>
+                                <td class="idea-cell"><span class="clamp-text">{{ idea.lead_comments[category._id|string] if idea.lead_comments and category._id|string in idea.lead_comments else "No final lead comment yet." }}</span></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-inline">No final winners have been confirmed for this category yet.</div>
+            {% endif %}
+        </section>
+    {% endfor %}
+</div>
+{% else %}
+<section class="empty-state"><h1>Create the first cycle</h1><a class="button" href="{{ url_for('core.cycles') }}">Open cycles</a></section>
+{% endif %}
+{% endblock %}

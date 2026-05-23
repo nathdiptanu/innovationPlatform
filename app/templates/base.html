@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}GRIT{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script defer src="https://unpkg.com/lucide@latest"></script>
+    <script defer src="{{ url_for('static', filename='app.js') }}"></script>
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="{{ url_for('public.home') }}">
+            <span class="brand-mark">G</span>
+            <span><strong>GRIT</strong><small>Grassroot Innovation In Technology</small></span>
+        </a>
+        <nav>
+            <a href="{{ url_for('public.home') }}">Ideas</a>
+            {% if g.user and can_access("core", g.user) %}
+                <a href="{{ url_for('api.docs') }}">Swagger</a>
+                <a href="{{ url_for('core.dashboard') }}">Core</a>
+                <a href="{{ url_for('core.categories') }}">Categories</a>
+                <a href="{{ url_for('core.users') }}">Accounts</a>
+            {% endif %}
+            {% if g.user and can_access("jury", g.user) %}
+                <a href="{{ url_for('jury.dashboard') }}">Jury</a>
+            {% endif %}
+            {% if g.user %}
+                <a class="nav-action" href="{{ url_for('auth.logout') }}">Logout</a>
+            {% else %}
+                <a class="nav-action" href="{{ url_for('auth.login') }}">Portal login</a>
+            {% endif %}
+        </nav>
+    </header>
+    <main class="shell">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <section class="flash-stack">
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </section>
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

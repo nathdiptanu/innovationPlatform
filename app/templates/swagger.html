@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}GRIT Swagger{% endblock %}
+{% block content %}
+<section class="panel docs-shell">
+    <div class="section-head">
+        <div>
+            <p class="eyebrow">OpenAPI 3.0</p>
+            <h1>GRIT API</h1>
+        </div>
+        <a class="button ghost" href="{{ url_for('api.openapi') }}">Open JSON</a>
+    </div>
+    <div id="swagger-ui"></div>
+</section>
+<link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css">
+<script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+<script>
+window.addEventListener("load", () => SwaggerUIBundle({ url: "{{ url_for('api.openapi') }}", dom_id: "#swagger-ui" }));
+</script>
+{% endblock %}

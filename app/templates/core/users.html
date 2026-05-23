@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}GRIT Portal Accounts{% endblock %}
+{% block content %}
+{% include "core/tabs.html" %}
+<section class="split-layout">
+    <form class="panel form-stack" method="post">
+        <p class="eyebrow">Entitlements</p>
+        <h1>Add portal account</h1>
+        <p class="muted">Create core, jury lead, and jury member logins here. After adding a jury account, assign it to the right category in Categories and jury panels.</p>
+        <label>Name<input name="name" required></label>
+        <label>Username<input name="username" required></label>
+        <label>Password<input type="password" name="password" minlength="8" required></label>
+        <label>Role
+            <select name="role">
+                <option value="core">Core member</option>
+                <option value="jury_lead">Jury lead</option>
+                <option value="jury">Jury member</option>
+            </select>
+        </label>
+        <button class="button" type="submit"><i data-lucide="user-plus"></i>Add account</button>
+    </form>
+    <section class="panel">
+        <div class="section-head"><div><p class="eyebrow">Accounts</p><h2>Active users</h2></div></div>
+        <div class="table-shell">
+            <table>
+                <thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Update</th><th></th></tr></thead>
+                <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>
+                            <form id="edit-user-{{ user._id }}" method="post" action="{{ url_for('core.edit_user', user_id=user._id) }}"></form>
+                            <input form="edit-user-{{ user._id }}" name="name" value="{{ user.name }}" required>
+                        </td>
+                        <td><strong>{{ user.username }}</strong></td>
+                        <td>
+                            <select form="edit-user-{{ user._id }}" name="role">
+                                <option value="core" {% if user.role == "core" %}selected{% endif %}>Core member</option>
+                                <option value="jury_lead" {% if user.role == "jury_lead" %}selected{% endif %}>Jury lead</option>
+                                <option value="jury" {% if user.role == "jury" %}selected{% endif %}>Jury member</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input form="edit-user-{{ user._id }}" type="password" name="password" placeholder="New password optional" minlength="8">
+                            <button form="edit-user-{{ user._id }}" class="button ghost compact" type="submit"><i data-lucide="save"></i>Save</button>
+                        </td>
+                        <td><form method="post" action="{{ url_for('core.delete_user', user_id=user._id) }}"><button class="icon-button danger" aria-label="Disable user"><i data-lucide="trash-2"></i></button></form></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</section>
+{% endblock %}

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GRIT Architecture Flow</title>
+    <style>
+        :root { --bg:#edf6ff; --surface:#fff; --ink:#10243f; --muted:#57718f; --line:#cfe1f5; --brand:#1769d1; --brand2:#13a0cc; --accent:#f0b34a; font-family:"Segoe UI",Arial,sans-serif; }
+        * { box-sizing: border-box; }
+        body { margin:0; color:var(--ink); background:linear-gradient(90deg,rgba(23,105,209,.07) 1px,transparent 1px),linear-gradient(rgba(19,160,204,.06) 1px,transparent 1px),var(--bg); background-size:42px 42px; line-height:1.55; }
+        main { width:min(1200px,calc(100vw - 2rem)); margin:2rem auto 4rem; }
+        header, section, .node { border:1px solid var(--line); border-radius:8px; background:rgba(255,255,255,.96); box-shadow:0 18px 50px rgba(21,35,31,.09); }
+        header { padding:clamp(1.5rem,4vw,3rem); color:#fff; background:linear-gradient(115deg,rgba(15,57,123,.96),rgba(23,105,209,.82)); }
+        h1 { font-size:clamp(2.2rem,6vw,5rem); line-height:.98; margin:.25rem 0 .5rem; }
+        h2 { margin:.2rem 0 .7rem; }
+        section { margin-top:1rem; padding:clamp(1rem,2.5vw,2rem); }
+        .eyebrow { margin:0 0 .35rem; text-transform:uppercase; color:var(--brand); font-weight:800; font-size:.78rem; letter-spacing:.08em; }
+        header .eyebrow { color:#d6ecff; }
+        .tabs { display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:1rem; }
+        .tabs button { border:1px solid var(--line); border-radius:8px; padding:.65rem .85rem; background:#fff; color:var(--muted); font-weight:800; cursor:pointer; }
+        .tabs button.active { color:#fff; border-color:var(--brand); background:var(--brand); }
+        .panel { display:none; }
+        .panel.active { display:block; }
+        .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:.8rem; }
+        .node { padding:1rem; min-height:124px; position:relative; }
+        .node strong { display:block; color:var(--brand); font-size:1.05rem; margin-bottom:.35rem; }
+        .node small { color:var(--muted); font-weight:700; }
+        .flow { display:grid; grid-template-columns:repeat(6,minmax(150px,1fr)); gap:.75rem; align-items:stretch; overflow:auto; padding-bottom:.5rem; }
+        .step { border:1px solid var(--line); border-radius:8px; padding:.9rem; background:#fff; min-width:150px; }
+        .step strong { display:block; color:var(--brand); }
+        .arrow { display:grid; place-items:center; color:var(--brand); font-size:1.5rem; font-weight:900; }
+        table { width:100%; border-collapse:collapse; }
+        th, td { padding:.7rem; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+        th { color:var(--muted); text-transform:uppercase; font-size:.78rem; }
+        code { padding:.12rem .32rem; border-radius:4px; background:#e6f2ff; color:#0d5598; }
+        .note { border-left:4px solid var(--accent); background:#fff9eb; padding:.85rem; border-radius:8px; }
+        @media (max-width: 900px) { .flow { grid-template-columns:1fr; } .arrow { transform:rotate(90deg); } }
+    </style>
+</head>
+<body>
+<main>
+    <header>
+        <p class="eyebrow">GRIT Architecture</p>
+        <h1>How The App Works</h1>
+        <p>Grassroot Innovation In Technology connects public idea submission, core committee governance, and category-scoped jury scoring on MongoDB.</p>
+    </header>
+
+    <section>
+        <p class="eyebrow">End-to-end flow</p>
+        <h2>Competition Lifecycle</h2>
+        <div class="flow" aria-label="Application lifecycle">
+            <div class="step"><strong>1. Core opens cycle</strong><span>Core sets one start/end window for all categories.</span></div>
+            <div class="arrow">→</div>
+            <div class="step"><strong>2. Users submit</strong><span>Public users submit before due date and edit with private token until jury release.</span></div>
+            <div class="arrow">→</div>
+            <div class="step"><strong>3. Core assigns panels</strong><span>Core adds/removes leads and members per category.</span></div>
+            <div class="arrow">→</div>
+            <div class="step"><strong>4. Release to jury</strong><span>Scoring opens only after release; release can be withdrawn for testing.</span></div>
+            <div class="arrow">→</div>
+            <div class="step"><strong>5. Jury scores</strong><span>Members score. Leads see category averages, scores, and comments.</span></div>
+            <div class="arrow">→</div>
+            <div class="step"><strong>6. Confirm/archive</strong><span>Lead confirms winners. Core reviews final winners, closes jury, and archives cycle.</span></div>
+        </div>
+    </section>
+
+    <section>
+        <p class="eyebrow">Explore by role</p>
+        <h2>Role Responsibilities</h2>
+        <div class="tabs">
+            <button class="active" data-tab="users">Users</button>
+            <button data-tab="core">Core</button>
+            <button data-tab="lead">Jury Lead</button>
+            <button data-tab="member">Jury Member</button>
+            <button data-tab="data">Data</button>
+        </div>
+        <div id="users" class="panel active">
+            <div class="grid">
+                <div class="node"><strong>Public access</strong><small>No login required for viewing, searching, submitting, commenting, or reacting.</small></div>
+                <div class="node"><strong>Idea detail</strong><small>Problem, solution, rich/plain content, images, optional image names, contributors, sponsor, and categories.</small></div>
+                <div class="node"><strong>Edit control</strong><small>Only the submitter with the private edit token/session can edit before cycle expiry.</small></div>
+                <div class="node"><strong>Feedback</strong><small>Visitors can comment and like/neutral/dislike; cached counts keep gallery loading fast.</small></div>
+            </div>
+        </div>
+        <div id="core" class="panel">
+            <div class="grid">
+                <div class="node"><strong>Cycle window</strong><small>One start/end deadline applies to every category in that cycle. New submissions close at due date.</small></div>
+                <div class="node"><strong>Panels</strong><small>Create, add, remove, and replace jury leads/members in category panels.</small></div>
+                <div class="node"><strong>Release controls</strong><small>Release to jury, withdraw release for testing, close jury, archive cycle.</small></div>
+                <div class="node"><strong>Management view</strong><small>Total submitted ideas, counts by category, final winners, sponsor, submitter, and lead final comment.</small></div>
+            </div>
+        </div>
+        <div id="lead" class="panel">
+            <div class="grid">
+                <div class="node"><strong>Category scope</strong><small>Lead sees only assigned categories.</small></div>
+                <div class="node"><strong>Peer visibility</strong><small>Lead sees same-category jury member scores and comments.</small></div>
+                <div class="node"><strong>Final comment</strong><small>Lead adds the overall final comment for top ideas.</small></div>
+                <div class="node"><strong>Confirm winners</strong><small>Lead confirms top ideas based on the category target set by core.</small></div>
+            </div>
+        </div>
+        <div id="member" class="panel">
+            <div class="grid">
+                <div class="node"><strong>Assigned review</strong><small>Members score only assigned categories after release.</small></div>
+                <div class="node"><strong>Scoring</strong><small>1-10 score, comment, and like/neutral/dislike signal.</small></div>
+                <div class="node"><strong>Progress</strong><small>Scored and pending items are colored and counted.</small></div>
+                <div class="node"><strong>Privacy</strong><small>Members do not see peer scores unless they are assigned as lead.</small></div>
+            </div>
+        </div>
+        <div id="data" class="panel">
+            <table>
+                <tr><th>Collection</th><th>Stores</th></tr>
+                <tr><td><code>users</code></td><td>Core, jury lead, and jury member accounts with hashed passwords.</td></tr>
+                <tr><td><code>cycles</code></td><td>Cycle name, single deadline, release/withdraw/close/archive state.</td></tr>
+                <tr><td><code>categories</code></td><td>Category names, winner target count, assigned jury lead/member IDs.</td></tr>
+                <tr><td><code>ideas</code></td><td>Submission content, edit token, contributors, image metadata, public comments, cached reactions.</td></tr>
+                <tr><td><code>evaluations</code></td><td>Category-scoped jury score, comment, and signal.</td></tr>
+                <tr><td><code>idea_reactions</code></td><td>Per-visitor public like/neutral/dislike events.</td></tr>
+            </table>
+            <p class="note">Demo mode stores these logical collections as JSON documents inside <code>data/grit.sqlite3</code>. Set <code>sqlite = no</code> in <code>config.ini</code> to switch back to MongoDB.</p>
+        </div>
+    </section>
+
+    <section>
+        <p class="eyebrow">Key guardrails</p>
+        <h2>Access And Visibility</h2>
+        <p class="note">Protected portal access is based on login role plus optional <code>app/access_config.py</code>. Jury category access is based on IDs assigned in each category document. Category deadlines are inherited from the parent cycle. Archived cycles are hidden from active dashboards and retained in archive.</p>
+    </section>
+</main>
+<script>
+    document.querySelectorAll("[data-tab]").forEach((button) => {
+        button.addEventListener("click", () => {
+            document.querySelectorAll("[data-tab]").forEach((item) => item.classList.remove("active"));
+            document.querySelectorAll(".panel").forEach((panel) => panel.classList.remove("active"));
+            button.classList.add("active");
+            document.getElementById(button.dataset.tab).classList.add("active");
+        });
+    });
+</script>
+</body>
+</html>

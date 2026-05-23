@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GRIT Architecture README</title>
+    <style>
+        body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; color: #15231f; background: #f3f6f4; line-height: 1.55; }
+        main { width: min(1040px, calc(100vw - 2rem)); margin: 2rem auto; padding: clamp(1rem, 3vw, 2.5rem); border: 1px solid #d8e1dd; border-radius: 8px; background: #fff; box-shadow: 0 18px 50px rgba(21,35,31,.09); }
+        h1, h2 { letter-spacing: 0; }
+        code { background: #edf3f1; padding: .12rem .32rem; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: .65rem; border-bottom: 1px solid #d8e1dd; text-align: left; vertical-align: top; }
+        .flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: .65rem; }
+        .flow span { padding: .8rem; border: 1px solid #d8e1dd; border-radius: 8px; background: #f7faf9; font-weight: 700; }
+    </style>
+</head>
+<body>
+<main>
+    <p>Grassroot Innovation In Technology</p>
+    <h1>GRIT Architecture</h1>
+    <p>GRIT is a Flask 3 application for Python 3.11.1 with MongoDB persistence, OpenAPI definitions, Swagger UI, public idea submission, core committee management, and jury evaluation.</p>
+    <p>For approval demos, the platform can run fully on local SQLite by setting <code>sqlite = yes</code> in <code>config.ini</code>. The local database is <code>data/grit.sqlite3</code>.</p>
+    <h2>Portal URLs</h2>
+    <table>
+        <tr><th>Portal</th><th>URL</th></tr>
+        <tr><td>Entrant/user</td><td><code>http://127.0.0.1:5000/users/</code></td></tr>
+        <tr><td>Core committee</td><td><code>http://127.0.0.1:5000/core/</code></td></tr>
+        <tr><td>Core final winners</td><td><code>http://127.0.0.1:5000/core/final-winners</code></td></tr>
+        <tr><td>Jury</td><td><code>http://127.0.0.1:5000/jury/</code></td></tr>
+    </table>
+    <h2>Process Flow</h2>
+    <div class="flow">
+        <span>User portal submits ideas</span>
+        <span>Core portal controls cycle and category panels</span>
+        <span>Mongo stores GRIT IDs and attachments metadata</span>
+        <span>Core releases assigned ideas</span>
+        <span>Jury portal scores and confirms winners</span>
+        <span>Core reviews final winners by category</span>
+        <span>Core closes jury and archives cycle</span>
+    </div>
+    <h2>User Requirement Overview</h2>
+    <table>
+        <tr><th>Need</th><th>Coverage</th></tr>
+        <tr><td>Browse other ideas quickly</td><td>The user portal shows a simplified idea gallery with category tabs, server-side pagination, and lightweight list fields.</td></tr>
+        <tr><td>Submit and edit ideas</td><td>Two annual cycle windows such as <code>GRIT-Cycle1-2026</code> control new submission; each idea gets a unique GRIT submission ID and an edit token. Edits stay open until core releases to jury.</td></tr>
+        <tr><td>Required idea detail</td><td>Problem, solution, contributors, sponsor, employee ID, India office location/region, production readiness, one or two categories, and content are captured.</td></tr>
+        <tr><td>Optional media and patent data</td><td>Video link, patent flags, team name, and image uploads are supported; image thumbnails open a larger preview.</td></tr>
+        <tr><td>Fast UI boundaries</td><td>User category tabs, core management tabs, jury category tabs, indexed queries, projections, and pagination keep screens scoped.</td></tr>
+    </table>
+    <h2>Surfaces</h2>
+    <table>
+        <tr><th>Portal</th><th>Coverage</th></tr>
+        <tr><td>Public</td><td>Cycle-aware submission, search, category browse tabs, edit tokens, contributors, category limits, image lightbox preview, HTML/plain content preview.</td></tr>
+        <tr><td>Core</td><td>Tabbed dashboard, accounts, six-month cycle windows, categories, create/remove jury panel members, release/close/archive actions, total counts, final winners, tabs, pagination.</td></tr>
+        <tr><td>Jury</td><td>Category entitlement, score/comment/signal, average ranking, lead comments, and lead-only winner confirmation using the core-set winner target.</td></tr>
+        <tr><td>Swagger</td><td>Core-only <code>/api/docs</code> and <code>/api/openapi.json</code>.</td></tr>
+    </table>
+    <h2>MongoDB</h2>
+    <p>Collections: <code>users</code>, <code>cycles</code>, <code>categories</code>, <code>ideas</code>, <code>evaluations</code>, and reserved <code>audit_events</code>. In SQLite mode, these are JSON documents in <code>data/grit.sqlite3</code>. In Mongo mode, the setup script creates collections, builds indexes, and bootstraps the first core user from environment variables.</p>
+    <h2>Entitlements</h2>
+    <p>Username-to-screen visibility is maintained in <code>app/access_config.py</code>. Core usernames receive the core screen only, jury usernames receive the jury screen only, and category-level jury assignments are stored on category documents. The public user portal remains available to people who also have protected portal accounts. Runtime checks live in <code>app/entitlements.py</code>.</p>
+    <h2>Production Hardening</h2>
+    <p>The pilot flow is covered. Before broad launch, add enterprise authentication, CSRF protection, audit logging, hardened upload handling, and notification delivery if committee handoffs need email or Teams messaging.</p>
+    <h2>Credentials and Data</h2>
+    <p>Portal usernames live in the MongoDB <code>users</code> collection. Passwords are stored as Werkzeug hashes, not plaintext. Core operators add or disable logins in <code>/core/users</code>, protected access is allowed in <code>app/access_config.py</code>, and jury lead/member category assignment is managed in <code>/core/categories</code>. The seeded <code>diptanun</code> account is an explicit test overlap with both core and jury visibility.</p>
+    <p>Seeded jury accounts are category-specific. For example, Automation lead uses <code>jury.lead.automation</code> and a separate Automation password, while Process Improvement has its own lead/member usernames and passwords. Category funneling is enforced by category jury assignments, and only the lead assignment can confirm winners.</p>
+    <p>The public countdown updates every second while entries are open. Core controls the active window from <code>/core/cycles</code> by selecting Cycle 1 or Cycle 2, the year, start time, and expiry time for each six-month GRIT cycle.</p>
+    <p>Archiving removes submitted ideas from active user/core/jury screens and keeps them in the core archive. After due date, users cannot submit new ideas but can edit existing ideas until release to jury; after release, edits and category changes are locked.</p>
+    <h2>Run</h2>
+    <pre>py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python start_grit.py</pre>
+    <p>Manual equivalent:</p>
+    <pre>python mongo_setup.py
+python seed_sample_data.py
+python -m unittest discover -s tests -v
+flask --app run.py run</pre>
+</main>
+</body>
+</html>

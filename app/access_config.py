@@ -1,0 +1,57 @@
+"""Username-based protected screen access for GRIT.
+
+Maintain this file when a portal account should gain or lose visibility to a
+protected screen. Usernames are stored lowercase in MongoDB.
+"""
+
+USER_SCREEN_ACCESS = {
+    "diptanun": {"core", "jury"},
+    "core.admin": {"core"},
+    "core.demo": {"core"},
+    "core.member2": {"core"},
+    "core.member3": {"core"},
+    "core.member4": {"core"},
+    "core.member5": {"core"},
+    "core.member6": {"core"},
+    "core.member7": {"core"},
+    "core.member8": {"core"},
+    "core.member9": {"core"},
+    "core.member10": {"core"},
+    "jury.lead.unique.idea": {"jury"},
+    "jury.member1.unique.idea": {"jury"},
+    "jury.member2.unique.idea": {"jury"},
+    "jury.member3.unique.idea": {"jury"},
+    "jury.member4.unique.idea": {"jury"},
+    "jury.lead.solution.re.use": {"jury"},
+    "jury.member1.solution.re.use": {"jury"},
+    "jury.member2.solution.re.use": {"jury"},
+    "jury.member3.solution.re.use": {"jury"},
+    "jury.member4.solution.re.use": {"jury"},
+    "jury.lead.process.improvement": {"jury"},
+    "jury.member1.process.improvement": {"jury"},
+    "jury.member2.process.improvement": {"jury"},
+    "jury.member3.process.improvement": {"jury"},
+    "jury.member4.process.improvement": {"jury"},
+    "jury.lead.devops": {"jury"},
+    "jury.member1.devops": {"jury"},
+    "jury.member2.devops": {"jury"},
+    "jury.member3.devops": {"jury"},
+    "jury.member4.devops": {"jury"},
+    "jury.lead.data.architecture": {"jury"},
+    "jury.member1.data.architecture": {"jury"},
+    "jury.member2.data.architecture": {"jury"},
+    "jury.member3.data.architecture": {"jury"},
+    "jury.member4.data.architecture": {"jury"},
+    "jury.lead.automation": {"jury"},
+    "jury.member1.automation": {"jury"},
+    "jury.member2.automation": {"jury"},
+    "jury.member3.automation": {"jury"},
+    "jury.member4.automation": {"jury"},
+    "jury.lead.technical.debt": {"jury"},
+    "jury.member1.technical.debt": {"jury"},
+    "jury.member2.technical.debt": {"jury"},
+    "jury.member3.technical.debt": {"jury"},
+    "jury.member4.technical.debt": {"jury"},
+}
+
+PUBLIC_SCREENS = {"public"}

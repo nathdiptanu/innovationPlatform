@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}GRIT Categories{% endblock %}
+{% block content %}
+{% include "core/tabs.html" %}
+<section class="section-head dashboard-head">
+    <div>
+        <p class="eyebrow">Panel design</p>
+        <h1>Categories and jury panels</h1>
+        <p class="muted">Edit category names and winner targets here. Use Remove to take someone off the current panel, then check a replacement below and save.</p>
+    </div>
+    {% if cycle %}
+    <form method="get" class="inline-form">
+        <select name="cycle_id" onchange="this.form.submit()">{% for item in cycles %}<option value="{{ item._id }}" {% if item._id == cycle._id %}selected{% endif %}>{{ item.name }}</option>{% endfor %}</select>
+    </form>
+    {% endif %}
+</section>
+{% if cycle %}
+<section class="split-layout category-layout">
+    <form class="panel form-stack" method="post">
+        <p class="eyebrow">{{ cycle.name }}</p>
+        <h2>Add category</h2>
+        <label>Name<input name="name" required></label>
+        <label>Winner target<input type="number" min="1" name="top_ideas_required" value="10" required></label>
+        <button class="button" type="submit"><i data-lucide="plus"></i>Save category</button>
+    </form>
+    <div class="category-editor-stack">
+        {% for category in categories %}
+        <article class="panel category-editor {% if not category.active %}inactive{% endif %}">
+            <form class="inline-form stretch" method="post" action="{{ url_for('core.edit_category', category_id=category._id) }}">
+                <input name="name" value="{{ category.name }}" required>
+                <input type="number" min="1" name="top_ideas_required" value="{{ category.top_ideas_required }}">
+                <button class="icon-button" aria-label="Save category"><i data-lucide="save"></i></button>
+            </form>
+
+            <section class="current-panel">
+                <div>
+                    <p class="eyebrow">Assigned leads</p>
+                    <div class="assignment-chip-row">
+                        {% for user_id in category.jury_lead_ids %}
+                            {% set user = jury_user_map.get(user_id) %}
+                            {% if user %}
+                                <form class="assignment-chip" method="post" action="{{ url_for('core.remove_panel_user', category_id=category._id) }}">
+                                    <input type="hidden" name="user_id" value="{{ user._id }}">
+                                    <input type="hidden" name="panel_role" value="lead">
+                                    <span>{{ user.name }}</span> <small>{{ user.username }}</small>
+                                    <button class="text-button danger" type="submit">Remove</button>
+                                </form>
+                            {% endif %}
+                        {% else %}
+                            <span class="muted">No lead assigned.</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div>
+                    <p class="eyebrow">Assigned members</p>
+                    <div class="assignment-chip-row">
+                        {% for user_id in category.jury_member_ids %}
+                            {% set user = jury_user_map.get(user_id) %}
+                            {% if user %}
+                                <form class="assignment-chip" method="post" action="{{ url_for('core.remove_panel_user', category_id=category._id) }}">
+                                    <input type="hidden" name="user_id" value="{{ user._id }}">
+                                    <input type="hidden" name="panel_role" value="member">
+                                    <span>{{ user.name }}</span> <small>{{ user.username }}</small>
+                                    <button class="text-button danger" type="submit">Remove</button>
+                                </form>
+                            {% endif %}
+                        {% else %}
+                            <span class="muted">No members assigned.</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+            <form class="quick-add-panel" method="post" action="{{ url_for('core.create_panel_user', category_id=category._id) }}">
+                <p class="eyebrow">Create and assign jury account</p>
+                <input name="name" placeholder="Full name" required>
+                <input name="username" placeholder="username for login" required>
+                <input name="password" placeholder="temporary password" required>
+                <select name="role" required>
+                    <option value="jury_lead">Jury lead</option>
+                    <option value="jury">Jury member</option>
+                </select>
+                <button class="button ghost" type="submit"><i data-lucide="user-plus"></i>Add to panel</button>
+            </form>
+
+            <form class="panel-form" method="post" action="{{ url_for('core.save_panel', category_id=category._id) }}">
+                <div class="assignment-grid">
+                    <fieldset>
+                        <legend>Jury leads</legend>
+                        {% for user in jury_users %}
+                            {% if user.role == "jury_lead" %}
+                                <label><input type="checkbox" name="jury_lead_ids" value="{{ user._id }}" {% if user._id|string in category.jury_lead_ids %}checked{% endif %}><span class="account-option"><strong>{{ user.name }}</strong><small>{{ user.username }}</small></span></label>
+                            {% endif %}
+                        {% endfor %}
+                    </fieldset>
+                    <fieldset>
+                        <legend>Jury members</legend>
+                        {% for user in jury_users %}
+                            <label><input type="checkbox" name="jury_member_ids" value="{{ user._id }}" {% if user._id|string in category.jury_member_ids %}checked{% endif %}><span class="account-option"><strong>{{ user.name }}</strong><small>{{ user.username }} | {{ user.role|replace("_", " ")|title }}</small></span></label>
+                        {% endfor %}
+                    </fieldset>
+                </div>
+                <div class="button-row">
+                    <button class="button ghost" type="submit"><i data-lucide="users"></i>Save panel</button>
+                </div>
+            </form>
+
+            <form method="post" action="{{ url_for('core.delete_category', category_id=category._id) }}"><button class="text-button danger" type="submit">Remove category</button></form>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% else %}
+<section class="empty-state"><h1>Create a cycle first</h1></section>
+{% endif %}
+{% endblock %}

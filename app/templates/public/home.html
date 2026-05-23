@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}GRIT Ideas{% endblock %}
+{% block content %}
+<section class="hero-band">
+    <div>
+        <p class="eyebrow">{{ cycle.name if cycle else "Competition workspace" }}</p>
+        <h1>GRIT</h1>
+        <p>Grassroot Innovation In Technology</p>
+    </div>
+    <div class="status-panel">
+        {% if cycle_open %}
+            <span class="status live">Entries open</span>
+            <strong>Submit before {{ cycle.end_at.strftime("%d %b %Y %H:%M UTC") }}</strong>
+            <div class="countdown" data-countdown data-deadline="{{ cycle.end_at.isoformat() }}">
+                <span>Time remaining</span>
+                <strong data-countdown-value>Calculating...</strong>
+            </div>
+            <a class="button" href="{{ url_for('public.create') }}"><i data-lucide="plus"></i>Submit idea</a>
+        {% elif cycle %}
+            <span class="status closed">Entries closed</span>
+            <strong>Submission window ended {{ cycle.end_at.strftime("%d %b %Y %H:%M UTC") }}</strong>
+        {% else %}
+            <span class="status closed">No cycle configured</span>
+            <strong>The committee has not opened a submission window.</strong>
+        {% endif %}
+    </div>
+</section>
+<section class="workspace-grid">
+    <div class="panel">
+        <div class="section-head">
+            <div>
+                <p class="eyebrow">Idea gallery</p>
+                <h2>Explore submissions</h2>
+            </div>
+            <form class="searchbar" method="get">
+                {% if selected_category_id %}<input type="hidden" name="category_id" value="{{ selected_category_id }}">{% endif %}
+                <input name="q" value="{{ q }}" placeholder="Idea ID, employee ID, problem">
+                <button class="icon-button" type="submit" aria-label="Search"><i data-lucide="search"></i></button>
+            </form>
+        </div>
+        <nav class="browse-tabs" aria-label="Idea categories">
+            <a class="{% if not selected_category_id %}active{% endif %}" href="{{ url_for('public.user_portal', q=q) }}">All</a>
+            {% for category in category_tabs %}
+                <a class="{% if selected_category_id == category._id|string %}active{% endif %}" href="{{ url_for('public.user_portal', category_id=category._id, q=q) }}">{{ category.name }}</a>
+            {% endfor %}
+        </nav>
+        <div class="idea-list">
+            {% for idea in ideas %}
+                <article class="idea-row">
+                    <div>
+                        <div class="idea-meta-line">
+                            <a href="{{ url_for('public.idea_detail', idea_id=idea.idea_id) }}"><strong>{{ idea.idea_id }}</strong></a>
+                            <span class="readiness">{{ idea.production_readiness|replace("_", " ")|title }}</span>
+                        </div>
+                        <h3>{{ idea.problem_statement|truncate(82, True) }}</h3>
+                        <p>{{ idea.solution_summary|truncate(110, True) }}</p>
+                        <small>{{ idea.owner_name }} | Submitted {{ idea.created_at.strftime("%d %b %Y") if idea.created_at else "date unavailable" }} | Edited {{ idea.updated_at.strftime("%d %b %Y") if idea.updated_at else "date unavailable" }}</small>
+                        <div class="reaction-strip compact-reactions">
+                            <span><i data-lucide="thumbs-up"></i>{{ idea.reaction_counts.like if idea.reaction_counts else 0 }}</span>
+                            <span><i data-lucide="circle-minus"></i>{{ idea.reaction_counts.neutral if idea.reaction_counts else 0 }}</span>
+                            <span><i data-lucide="thumbs-down"></i>{{ idea.reaction_counts.dislike if idea.reaction_counts else 0 }}</span>
+                        </div>
+                    </div>
+                    <div class="idea-actions">
+                        <div class="tag-stack">
+                            {% for category_id in idea.category_ids %}
+                                {% if categories.get(category_id) %}<span class="tag">{{ categories[category_id].name }}</span>{% endif %}
+                            {% endfor %}
+                        </div>
+                        <a class="button ghost compact" href="{{ url_for('public.idea_detail', idea_id=idea.idea_id) }}">View</a>
+                    </div>
+                </article>
+            {% else %}
+                <div class="empty-inline">No ideas match this view.</div>
+            {% endfor %}
+        </div>
+        {% include "pagination.html" %}
+    </div>
+    <aside class="panel metrics">
+        <p class="eyebrow">Workspace pulse</p>
+        <div class="metric"><strong>{{ total_so_far }}</strong><span>Total ideas submitted</span></div>
+        <div class="metric"><strong>{{ total }}</strong><span>Visible ideas in this view</span></div>
+        <div class="metric"><strong>{{ category_tabs|length }}</strong><span>Categories</span></div>
+        <div class="metric"><strong>2</strong><span>Max categories per idea</span></div>
+        {% if cycle_open %}<a class="button submit-rail" href="{{ url_for('public.create') }}"><i data-lucide="sparkles"></i>New idea</a>{% endif %}
+    </aside>
+</section>
+{% endblock %}

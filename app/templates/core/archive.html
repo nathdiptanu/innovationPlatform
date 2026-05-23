@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}GRIT Archive{% endblock %}
+{% block content %}
+{% include "core/tabs.html" %}
+<section class="section-head dashboard-head">
+    <div><p class="eyebrow">Archive</p><h1>Previous cycles</h1></div>
+    <form method="get" class="inline-form">{% if cycles %}<select name="cycle_id" onchange="this.form.submit()">{% for cycle in cycles %}<option value="{{ cycle._id }}" {% if cycle_id == cycle._id|string %}selected{% endif %}>{{ cycle.name }}</option>{% endfor %}</select>{% endif %}</form>
+</section>
+<section class="panel">
+    <div class="table-shell">
+        <table>
+            <thead><tr><th>Idea</th><th>Problem</th><th>Submitter</th><th>Created</th></tr></thead>
+            <tbody>
+            {% for idea in ideas %}
+                <tr><td>{{ idea.idea_id }}</td><td class="idea-cell"><span class="clamp-text">{{ idea.problem_statement|truncate(320, True) }}</span></td><td>{{ idea.owner_name }}</td><td>{{ idea.created_at.strftime("%d %b %Y") }}</td></tr>
+            {% else %}
+                <tr><td colspan="4">No archived ideas.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% include "pagination.html" %}
+</section>
+{% endblock %}

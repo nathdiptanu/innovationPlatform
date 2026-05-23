@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}{{ idea.idea_id }} | GRIT{% endblock %}
+{% block content %}
+<section class="detail-head panel">
+    <div>
+        <p class="eyebrow">{{ cycle.name }}</p>
+        <h1>{{ idea.problem_statement }}</h1>
+        <p>{{ idea.idea_id }} | {{ idea.owner_name }} | {{ idea.owner_employee_id }}</p>
+        <p class="muted">Submitted {{ idea.created_at.strftime("%d %b %Y %H:%M UTC") if idea.created_at else "date unavailable" }} | Last edited {{ idea.updated_at.strftime("%d %b %Y %H:%M UTC") if idea.updated_at else "date unavailable" }}</p>
+    </div>
+    {% if can_edit %}
+        <a class="button" href="{{ url_for('public.edit', idea_id=idea.idea_id, token=request.args.get('token')) }}"><i data-lucide="pencil"></i>Edit</a>
+    {% endif %}
+</section>
+<section class="detail-grid">
+    <article class="panel prose">
+        <h2>Solution</h2>
+        <p>{{ idea.solution_summary }}</p>
+        <section class="reaction-panel">
+            <h2>Idea signals</h2>
+            <div class="reaction-strip">
+                {% for value, icon in [("like", "thumbs-up"), ("neutral", "circle-minus"), ("dislike", "thumbs-down")] %}
+                    <form method="post" action="{{ url_for('public.react', idea_id=idea.idea_id) }}">
+                        <input type="hidden" name="sentiment" value="{{ value }}">
+                        <button class="button ghost compact {% if visitor_reaction and visitor_reaction.sentiment == value %}selected{% endif %}" type="submit">
+                            <i data-lucide="{{ icon }}"></i>{{ idea.reaction_counts[value] if idea.reaction_counts and value in idea.reaction_counts else 0 }}
+                        </button>
+                    </form>
+                {% endfor %}
+            </div>
+        </section>
+        <h2>Detail</h2>
+        {% if idea.content_format == "html" %}
+            <div>{{ idea.content|safe }}</div>
+        {% else %}
+            <pre>{{ idea.content }}</pre>
+        {% endif %}
+        {% if idea.video_link %}<a class="inline-link" href="{{ idea.video_link }}" target="_blank" rel="noreferrer">Open video link</a>{% endif %}
+        <section class="feedback-section">
+            <div class="section-head">
+                <div>
+                    <p class="eyebrow">Community feedback</p>
+                    <h2>Comments and signals</h2>
+                </div>
+            </div>
+            <form class="feedback-form" method="post" action="{{ url_for('public.add_comment', idea_id=idea.idea_id) }}">
+                <div class="field-grid">
+                    <label>Name<input name="commenter_name" required></label>
+                    <label>Username (optional)<input name="commenter_username"></label>
+                </div>
+                <label>Comment<textarea name="comment" required></textarea></label>
+                <fieldset><legend>Signal</legend><div class="sentiment-row">{% for value, icon in [("like", "thumbs-up"), ("neutral", "circle-minus"), ("dislike", "thumbs-down")] %}<label><input type="radio" name="sentiment" value="{{ value }}" {% if value == "neutral" %}checked{% endif %}><i data-lucide="{{ icon }}"></i></label>{% endfor %}</div></fieldset>
+                <button class="button ghost" type="submit"><i data-lucide="message-circle"></i>Add feedback</button>
+            </form>
+            <div class="review-stack">
+                {% for comment in idea.public_comments|default([], true)|reverse %}
+                    <article class="review-note">
+                        <strong>{{ comment.name }}{% if comment.username %} | {{ comment.username }}{% endif %}</strong>
+                        <span>{{ comment.sentiment|title }}{% if comment.created_at %} | {{ comment.created_at.strftime("%d %b %Y %H:%M UTC") }}{% endif %}</span>
+                        <p>{{ comment.comment }}</p>
+                    </article>
+                {% else %}
+                    <div class="empty-inline">No public feedback yet.</div>
+                {% endfor %}
+            </div>
+        </section>
+    </article>
+    <aside class="panel metadata">
+        <h2>Idea profile</h2>
+        <div class="tag-stack">
+            {% for category_id in idea.category_ids %}
+                {% if categories.get(category_id) %}<span class="tag">{{ categories[category_id].name }}</span>{% endif %}
+            {% endfor %}
+        </div>
+        <dl>
+            <dt>Production</dt><dd>{{ idea.production_readiness|replace("_", " ")|title }}</dd>
+            <dt>Officer sponsor</dt><dd>{{ idea.officer_sponsor }}</dd>
+            <dt>Office</dt><dd>{{ idea.office_location }}, {{ idea.india_region }}</dd>
+            <dt>Submitted</dt><dd>{{ idea.created_at.strftime("%d %b %Y %H:%M UTC") if idea.created_at else "Unavailable" }}</dd>
+            <dt>Last edited</dt><dd>{{ idea.updated_at.strftime("%d %b %Y %H:%M UTC") if idea.updated_at else "Unavailable" }}</dd>
+            <dt>Patent</dt><dd>{{ "Patented" if idea.is_patented else "Patent candidate" if idea.can_be_patented else "Not marked" }}</dd>
+        </dl>
+        <h3>Contributors</h3>
+        <ul class="clean-list">{% for contributor in idea.contributors %}<li>{{ contributor.name }}{% if contributor.username %} | {{ contributor.username }}{% endif %}</li>{% endfor %}</ul>
+        {% if idea.team_name %}<p><strong>Team:</strong> {{ idea.team_name }}</p>{% endif %}
+        {% if idea.attachments %}
+            <h3>Images</h3>
+            <div class="image-grid">
+                {% for image in idea.attachments %}
+                    {% set image_title = image.display_name if image.display_name else image.original_name %}
+                    <button class="image-preview-trigger" type="button" data-image-preview="{{ url_for('static', filename=image.path) }}" data-image-title="{{ image_title }}">
+                        <img src="{{ url_for('static', filename=image.path) }}" alt="{{ image_title }}">
+                    </button>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </aside>
+</section>
+<dialog class="image-dialog" data-image-dialog>
+    <button class="icon-button dialog-close" type="button" aria-label="Close image preview" data-image-close><i data-lucide="x"></i></button>
+    <figure>
+        <img data-image-dialog-preview alt="">
+        <figcaption data-image-dialog-title></figcaption>
+    </figure>
+</dialog>
+{% endblock %}

@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GRIT How To Use</title>
+    <style>
+        :root {
+            --bg: #edf6ff;
+            --surface: #ffffff;
+            --ink: #10243f;
+            --muted: #57718f;
+            --line: #cfe1f5;
+            --brand: #1769d1;
+            --brand-2: #13a0cc;
+            --accent: #f0b34a;
+            --danger: #a43d3d;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            color: var(--ink);
+            background:
+                linear-gradient(90deg, rgba(23,105,209,.07) 1px, transparent 1px),
+                linear-gradient(rgba(19,160,204,.06) 1px, transparent 1px),
+                var(--bg);
+            background-size: 42px 42px;
+            line-height: 1.55;
+        }
+        main { width: min(1180px, calc(100vw - 2rem)); margin: 2rem auto 4rem; }
+        header, section {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: rgba(255,255,255,.96);
+            box-shadow: 0 18px 50px rgba(21,35,31,.09);
+        }
+        header {
+            padding: clamp(1.5rem, 4vw, 3rem);
+            color: #fff;
+            background: linear-gradient(115deg, rgba(15,57,123,.96), rgba(23,105,209,.82));
+        }
+        section { padding: clamp(1rem, 2.5vw, 2rem); margin-top: 1rem; }
+        h1 { font-size: clamp(2.2rem, 6vw, 5rem); line-height: .98; margin: .25rem 0 .5rem; }
+        h2 { margin: 0 0 .75rem; font-size: 1.45rem; }
+        h3 { margin: 1rem 0 .5rem; }
+        p { margin-top: 0; }
+        .eyebrow { margin-bottom: .35rem; text-transform: uppercase; color: var(--brand); font-weight: 800; font-size: .78rem; letter-spacing: .08em; }
+        header .eyebrow { color: #d6ecff; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: .8rem; }
+        .card { border: 1px solid var(--line); border-radius: 8px; padding: 1rem; background: #fbfcfc; }
+        .card strong { display: block; font-size: 1.1rem; color: var(--brand); }
+        table { width: 100%; border-collapse: collapse; margin-top: .75rem; }
+        th, td { padding: .7rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+        th { color: var(--muted); text-transform: uppercase; font-size: .78rem; }
+        code { padding: .12rem .32rem; border-radius: 4px; background: #e6f2ff; color: #0d5598; }
+        a { color: var(--brand); font-weight: 800; text-decoration: none; }
+        ul, ol { padding-left: 1.25rem; }
+        li { margin: .28rem 0; }
+        .note { border-left: 4px solid var(--accent); background: #fff9eb; padding: .85rem; border-radius: 8px; }
+        .status { display: inline-block; padding: .28rem .48rem; border-radius: 999px; background: #deefff; color: #15529c; font-weight: 800; font-size: .82rem; }
+        @media print {
+            body { background: #fff; }
+            main { width: 100%; margin: 0; }
+            header, section { box-shadow: none; break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <header>
+        <p class="eyebrow">Grassroot Innovation In Technology</p>
+        <h1>GRIT How To Use</h1>
+        <p>A practical guide for users, core committee members, jury leads, and jury members.</p>
+    </header>
+
+    <section>
+        <p class="eyebrow">Start Here</p>
+        <h2>Local URLs</h2>
+        <table>
+            <tr><th>Flow</th><th>URL</th><th>Who can use it</th></tr>
+            <tr><td>Public user portal</td><td><a href="http://127.0.0.1:5000/users/">http://127.0.0.1:5000/users/</a></td><td>Anyone, no login</td></tr>
+            <tr><td>Submit idea</td><td><a href="http://127.0.0.1:5000/ideas/new">http://127.0.0.1:5000/ideas/new</a></td><td>Anyone while entries are open</td></tr>
+            <tr><td>Portal login</td><td><a href="http://127.0.0.1:5000/auth/login">http://127.0.0.1:5000/auth/login</a></td><td>Core and jury accounts</td></tr>
+            <tr><td>Core dashboard</td><td><a href="http://127.0.0.1:5000/core/">http://127.0.0.1:5000/core/</a></td><td>Core committee</td></tr>
+            <tr><td>Cycles</td><td><a href="http://127.0.0.1:5000/core/cycles">http://127.0.0.1:5000/core/cycles</a></td><td>Core committee</td></tr>
+            <tr><td>Categories and jury panels</td><td><a href="http://127.0.0.1:5000/core/categories">http://127.0.0.1:5000/core/categories</a></td><td>Core committee</td></tr>
+            <tr><td>Final winners</td><td><a href="http://127.0.0.1:5000/core/final-winners">http://127.0.0.1:5000/core/final-winners</a></td><td>Core committee</td></tr>
+            <tr><td>Accounts</td><td><a href="http://127.0.0.1:5000/core/users">http://127.0.0.1:5000/core/users</a></td><td>Core committee</td></tr>
+            <tr><td>Jury portal</td><td><a href="http://127.0.0.1:5000/jury/">http://127.0.0.1:5000/jury/</a></td><td>Assigned jury leads/members</td></tr>
+            <tr><td>Swagger</td><td><a href="http://127.0.0.1:5000/api/docs">http://127.0.0.1:5000/api/docs</a></td><td>Core committee</td></tr>
+        </table>
+        <p class="note">To start locally, run <code>python start_grit.py</code> from the project folder.</p>
+        <p class="note">Demo mode currently uses SQLite from <code>config.ini</code>. Data is stored in <code>data/grit.sqlite3</code> and is retained after restart.</p>
+    </section>
+
+    <section>
+        <p class="eyebrow">Public Users</p>
+        <h2>Submitting And Viewing Ideas</h2>
+        <div class="grid">
+            <div class="card"><strong>No login required</strong><span>Users can browse, search, view, react, comment, and submit ideas without a password.</span></div>
+            <div class="card"><strong>Cycle aware</strong><span>Submissions are accepted only during the cycle start/expiry window set by core committee. All categories in a cycle share the same deadline.</span></div>
+            <div class="card"><strong>Edit protection</strong><span>Only the submitter with the private edit token/session can edit an idea. Edits remain open after due date until core releases to jury.</span></div>
+        </div>
+        <h3>User Features</h3>
+        <ul>
+            <li>Browse all submitted ideas in a compact paginated gallery.</li>
+            <li>See submitted date and last edited date on idea detail.</li>
+            <li>Filter by category tabs and search by idea ID, problem, solution, owner name, employee ID, or team name.</li>
+            <li>Submit problem statement, solution, optional video link, patent flags, production readiness, contributors, sponsor, office location, India region, employee ID, and categories.</li>
+            <li>Add rich HTML or plain-text solution details and preview before submitting.</li>
+            <li>Upload images and optionally provide image display names.</li>
+            <li>Open image previews from the idea detail page.</li>
+            <li>Add public feedback comments with like/neutral/dislike signal.</li>
+            <li>React directly with like/neutral/dislike buttons. Counts show on both gallery and detail pages.</li>
+        </ul>
+    </section>
+
+    <section>
+        <p class="eyebrow">Core Committee</p>
+        <h2>Managing The Competition</h2>
+        <h3>Core Features</h3>
+        <ul>
+            <li>Create and edit cycle windows using <code>GRIT-Cycle1-YYYY</code> and <code>GRIT-Cycle2-YYYY</code>.</li>
+            <li>Control the submission start and end date in one place: <code>/core/cycles</code>. All categories under that cycle use the same start and deadline.</li>
+            <li>View total submitted ideas, category counts, and management dashboard summaries.</li>
+            <li>Add, edit, disable, and change passwords for core/jury portal accounts.</li>
+            <li>Create and assign a new jury lead/member directly from the Categories page.</li>
+            <li>Add, rename, deactivate, and configure categories.</li>
+            <li>Set the winner target per category.</li>
+            <li>Assign or remove jury leads and jury members per category.</li>
+            <li><span class="status">Testing</span> Release ideas to jury and withdraw release before production launch.</li>
+            <li>Close jury visibility after review.</li>
+            <li>Open Final Winners to see jury-lead-confirmed winners grouped by category, sorted by score descending, with lead final comments.</li>
+            <li>Archive a completed cycle so old ideas move out of the active UI.</li>
+            <li>View core-only Swagger and OpenAPI definitions.</li>
+        </ul>
+        <h3>Core Committee Logins</h3>
+        <p>All seeded core committee accounts use password <code>GirtDemo123!</code>. Passwords can be changed in <code>/core/users</code>.</p>
+        <table>
+            <tr><th>Name</th><th>Username</th><th>Password</th></tr>
+            <tr><td>Soma Chakraborty</td><td><code>core.demo</code></td><td><code>GirtDemo123!</code></td></tr>
+            <tr><td>Amitabh Sen</td><td><code>core.member2</code></td><td><code>GirtDemo123!</code></td></tr>
+            <tr><td>Renu Bhatia</td><td><code>core.member3</code></td><td><code>GirtDemo123!</code></td></tr>
+            <tr><td>Prakash Nair</td><td><code>core.member4</code></td><td><code>GirtDemo123!</code></td></tr>
+            <tr><td>Manisha Joshi</td><td><code>core.member5</code></td><td><code>GirtDemo123!</code></td></tr>
+            <tr><td>Suresh Menon</td><td><code>core.member6</code></td><td><code>GirtDemo123!</code></td></tr>
+            <tr><td>Devika Pillai</td><td><code>core.member7</code></td><td><code>GirtDemo123!</code></td></tr>
+            <tr><td>Rohit Sethi</td><td><code>core.member8</code></td><td><code>GirtDemo123!</code></td></tr>
+            <tr><td>Anita Rao</td><td><code>core.member9</code></td><td><code>GirtDemo123!</code></td></tr>
+            <tr><td>Vivek Srinivasan</td><td><code>core.member10</code></td><td><code>GirtDemo123!</code></td></tr>
+        </table>
+        <h3>Core Test Login</h3>
+        <table>
+            <tr><th>Name</th><th>Username</th><th>Password</th><th>Notes</th></tr>
+            <tr><td>Diptanu Nath</td><td><code>diptanun</code></td><td><code>buntyyyy</code></td><td>Configured as a protected core/jury test login. Assign it to a category only if it should participate in jury review.</td></tr>
+        </table>
+    </section>
+
+    <section>
+        <p class="eyebrow">Jury Lead</p>
+        <h2>Leading Category Review</h2>
+        <ul>
+            <li>Can access only categories assigned by core committee.</li>
+            <li>Can score and comment on ideas in the assigned category after core releases to jury.</li>
+            <li>Can see same-category average scores and peer review counts.</li>
+            <li>Can see same-category jury member comments/scores from the category dashboard and idea detail.</li>
+            <li>Can add the final overall winner reference comment.</li>
+            <li>Can confirm top ideas for that category based on the core-set winner target.</li>
+            <li>Cannot see or score other categories unless assigned to them.</li>
+        </ul>
+    </section>
+
+    <section>
+        <p class="eyebrow">Jury Members</p>
+        <h2>Scoring Assigned Ideas</h2>
+        <ul>
+            <li>Can access only assigned categories after core releases to jury.</li>
+            <li>Can score each idea from 1 to 10.</li>
+            <li>Can add comments and like/neutral/dislike signal for review context.</li>
+            <li>Can see own scored and pending counts.</li>
+            <li>Already-scored ideas show a scored color; pending ideas show a pending color.</li>
+            <li>Idea titles and table rows are kept compact so long descriptions do not stretch the dashboard.</li>
+            <li>Cannot see peer scores or category averages unless they are the assigned jury lead.</li>
+            <li>Cannot score an idea where their username is listed as a contributor.</li>
+        </ul>
+    </section>
+
+    <section>
+        <p class="eyebrow">Jury Credentials</p>
+        <h2>Category Logins</h2>
+        <table>
+            <tr><th>Category</th><th>Role</th><th>Name</th><th>Username</th><th>Password</th></tr>
+            <tr><td>Unique Idea</td><td>Lead</td><td>Ananya Rao</td><td><code>jury.lead.unique.idea</code></td><td><code>UniqueLead123!</code></td></tr>
+            <tr><td>Unique Idea</td><td>Member</td><td>Karan Malhotra</td><td><code>jury.member1.unique.idea</code></td><td><code>UniqueJury123!</code></td></tr>
+            <tr><td>Unique Idea</td><td>Member</td><td>Priya Menon</td><td><code>jury.member2.unique.idea</code></td><td><code>UniqueJury123!</code></td></tr>
+            <tr><td>Unique Idea</td><td>Member</td><td>Sahil Mathur</td><td><code>jury.member3.unique.idea</code></td><td><code>UniqueJury123!</code></td></tr>
+            <tr><td>Unique Idea</td><td>Member</td><td>Ira Mukherjee</td><td><code>jury.member4.unique.idea</code></td><td><code>UniqueJury123!</code></td></tr>
+            <tr><td>Solution Re-use</td><td>Lead</td><td>Rahul Iyer</td><td><code>jury.lead.solution.re.use</code></td><td><code>ReuseLead123!</code></td></tr>
+            <tr><td>Solution Re-use</td><td>Member</td><td>Meera Subramanian</td><td><code>jury.member1.solution.re.use</code></td><td><code>ReuseJury123!</code></td></tr>
+            <tr><td>Solution Re-use</td><td>Member</td><td>Nikhil Bansal</td><td><code>jury.member2.solution.re.use</code></td><td><code>ReuseJury123!</code></td></tr>
+            <tr><td>Solution Re-use</td><td>Member</td><td>Tanvi Shah</td><td><code>jury.member3.solution.re.use</code></td><td><code>ReuseJury123!</code></td></tr>
+            <tr><td>Solution Re-use</td><td>Member</td><td>Harish Kumar</td><td><code>jury.member4.solution.re.use</code></td><td><code>ReuseJury123!</code></td></tr>
+            <tr><td>Process Improvement</td><td>Lead</td><td>Sanjana Kapoor</td><td><code>jury.lead.process.improvement</code></td><td><code>ProcessLead123!</code></td></tr>
+            <tr><td>Process Improvement</td><td>Member</td><td>Arjun Nair</td><td><code>jury.member1.process.improvement</code></td><td><code>ProcessJury123!</code></td></tr>
+            <tr><td>Process Improvement</td><td>Member</td><td>Neha Kulkarni</td><td><code>jury.member2.process.improvement</code></td><td><code>ProcessJury123!</code></td></tr>
+            <tr><td>Process Improvement</td><td>Member</td><td>Raghav Sinha</td><td><code>jury.member3.process.improvement</code></td><td><code>ProcessJury123!</code></td></tr>
+            <tr><td>Process Improvement</td><td>Member</td><td>Sneha Patil</td><td><code>jury.member4.process.improvement</code></td><td><code>ProcessJury123!</code></td></tr>
+            <tr><td>DevOps</td><td>Lead</td><td>Vikram Desai</td><td><code>jury.lead.devops</code></td><td><code>DevOpsLead123!</code></td></tr>
+            <tr><td>DevOps</td><td>Member</td><td>Pooja Reddy</td><td><code>jury.member1.devops</code></td><td><code>DevOpsJury123!</code></td></tr>
+            <tr><td>DevOps</td><td>Member</td><td>Siddharth Jain</td><td><code>jury.member2.devops</code></td><td><code>DevOpsJury123!</code></td></tr>
+            <tr><td>DevOps</td><td>Member</td><td>Aman Verma</td><td><code>jury.member3.devops</code></td><td><code>DevOpsJury123!</code></td></tr>
+            <tr><td>DevOps</td><td>Member</td><td>Lakshmi Prasad</td><td><code>jury.member4.devops</code></td><td><code>DevOpsJury123!</code></td></tr>
+            <tr><td>Data Architecture</td><td>Lead</td><td>Aditi Sharma</td><td><code>jury.lead.data.architecture</code></td><td><code>DataLead123!</code></td></tr>
+            <tr><td>Data Architecture</td><td>Member</td><td>Rohan Mehta</td><td><code>jury.member1.data.architecture</code></td><td><code>DataJury123!</code></td></tr>
+            <tr><td>Data Architecture</td><td>Member</td><td>Farah Khan</td><td><code>jury.member2.data.architecture</code></td><td><code>DataJury123!</code></td></tr>
+            <tr><td>Data Architecture</td><td>Member</td><td>Gaurav Mishra</td><td><code>jury.member3.data.architecture</code></td><td><code>DataJury123!</code></td></tr>
+            <tr><td>Data Architecture</td><td>Member</td><td>Nandini Rao</td><td><code>jury.member4.data.architecture</code></td><td><code>DataJury123!</code></td></tr>
+            <tr><td>Automation</td><td>Lead</td><td>Kavita Krishnan</td><td><code>jury.lead.automation</code></td><td><code>AutoLead123!</code></td></tr>
+            <tr><td>Automation</td><td>Member</td><td>Sameer Gupta</td><td><code>jury.member1.automation</code></td><td><code>AutoJury123!</code></td></tr>
+            <tr><td>Automation</td><td>Member</td><td>Ishita Bose</td><td><code>jury.member2.automation</code></td><td><code>AutoJury123!</code></td></tr>
+            <tr><td>Automation</td><td>Member</td><td>Pranav Rao</td><td><code>jury.member3.automation</code></td><td><code>AutoJury123!</code></td></tr>
+            <tr><td>Automation</td><td>Member</td><td>Maya Nambiar</td><td><code>jury.member4.automation</code></td><td><code>AutoJury123!</code></td></tr>
+            <tr><td>Technical Debt</td><td>Lead</td><td>Ritesh Agarwal</td><td><code>jury.lead.technical.debt</code></td><td><code>DebtLead123!</code></td></tr>
+            <tr><td>Technical Debt</td><td>Member</td><td>Divya Narayanan</td><td><code>jury.member1.technical.debt</code></td><td><code>DebtJury123!</code></td></tr>
+            <tr><td>Technical Debt</td><td>Member</td><td>Manav Chandra</td><td><code>jury.member2.technical.debt</code></td><td><code>DebtJury123!</code></td></tr>
+            <tr><td>Technical Debt</td><td>Member</td><td>Shreya Ghosh</td><td><code>jury.member3.technical.debt</code></td><td><code>DebtJury123!</code></td></tr>
+            <tr><td>Technical Debt</td><td>Member</td><td>Abhishek Tiwari</td><td><code>jury.member4.technical.debt</code></td><td><code>DebtJury123!</code></td></tr>
+        </table>
+    </section>
+
+    <section>
+        <p class="eyebrow">Typical Testing Flow</p>
+        <h2>End-To-End Walkthrough</h2>
+        <ol>
+            <li>Start the app with <code>python start_grit.py</code>.</li>
+            <li>Open the user portal and submit or inspect ideas.</li>
+            <li>Log in as core using <code>core.demo</code> / <code>GirtDemo123!</code>.</li>
+            <li>Open Cycles and verify the start/expiry window.</li>
+            <li>Remember that this one cycle window applies to every category in the cycle.</li>
+            <li>Open Categories and confirm each category has the intended jury lead and members.</li>
+            <li>Add or remove a jury lead/member directly from Categories when panel assignments change.</li>
+            <li>Open Core dashboard and click Release to jury.</li>
+            <li>Log in as a jury member and score assigned ideas.</li>
+            <li>Log in as the jury lead to see same-category scores and confirm top ideas.</li>
+            <li>Log back in as core and open Final Winners to review grouped category winners with scores and lead comments.</li>
+            <li>For testing, core can click Withdraw release to block jury scoring again.</li>
+            <li>After final review, core can close jury visibility and archive the cycle.</li>
+        </ol>
+    </section>
+
+    <section>
+        <p class="eyebrow">Data And Security Notes</p>
+        <h2>Current Behavior</h2>
+        <ul>
+            <li>Portal passwords are stored as hashes in MongoDB, not plaintext.</li>
+            <li>In SQLite demo mode, the same logical collections are persisted as JSON documents inside <code>data/grit.sqlite3</code>.</li>
+            <li>Public users do not need accounts.</li>
+            <li>Protected URL visibility is maintained in <code>app/access_config.py</code>.</li>
+            <li>Core/jury accounts are stored in MongoDB collection <code>users</code>.</li>
+            <li>Ideas are stored in <code>ideas</code>; jury scores are stored in <code>evaluations</code>; public reactions are stored in <code>idea_reactions</code>.</li>
+            <li>Cached reaction counts are stored on ideas so gallery pages load quickly.</li>
+            <li>Jury scoring is blocked until core releases to jury.</li>
+            <li>Jury release can be withdrawn for pre-production testing.</li>
+            <li>Category documents do not store separate deadlines. They inherit visibility from their parent cycle.</li>
+            <li>After due date, users cannot submit new ideas but can edit existing ideas until release to jury.</li>
+            <li>After release to jury, idea category edits are locked.</li>
+            <li>Archived cycle ideas are hidden from active user/core/jury dashboards and retained in core archive.</li>
+        </ul>
+    </section>
+</main>
+</body>
+</html>

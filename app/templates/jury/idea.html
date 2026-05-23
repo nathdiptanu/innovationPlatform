@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Score {{ idea.idea_id }}{% endblock %}
+{% block content %}
+<section class="detail-grid jury-grid">
+    <article class="panel prose">
+        <p class="eyebrow">{{ category.name }}</p>
+        <h1>{{ idea.problem_statement }}</h1>
+        <p><strong>{{ idea.idea_id }}</strong> | {{ idea.owner_name }}</p>
+        <h2>Solution</h2>
+        <p>{{ idea.solution_summary }}</p>
+        {% if idea.content_format == "html" %}<div>{{ idea.content|safe }}</div>{% else %}<pre>{{ idea.content }}</pre>{% endif %}
+    </article>
+    <aside class="form-stack">
+        <form class="panel form-stack" method="post">
+            <p class="eyebrow">Evaluation</p>
+            {% if self_review %}<div class="flash error">You are listed as a contributor. Jury scoring is blocked for this idea.</div>{% endif %}
+            <label>Score
+                <input type="range" min="1" max="10" name="score" value="{{ evaluation.score if evaluation else 5 }}" data-score-range {% if self_review %}disabled{% endif %}>
+                <output data-score-output>{{ evaluation.score if evaluation else 5 }}</output>
+            </label>
+            <label>Comment<textarea name="comment" {% if self_review %}disabled{% endif %}>{{ evaluation.comment if evaluation else "" }}</textarea></label>
+            <fieldset><legend>Signal</legend><div class="sentiment-row">{% for value, icon in [("like", "thumbs-up"), ("neutral", "circle-minus"), ("dislike", "thumbs-down")] %}<label><input type="radio" name="sentiment" value="{{ value }}" {% if (evaluation and evaluation.sentiment == value) or (not evaluation and value == "neutral") %}checked{% endif %}><i data-lucide="{{ icon }}"></i></label>{% endfor %}</div></fieldset>
+            <button class="button" type="submit" {% if self_review %}disabled{% endif %}><i data-lucide="save"></i>Save score</button>
+        </form>
+        {% if is_lead and not self_review %}
+        <form class="panel form-stack" method="post" action="{{ url_for('jury.lead_comment', idea_id=idea.idea_id) }}">
+            <input type="hidden" name="category_id" value="{{ category._id }}">
+            <p class="eyebrow">Jury lead</p>
+            <label>Jury lead final overall comment<textarea name="lead_comment">{{ idea.lead_comments[category._id|string] if idea.lead_comments and category._id|string in idea.lead_comments else "" }}</textarea></label>
+            <button class="button ghost" type="submit"><i data-lucide="message-square"></i>Save comment</button>
+        </form>
+        <section class="panel">
+            <p class="eyebrow">Category scores</p>
+            <h2>Same-category jury reviews</h2>
+            <div class="review-stack">
+                {% for row in peer_evaluations %}
+                    <article class="review-note">
+                        <strong>{{ row.juror_name }}</strong>
+                        <span>{{ row.score }}/10 | {{ row.sentiment|title }}</span>
+                        <p>{{ row.comment or "No comment added." }}</p>
+                    </article>
+                {% else %}
+                    <div class="empty-inline">No same-category scores have been submitted yet.</div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </aside>
+</section>
+{% endblock %}

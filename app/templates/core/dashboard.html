@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}GRIT Core Dashboard{% endblock %}
+{% block content %}
+{% include "core/tabs.html" %}
+<section class="section-head dashboard-head">
+    <div>
+        <p class="eyebrow">Core committee</p>
+        <h1>Management dashboard</h1>
+    </div>
+    <div class="button-row">
+        <a class="button ghost" href="{{ url_for('core.cycles') }}"><i data-lucide="calendar-range"></i>Cycles</a>
+        <a class="button ghost" href="{{ url_for('core.final_winners') }}"><i data-lucide="trophy"></i>Final winners</a>
+        <a class="button ghost" href="{{ url_for('core.archive') }}"><i data-lucide="archive"></i>Archive</a>
+    </div>
+</section>
+{% if cycle %}
+<section class="panel cycle-strip">
+    <form method="get" class="inline-form">
+        <label>Cycle
+            <select name="cycle_id" onchange="this.form.submit()">
+                {% for item in cycles %}<option value="{{ item._id }}" {% if item._id == cycle._id %}selected{% endif %}>{{ item.name }}</option>{% endfor %}
+            </select>
+        </label>
+    </form>
+    <div class="button-row">
+        <form method="post" action="{{ url_for('core.release_jury', cycle_id=cycle._id) }}"><button class="button" type="submit"><i data-lucide="send"></i>Release to jury</button></form>
+        <form method="post" action="{{ url_for('core.withdraw_jury', cycle_id=cycle._id) }}"><button class="button ghost" type="submit"><i data-lucide="undo-2"></i>Withdraw release</button></form>
+        <form method="post" action="{{ url_for('core.close_jury', cycle_id=cycle._id) }}"><button class="button ghost" type="submit"><i data-lucide="lock"></i>Close jury</button></form>
+        <form method="post" action="{{ url_for('core.archive_cycle', cycle_id=cycle._id) }}"><button class="button danger" type="submit"><i data-lucide="archive"></i>Archive cycle</button></form>
+    </div>
+</section>
+<section class="summary-grid" aria-label="Category submission summary">
+    <article class="panel summary-tile total-tile">
+        <p class="eyebrow">{{ cycle.name }}</p>
+        <strong>{{ cycle_total }}</strong>
+        <span>Total ideas submitted</span>
+        <small>Across all categories</small>
+    </article>
+    {% for category in categories %}
+        <article class="panel summary-tile">
+            <p class="eyebrow">{{ cycle.name }}</p>
+            <strong>{{ category_counts.get(category._id|string, 0) }}</strong>
+            <span>{{ category.name }}</span>
+            <small>Winner target {{ category.top_ideas_required }}</small>
+        </article>
+    {% endfor %}
+</section>
+<section class="dashboard-grid">
+    <aside class="panel category-tabs">
+        <p class="eyebrow">Categories</p>
+        {% for category in categories %}
+            <a class="tab-link {% if selected_category_id == category._id|string %}active{% endif %}" href="{{ url_for('core.dashboard', cycle_id=cycle._id, category_id=category._id) }}">
+                <span>{{ category.name }}</span><strong>{{ category_counts.get(category._id|string, 0) }}</strong>
+            </a>
+        {% endfor %}
+    </aside>
+    <section class="panel">
+        <div class="section-head">
+            <div>
+                <p class="eyebrow">Ideas</p>
+                <h2>Category entries</h2>
+            </div>
+            <strong class="metric-pill">{{ total }} visible / {{ cycle_total }} total</strong>
+        </div>
+        <div class="table-shell">
+            <table>
+                <thead><tr><th>Idea</th><th>Submitter</th><th>Average</th><th>Updated</th></tr></thead>
+                <tbody>
+                {% for idea in ideas %}
+                    <tr>
+                        <td class="idea-cell"><a href="{{ url_for('public.idea_detail', idea_id=idea.idea_id) }}">{{ idea.idea_id }}</a><span class="clamp-text">{{ idea.problem_statement|truncate(320, True) }}</span></td>
+                        <td>{{ idea.owner_name }}<span>{{ idea.office_location }}</span></td>
+                        <td>{{ idea.average_score }}<span>{{ idea.score_count }} scores</span></td>
+                        <td>{{ idea.updated_at.strftime("%d %b %H:%M") }}</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="4">No ideas in this category.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% include "pagination.html" %}
+    </section>
+</section>
+<section class="panel confirmed-results">
+    <div class="section-head">
+        <div>
+            <p class="eyebrow">Jury lead handoff</p>
+            <h2>Confirmed top ideas</h2>
+        </div>
+        {% if selected_category %}
+            <strong class="metric-pill">{{ confirmed_ideas|length }} / {{ selected_category.top_ideas_required }} confirmed</strong>
+        {% endif %}
+    </div>
+    {% if confirmed_ideas %}
+        <div class="table-shell">
+            <table>
+                <thead><tr><th>Idea</th><th>Submitter</th><th>Team</th><th>Sponsor</th><th>Average</th><th>Jury lead final comment</th></tr></thead>
+                <tbody>
+                {% for idea in confirmed_ideas %}
+                    <tr>
+                        <td class="idea-cell"><a href="{{ url_for('public.idea_detail', idea_id=idea.idea_id) }}">{{ idea.idea_id }}</a><span class="clamp-text">{{ idea.problem_statement|truncate(320, True) }}</span></td>
+                        <td>{{ idea.owner_name }}<span>{{ idea.owner_employee_id }}</span></td>
+                        <td>{{ idea.team_name or "Individual / named contributors" }}</td>
+                        <td>{{ idea.officer_sponsor }}</td>
+                        <td>{{ idea.average_score }}<span>{{ idea.score_count }} reviews</span></td>
+                        <td>{{ idea.lead_comments[selected_category._id|string] if idea.lead_comments and selected_category._id|string in idea.lead_comments else "No final lead comment yet." }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-inline">The jury lead has not confirmed top ideas for this category yet.</div>
+    {% endif %}
+</section>
+{% else %}
+<section class="empty-state"><h1>Create the first cycle</h1><a class="button" href="{{ url_for('core.cycles') }}">Open cycles</a></section>
+{% endif %}
+{% endblock %}
