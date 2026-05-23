@@ -230,7 +230,15 @@ def create_panel_user(category_id):
 @require_screen("core")
 def delete_user(user_id):
     collection("users").update_one({"_id": ObjectId(user_id)}, {"$set": {"active": False, "disabled_at": utcnow()}})
+    collection("categories").update_many(
+        {},
+        {"$pull": {"jury_member_ids": user_id, "jury_lead_ids": user_id}, "$set": {"updated_at": utcnow()}},
+    )
     flash("Portal account disabled.", "success")
+    next_url = request.form.get("next") or request.args.get("next")
+    if next_url == "categories":
+        cycle = selected_cycle()
+        return redirect(url_for("core.categories", cycle_id=str(cycle["_id"]) if cycle else None))
     return redirect(url_for("core.users"))
 
 
@@ -267,6 +275,7 @@ def categories():
             flash("Category saved.", "success")
             return redirect(url_for("core.categories", cycle_id=str(cycle["_id"])))
     jury_users = list(collection("users").find({"active": True, "role": {"$in": ["jury", "jury_lead"]}}).sort("name", 1))
+    core_users = list(collection("users").find({"active": True, "role": "core"}).sort("name", 1))
     jury_user_map = {str(user["_id"]): user for user in jury_users}
     return render_template(
         "core/categories.html",
@@ -274,8 +283,34 @@ def categories():
         cycles=list(collection("cycles").find().sort("start_at", -1)),
         categories=categories_for_cycle(cycle["_id"], active_only=False) if cycle else [],
         jury_users=jury_users,
+        core_users=core_users,
         jury_user_map=jury_user_map,
     )
+
+
+@core_bp.post("/categories/core-users")
+@require_screen("core")
+def create_core_user_from_categories():
+    cycle = selected_cycle()
+    username = request.form.get("username", "").strip()
+    name = request.form.get("name", "").strip()
+    password = request.form.get("password", "")
+    if not username or not name or len(password) < 8:
+        flash("Add core member name, username, and password of at least eight characters.", "error")
+    else:
+        existing = collection("users").find_one({"username": username.lower()})
+        if existing:
+            collection("users").update_one(
+                {"_id": existing["_id"]},
+                {"$set": {"name": name, "role": "core", "active": True, "updated_at": utcnow()}},
+            )
+            if password:
+                collection("users").update_one({"_id": existing["_id"]}, {"$set": {"password_hash": generate_password_hash(password)}})
+            flash("Existing account restored as a core member.", "success")
+        else:
+            create_user(username, name, password, "core")
+            flash("Core member account added.", "success")
+    return redirect(url_for("core.categories", cycle_id=str(cycle["_id"]) if cycle else None))
 
 
 @core_bp.post("/categories/<category_id>/edit")
@@ -304,6 +339,26 @@ def save_panel(category_id):
             {"$set": {"jury_member_ids": member_ids, "jury_lead_ids": lead_ids, "updated_at": utcnow()}},
         )
         flash("Jury panel updated.", "success")
+    return redirect(url_for("core.categories", cycle_id=category["cycle_id"]))
+
+
+@core_bp.post("/categories/<category_id>/panel/add")
+@require_screen("core")
+def add_panel_user(category_id):
+    category = collection("categories").find_one({"_id": ObjectId(category_id)})
+    user_id = request.form.get("user_id", "")
+    panel_role = request.form.get("panel_role", "")
+    field = "jury_lead_ids" if panel_role == "lead" else "jury_member_ids" if panel_role == "member" else ""
+    user = collection("users").find_one({"_id": ObjectId(user_id), "active": True}) if user_id else None
+    if not category or not user or not field:
+        abort(400, "Valid category, user, and panel role are required.")
+    ids = set(category.get(field, []))
+    ids.add(str(user["_id"]))
+    collection("categories").update_one(
+        {"_id": ObjectId(category_id)},
+        {"$set": {field: sorted(ids), "updated_at": utcnow()}},
+    )
+    flash("Panel assignment added.", "success")
     return redirect(url_for("core.categories", cycle_id=category["cycle_id"]))
 
 

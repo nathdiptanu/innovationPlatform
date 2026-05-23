@@ -6,7 +6,7 @@
     <div>
         <p class="eyebrow">Panel design</p>
         <h1>Categories and jury panels</h1>
-        <p class="muted">Edit category names and winner targets here. Use Remove to take someone off the current panel, then check a replacement below and save.</p>
+        <p class="muted">Edit category names, winner targets, jury panels, and core committee accounts here. Use Add selected or Remove for day-to-day panel changes.</p>
     </div>
     {% if cycle %}
     <form method="get" class="inline-form">
@@ -16,13 +16,36 @@
 </section>
 {% if cycle %}
 <section class="split-layout category-layout">
-    <form class="panel form-stack" method="post">
-        <p class="eyebrow">{{ cycle.name }}</p>
-        <h2>Add category</h2>
-        <label>Name<input name="name" required></label>
-        <label>Winner target<input type="number" min="1" name="top_ideas_required" value="10" required></label>
-        <button class="button" type="submit"><i data-lucide="plus"></i>Save category</button>
-    </form>
+    <aside class="form-stack">
+        <form class="panel form-stack" method="post">
+            <p class="eyebrow">{{ cycle.name }}</p>
+            <h2>Add category</h2>
+            <label>Name<input name="name" required></label>
+            <label>Winner target<input type="number" min="1" name="top_ideas_required" value="10" required></label>
+            <button class="button" type="submit"><i data-lucide="plus"></i>Save category</button>
+        </form>
+        <section class="panel form-stack">
+            <p class="eyebrow">Core members</p>
+            <h2>Committee access</h2>
+            <form class="form-stack" method="post" action="{{ url_for('core.create_core_user_from_categories', cycle_id=cycle._id) }}">
+                <label>Name<input name="name" required></label>
+                <label>Username<input name="username" required></label>
+                <label>Password<input type="password" name="password" minlength="8" required></label>
+                <button class="button ghost" type="submit"><i data-lucide="user-plus"></i>Add core member</button>
+            </form>
+            <div class="assignment-chip-row vertical">
+                {% for user in core_users %}
+                    <form class="assignment-chip wide" method="post" action="{{ url_for('core.delete_user', user_id=user._id) }}">
+                        <input type="hidden" name="next" value="categories">
+                        <span>{{ user.name }}</span><small>{{ user.username }}</small>
+                        <button class="text-button danger" type="submit">Disable</button>
+                    </form>
+                {% else %}
+                    <span class="muted">No active core members.</span>
+                {% endfor %}
+            </div>
+        </section>
+    </aside>
     <div class="category-editor-stack">
         {% for category in categories %}
         <article class="panel category-editor {% if not category.active %}inactive{% endif %}">
@@ -72,7 +95,7 @@
             </section>
 
             <form class="quick-add-panel" method="post" action="{{ url_for('core.create_panel_user', category_id=category._id) }}">
-                <p class="eyebrow">Create and assign jury account</p>
+                <p class="eyebrow">Create new jury account and assign</p>
                 <input name="name" placeholder="Full name" required>
                 <input name="username" placeholder="username for login" required>
                 <input name="password" placeholder="temporary password" required>
@@ -81,6 +104,21 @@
                     <option value="jury">Jury member</option>
                 </select>
                 <button class="button ghost" type="submit"><i data-lucide="user-plus"></i>Add to panel</button>
+            </form>
+
+            <form class="quick-add-panel existing-panel-add" method="post" action="{{ url_for('core.add_panel_user', category_id=category._id) }}">
+                <p class="eyebrow">Add existing jury account</p>
+                <select name="user_id" required>
+                    <option value="">Select existing lead/member</option>
+                    {% for user in jury_users %}
+                        <option value="{{ user._id }}">{{ user.name }} | {{ user.username }} | {{ user.role|replace("_", " ")|title }}</option>
+                    {% endfor %}
+                </select>
+                <select name="panel_role" required>
+                    <option value="lead">Assign as jury lead</option>
+                    <option value="member">Assign as jury member</option>
+                </select>
+                <button class="button ghost" type="submit"><i data-lucide="user-check"></i>Add selected</button>
             </form>
 
             <form class="panel-form" method="post" action="{{ url_for('core.save_panel', category_id=category._id) }}">

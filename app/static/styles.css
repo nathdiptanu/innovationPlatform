@@ -367,6 +367,7 @@ tbody tr { min-height: 76px; }
 .account-option small { color: var(--muted); font-weight: 600; }
 .current-panel { display: grid; gap: .75rem; padding: .85rem; border: 1px solid var(--line); border-radius: 8px; background: #f4f9ff; }
 .assignment-chip-row { display: flex; gap: .45rem; flex-wrap: wrap; }
+.assignment-chip-row.vertical { display: grid; }
 .assignment-chip {
     display: inline-flex;
     align-items: center;
@@ -377,6 +378,7 @@ tbody tr { min-height: 76px; }
     background: #fff;
     font-weight: 800;
 }
+.assignment-chip.wide { justify-content: space-between; border-radius: 8px; }
 .assignment-chip small { color: var(--muted); font-weight: 700; }
 .quick-add-panel {
     display: grid;
@@ -389,6 +391,7 @@ tbody tr { min-height: 76px; }
     background: #fbfdff;
 }
 .quick-add-panel .eyebrow { grid-column: 1 / -1; margin-bottom: 0; }
+.existing-panel-add { grid-template-columns: minmax(0, 1fr) 220px auto; }
 .pagination { display: flex; justify-content: space-between; align-items: center; gap: .8rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--line); }
 .pagination a { font-weight: 800; color: var(--brand); }
 .flash-stack { display: grid; gap: .55rem; margin-bottom: 1rem; }

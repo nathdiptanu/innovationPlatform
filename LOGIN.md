@@ -107,6 +107,8 @@ Each category has 1 jury lead and 4 jury members. Jury leads can see same-catego
    Add or remove jury access by checking or unchecking jury leads/members under a category and clicking **Save panel**.
    You can also use the visible **Remove** button beside assigned leads/members, then select a replacement and save the panel.
    To add a new person directly from this page, use **Create and assign jury account**, enter name, username, temporary password, and role, then click **Add to panel**.
+   To add an existing jury lead/member, use **Add existing jury account**, select the user, select lead/member role, and click **Add selected**.
+   Core committee members can also be added or disabled from the Core members panel on this same page.
 
 6. Open http://127.0.0.1:5000/core/users to add, edit, disable, or change passwords for core/jury accounts.
 
@@ -142,4 +144,6 @@ Each category has 1 jury lead and 4 jury members. Jury leads can see same-catego
 - Passwords are stored as hashes, not plaintext.
 - Protected URL access is allowed in `app/access_config.py`.
 - Category-level jury access is controlled in `/core/categories`.
+- Jury lead/member add/remove is available in `/core/categories` with visible Add selected, Add to panel, and Remove controls.
+- Core member add/disable is available in `/core/categories` and `/core/users`; the count of core members is not fixed.
 - Jury score visibility is category-scoped. A lead/member from another category cannot see or score a different category unless core assigns that account to that category.

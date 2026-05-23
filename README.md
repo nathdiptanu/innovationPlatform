@@ -289,6 +289,7 @@ Current implementation covers:
 - Core accounts can create/disable portal accounts.
 - Core accounts can edit portal display names, roles, and passwords from `/core/users`.
 - Core accounts can also create and assign a category-specific jury lead/member directly from `/core/categories`.
+- Core accounts can add/disable core committee members directly from `/core/categories` as well as `/core/users`; the number of core members is variable.
 - Each year has two cycle name slots: `GRIT-Cycle1-2026` and `GRIT-Cycle2-2026` style names.
 - New idea IDs inherit the cycle prefix while keeping a unique suffix.
 - Core users control start/stop times, release to jury, withdraw jury release during pre-production testing, jury closure, and archive actions.
@@ -297,7 +298,7 @@ Current implementation covers:
 - Categories can be added, renamed, deactivated, assigned to jury panels, and configured with a required winner target.
 - Category dashboards show idea counts and category tabs with paginated entries.
 - Core screens have tabs for dashboard, cycles, categories, accounts, and archive so operators can move between management flows without overloading a single page.
-- Core operators must assign jury leads and jury members to each category before releasing ideas to the jury screen. Add/edit/disable accounts in `/core/users`, or create a category-specific lead/member directly in `/core/categories`, then assign/remove category access by checkbox or the visible Remove button.
+- Core operators must assign jury leads and jury members to each category before releasing ideas to the jury screen. Add/edit/disable accounts in `/core/users`, or create a category-specific lead/member directly in `/core/categories`. On `/core/categories`, use **Add existing jury account** to select a current lead/member, **Create new jury account and assign** for a new person, and the visible **Remove** button to take someone off a category panel.
 
 ### Jury
 

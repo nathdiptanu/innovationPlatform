@@ -50,7 +50,8 @@
         <li>Review categories, winner target counts, and category names before entrants submit.</li>
         <li>Create core, jury lead, and jury member logins in <code>/core/users</code>.</li>
         <li>Add protected usernames to <code>app/access_config.py</code>: core gets <code>{"core"}</code>; jury lead and jury member accounts get <code>{"jury"}</code>.</li>
-        <li>Assign jury leads and jury members in <code>/core/categories</code>. You can create a new jury account directly from the category panel, remove old panel members, and save replacements. Each active jury panel must contain three to seven unique people.</li>
+        <li>Assign jury leads and jury members in <code>/core/categories</code>. You can add an existing jury account, create a new jury account directly from the category panel, remove old panel members, and save replacements. Each active jury panel must contain three to seven unique people.</li>
+        <li>Add or disable core committee members from the Core members panel on <code>/core/categories</code> or from <code>/core/users</code>. Core committee size is variable.</li>
         <li>After submissions close or the committee is ready, release the cycle to jury from the core dashboard. During pre-production testing, use Withdraw release to block jury scoring again.</li>
         <li>After jury lead confirmation, open Final Winners to review grouped category winners with scores and lead final comments, then close jury visibility and archive the cycle.</li>
     </ol>
