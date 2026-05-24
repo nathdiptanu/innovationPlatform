@@ -34,6 +34,28 @@ function renderPreview() {
 
 document.addEventListener("DOMContentLoaded", () => {
     if (window.lucide) window.lucide.createIcons();
+    document.querySelectorAll(".flash.success").forEach((flash) => {
+        const popup = document.createElement("div");
+        popup.className = "success-popup";
+        popup.textContent = flash.textContent.trim();
+        popup.setAttribute("role", "status");
+        document.body.appendChild(popup);
+        window.setTimeout(() => popup.remove(), 5200);
+    });
+    document.querySelectorAll("[data-confirm-twice]").forEach((form) => {
+        form.addEventListener("submit", (event) => {
+            const selected = form.querySelectorAll("input[type='checkbox']:checked").length;
+            if (!selected) {
+                event.preventDefault();
+                window.alert("Select at least one assigned jury lead or member to remove.");
+                return;
+            }
+            const message = form.dataset.confirmTwice || "Remove selected assignment?";
+            if (!window.confirm(message) || !window.confirm("Final confirmation: this will remove the selected jury assignment(s). Continue?")) {
+                event.preventDefault();
+            }
+        });
+    });
     document.querySelectorAll("[data-content-input], input[name='content_format']").forEach((node) => {
         node.addEventListener("input", renderPreview);
         node.addEventListener("change", renderPreview);
