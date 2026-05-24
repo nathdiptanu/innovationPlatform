@@ -42,15 +42,17 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.appendChild(popup);
         window.setTimeout(() => popup.remove(), 5200);
     });
-    document.querySelectorAll("[data-confirm-twice]").forEach((form) => {
+    document.querySelectorAll("form:has([data-confirm-twice])").forEach((form) => {
         form.addEventListener("submit", (event) => {
+            const submitter = event.submitter;
+            if (!submitter?.matches("[data-confirm-twice]")) return;
             const selected = form.querySelectorAll("input[type='checkbox']:checked").length;
             if (!selected) {
                 event.preventDefault();
                 window.alert("Select at least one assigned jury lead or member to remove.");
                 return;
             }
-            const message = form.dataset.confirmTwice || "Remove selected assignment?";
+            const message = submitter.dataset.confirmTwice || "Remove selected assignment?";
             if (!window.confirm(message) || !window.confirm("Final confirmation: this will remove the selected jury assignment(s). Continue?")) {
                 event.preventDefault();
             }

@@ -106,48 +106,6 @@
                 <button class="button ghost" type="submit"><i data-lucide="user-plus"></i>Add to panel</button>
             </form>
 
-            <form class="quick-add-panel existing-panel-add" method="post" action="{{ url_for('core.add_panel_user', category_id=category._id) }}">
-                <p class="eyebrow">Add existing jury account</p>
-                <select name="user_id" required>
-                    <option value="">Select existing lead/member</option>
-                    {% for user in jury_users %}
-                        <option value="{{ user._id }}">{{ user.name }} | {{ user.username }} | {{ user.role|replace("_", " ")|title }}</option>
-                    {% endfor %}
-                </select>
-                <select name="panel_role" required>
-                    <option value="lead">Assign as jury lead</option>
-                    <option value="member">Assign as jury member</option>
-                </select>
-                <button class="button ghost" type="submit"><i data-lucide="user-check"></i>Add selected</button>
-            </form>
-
-            <form class="remove-assignment-panel" method="post" action="{{ url_for('core.remove_selected_panel_users', category_id=category._id) }}" data-confirm-twice="Remove selected jury assignments from {{ category.name }}?">
-                <p class="eyebrow">Remove assigned leads or members</p>
-                <div class="assignment-grid compact-assignment-grid">
-                    <fieldset>
-                        <legend>Select assigned leads to remove</legend>
-                        {% for user in jury_users %}
-                            {% if user._id|string in category.jury_lead_ids %}
-                                <label><input type="checkbox" name="jury_lead_remove_ids" value="{{ user._id }}"><span class="account-option"><strong>{{ user.name }}</strong><small>{{ user.username }}</small></span></label>
-                            {% endif %}
-                        {% else %}
-                            <span class="muted">No leads assigned.</span>
-                        {% endfor %}
-                    </fieldset>
-                    <fieldset>
-                        <legend>Select assigned members to remove</legend>
-                        {% for user in jury_users %}
-                            {% if user._id|string in category.jury_member_ids %}
-                                <label><input type="checkbox" name="jury_member_remove_ids" value="{{ user._id }}"><span class="account-option"><strong>{{ user.name }}</strong><small>{{ user.username }}</small></span></label>
-                            {% endif %}
-                        {% else %}
-                            <span class="muted">No members assigned.</span>
-                        {% endfor %}
-                    </fieldset>
-                </div>
-                <button class="button danger" type="submit"><i data-lucide="user-minus"></i>Remove selected</button>
-            </form>
-
             <form class="panel-form" method="post" action="{{ url_for('core.save_panel', category_id=category._id) }}">
                 <div class="assignment-grid">
                     <fieldset>
@@ -167,6 +125,7 @@
                 </div>
                 <div class="button-row">
                     <button class="button ghost" type="submit"><i data-lucide="users"></i>Save panel</button>
+                    <button class="button danger" type="submit" formaction="{{ url_for('core.remove_checked_panel_users', category_id=category._id) }}" data-confirm-twice="Remove selected checked jury assignment(s) from {{ category.name }}?"><i data-lucide="user-minus"></i>Remove selected</button>
                 </div>
             </form>
 

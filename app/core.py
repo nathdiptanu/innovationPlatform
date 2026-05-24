@@ -406,6 +406,32 @@ def remove_selected_panel_users(category_id):
     return redirect(url_for("core.categories", cycle_id=category["cycle_id"]))
 
 
+@core_bp.post("/categories/<category_id>/panel/remove-checked")
+@require_screen("core")
+def remove_checked_panel_users(category_id):
+    category = collection("categories").find_one({"_id": ObjectId(category_id)})
+    if not category:
+        abort(404, "Category not found.")
+    checked_leads = set(request.form.getlist("jury_lead_ids"))
+    checked_members = set(request.form.getlist("jury_member_ids"))
+    assigned_leads = set(category.get("jury_lead_ids", []))
+    assigned_members = set(category.get("jury_member_ids", []))
+    lead_remove_ids = checked_leads & assigned_leads
+    member_remove_ids = checked_members & assigned_members
+    if not lead_remove_ids and not member_remove_ids:
+        flash("Select an assigned jury lead/member checkbox before clicking Remove selected.", "error")
+        return redirect(url_for("core.categories", cycle_id=category["cycle_id"]))
+    updated_leads = [user_id for user_id in category.get("jury_lead_ids", []) if user_id not in lead_remove_ids]
+    updated_members = [user_id for user_id in category.get("jury_member_ids", []) if user_id not in member_remove_ids]
+    collection("categories").update_one(
+        {"_id": ObjectId(category_id)},
+        {"$set": {"jury_lead_ids": updated_leads, "jury_member_ids": updated_members, "updated_at": utcnow()}},
+    )
+    removed_count = len(lead_remove_ids) + len(member_remove_ids)
+    flash(f"{removed_count} jury assignment(s) removed from {category['name']}.", "success")
+    return redirect(url_for("core.categories", cycle_id=category["cycle_id"]))
+
+
 @core_bp.post("/categories/<category_id>/delete")
 @require_screen("core")
 def delete_category(category_id):
