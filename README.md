@@ -221,6 +221,8 @@ Direct database meaning:
 | Swagger UI, core only | `/api/docs` |
 | OpenAPI JSON, core only | `/api/openapi.json` |
 
+Swagger is core-login protected and now documents the full route contract: public idea flows, JSON integration APIs, auth/session routes, core committee cycle/category/jury-panel actions, and jury scoring/confirmation actions. Each operation includes its purpose, access expectation, request fields where applicable, and success/error response meanings.
+
 ## Workflow
 
 ```mermaid
