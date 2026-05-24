@@ -129,13 +129,15 @@
                 </select>
                 <select name="user_id" required>
                     <option value="">Select assigned person</option>
-                    {% for user_id in category.jury_member_ids %}
-                        {% set user = jury_user_map.get(user_id) %}
-                        {% if user %}<option value="{{ user._id }}">Member | {{ user.name }} | {{ user.username }}</option>{% endif %}
+                    {% for user in jury_users %}
+                        {% if user._id|string in category.jury_member_ids %}
+                            <option value="{{ user._id }}">Member | {{ user.name }} | {{ user.username }}</option>
+                        {% endif %}
                     {% endfor %}
-                    {% for user_id in category.jury_lead_ids %}
-                        {% set user = jury_user_map.get(user_id) %}
-                        {% if user %}<option value="{{ user._id }}">Lead | {{ user.name }} | {{ user.username }}</option>{% endif %}
+                    {% for user in jury_users %}
+                        {% if user._id|string in category.jury_lead_ids %}
+                            <option value="{{ user._id }}">Lead | {{ user.name }} | {{ user.username }}</option>
+                        {% endif %}
                     {% endfor %}
                 </select>
                 <button class="button danger" type="submit"><i data-lucide="user-minus"></i>Remove selected</button>
