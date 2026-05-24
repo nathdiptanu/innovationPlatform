@@ -408,6 +408,7 @@ tbody tr { min-height: 76px; }
 }
 .quick-add-panel .eyebrow { grid-column: 1 / -1; margin-bottom: 0; }
 .existing-panel-add { grid-template-columns: minmax(0, 1fr) 220px auto; }
+.existing-panel-remove { grid-template-columns: 220px minmax(0, 1fr) auto; border-style: solid; background: #fff8f8; }
 .pagination { display: flex; justify-content: space-between; align-items: center; gap: .8rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--line); }
 .pagination a { font-weight: 800; color: var(--brand); }
 .flash-stack { display: grid; gap: .55rem; margin-bottom: 1rem; }

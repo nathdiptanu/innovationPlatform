@@ -121,6 +121,26 @@
                 <button class="button ghost" type="submit"><i data-lucide="user-check"></i>Add selected</button>
             </form>
 
+            <form class="quick-add-panel existing-panel-remove" method="post" action="{{ url_for('core.remove_panel_user', category_id=category._id) }}" onsubmit="return confirm('Remove this jury assignment from {{ category.name }}?');">
+                <p class="eyebrow">Remove existing jury assignment</p>
+                <select name="panel_role" required>
+                    <option value="member">Remove jury member</option>
+                    <option value="lead">Remove jury lead</option>
+                </select>
+                <select name="user_id" required>
+                    <option value="">Select assigned person</option>
+                    {% for user_id in category.jury_member_ids %}
+                        {% set user = jury_user_map.get(user_id) %}
+                        {% if user %}<option value="{{ user._id }}">Member | {{ user.name }} | {{ user.username }}</option>{% endif %}
+                    {% endfor %}
+                    {% for user_id in category.jury_lead_ids %}
+                        {% set user = jury_user_map.get(user_id) %}
+                        {% if user %}<option value="{{ user._id }}">Lead | {{ user.name }} | {{ user.username }}</option>{% endif %}
+                    {% endfor %}
+                </select>
+                <button class="button danger" type="submit"><i data-lucide="user-minus"></i>Remove selected</button>
+            </form>
+
             <form class="panel-form" method="post" action="{{ url_for('core.save_panel', category_id=category._id) }}">
                 <div class="assignment-grid">
                     <fieldset>

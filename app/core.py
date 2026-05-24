@@ -369,6 +369,11 @@ def remove_panel_user(category_id):
     user_id = request.form.get("user_id", "")
     panel_role = request.form.get("panel_role", "")
     field = "jury_lead_ids" if panel_role == "lead" else "jury_member_ids" if panel_role == "member" else ""
+    if category and user_id and (not field or user_id not in category.get(field, [])):
+        if user_id in category.get("jury_member_ids", []):
+            field = "jury_member_ids"
+        elif user_id in category.get("jury_lead_ids", []):
+            field = "jury_lead_ids"
     if not category or not user_id or not field:
         abort(400, "Valid category, user, and panel role are required.")
     collection("categories").update_one(
