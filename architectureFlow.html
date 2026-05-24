@@ -3,128 +3,384 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>GRIT Architecture Flow</title>
+    <title>GRIT Interactive Architecture Flow</title>
     <style>
-        :root { --bg:#edf6ff; --surface:#fff; --ink:#10243f; --muted:#57718f; --line:#cfe1f5; --brand:#1769d1; --brand2:#13a0cc; --accent:#f0b34a; font-family:"Segoe UI",Arial,sans-serif; }
+        :root {
+            --bg: #edf6ff;
+            --surface: #ffffff;
+            --ink: #10243f;
+            --muted: #57718f;
+            --line: #cfe1f5;
+            --user: #1769d1;
+            --core: #0b8f79;
+            --jury: #7b55c7;
+            --lead: #b76d10;
+            --winner: #c6426e;
+            --data: #314f73;
+            --accent: #f0b34a;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
         * { box-sizing: border-box; }
-        body { margin:0; color:var(--ink); background:linear-gradient(90deg,rgba(23,105,209,.07) 1px,transparent 1px),linear-gradient(rgba(19,160,204,.06) 1px,transparent 1px),var(--bg); background-size:42px 42px; line-height:1.55; }
-        main { width:min(1200px,calc(100vw - 2rem)); margin:2rem auto 4rem; }
-        header, section, .node { border:1px solid var(--line); border-radius:8px; background:rgba(255,255,255,.96); box-shadow:0 18px 50px rgba(21,35,31,.09); }
-        header { padding:clamp(1.5rem,4vw,3rem); color:#fff; background:linear-gradient(115deg,rgba(15,57,123,.96),rgba(23,105,209,.82)); }
-        h1 { font-size:clamp(2.2rem,6vw,5rem); line-height:.98; margin:.25rem 0 .5rem; }
-        h2 { margin:.2rem 0 .7rem; }
-        section { margin-top:1rem; padding:clamp(1rem,2.5vw,2rem); }
-        .eyebrow { margin:0 0 .35rem; text-transform:uppercase; color:var(--brand); font-weight:800; font-size:.78rem; letter-spacing:.08em; }
-        header .eyebrow { color:#d6ecff; }
-        .tabs { display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:1rem; }
-        .tabs button { border:1px solid var(--line); border-radius:8px; padding:.65rem .85rem; background:#fff; color:var(--muted); font-weight:800; cursor:pointer; }
-        .tabs button.active { color:#fff; border-color:var(--brand); background:var(--brand); }
-        .panel { display:none; }
-        .panel.active { display:block; }
-        .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:.8rem; }
-        .node { padding:1rem; min-height:124px; position:relative; }
-        .node strong { display:block; color:var(--brand); font-size:1.05rem; margin-bottom:.35rem; }
-        .node small { color:var(--muted); font-weight:700; }
-        .flow { display:grid; grid-template-columns:repeat(6,minmax(150px,1fr)); gap:.75rem; align-items:stretch; overflow:auto; padding-bottom:.5rem; }
-        .step { border:1px solid var(--line); border-radius:8px; padding:.9rem; background:#fff; min-width:150px; }
-        .step strong { display:block; color:var(--brand); }
-        .arrow { display:grid; place-items:center; color:var(--brand); font-size:1.5rem; font-weight:900; }
-        table { width:100%; border-collapse:collapse; }
-        th, td { padding:.7rem; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
-        th { color:var(--muted); text-transform:uppercase; font-size:.78rem; }
-        code { padding:.12rem .32rem; border-radius:4px; background:#e6f2ff; color:#0d5598; }
-        .note { border-left:4px solid var(--accent); background:#fff9eb; padding:.85rem; border-radius:8px; }
-        @media (max-width: 900px) { .flow { grid-template-columns:1fr; } .arrow { transform:rotate(90deg); } }
+        body {
+            margin: 0;
+            color: var(--ink);
+            background:
+                linear-gradient(90deg, rgba(23,105,209,.07) 1px, transparent 1px),
+                linear-gradient(rgba(19,160,204,.06) 1px, transparent 1px),
+                var(--bg);
+            background-size: 42px 42px;
+            line-height: 1.55;
+        }
+        main { width: min(1320px, calc(100vw - 2rem)); margin: 2rem auto 4rem; }
+        header, section, .card, .flow-node, .note-card {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: rgba(255,255,255,.96);
+            box-shadow: 0 18px 50px rgba(21,35,31,.09);
+        }
+        header {
+            padding: clamp(1.5rem, 4vw, 3rem);
+            color: #fff;
+            background:
+                linear-gradient(115deg, rgba(15,57,123,.96), rgba(23,105,209,.82)),
+                repeating-linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.08) 2px, transparent 2px, transparent 20px);
+        }
+        h1 { font-size: clamp(2.4rem, 6vw, 5.5rem); line-height: .98; margin: .25rem 0 .6rem; letter-spacing: 0; }
+        h2 { margin: .2rem 0 .7rem; letter-spacing: 0; }
+        h3 { margin: .1rem 0 .35rem; }
+        p { margin-top: 0; }
+        section { margin-top: 1rem; padding: clamp(1rem, 2.5vw, 2rem); }
+        code { padding: .12rem .32rem; border-radius: 4px; background: #e6f2ff; color: #0d5598; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: .72rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+        th { color: var(--muted); text-transform: uppercase; font-size: .78rem; }
+        .eyebrow { margin: 0 0 .35rem; text-transform: uppercase; color: var(--user); font-weight: 800; font-size: .78rem; letter-spacing: .08em; }
+        header .eyebrow { color: #d6ecff; }
+        .legend { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            padding: .42rem .65rem;
+            border-radius: 999px;
+            color: #fff;
+            font-weight: 800;
+            font-size: .86rem;
+        }
+        .pill.user { background: var(--user); }
+        .pill.core { background: var(--core); }
+        .pill.jury { background: var(--jury); }
+        .pill.lead { background: var(--lead); }
+        .pill.winner { background: var(--winner); }
+        .pill.data { background: var(--data); }
+        .flow-board {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(220px, 1fr));
+            gap: 1rem;
+            align-items: stretch;
+            overflow-x: auto;
+            padding: .25rem 0 .75rem;
+        }
+        .lane {
+            display: grid;
+            gap: .75rem;
+            min-width: 220px;
+        }
+        .lane-title {
+            padding: .7rem .85rem;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 900;
+            text-align: center;
+        }
+        .lane.user .lane-title { background: var(--user); }
+        .lane.core .lane-title { background: var(--core); }
+        .lane.jury .lane-title { background: var(--jury); }
+        .lane.lead .lane-title { background: var(--lead); }
+        .flow-node {
+            position: relative;
+            min-height: 132px;
+            padding: 1rem;
+            border-left: 5px solid var(--user);
+            overflow: hidden;
+        }
+        .lane.core .flow-node { border-left-color: var(--core); }
+        .lane.jury .flow-node { border-left-color: var(--jury); }
+        .lane.lead .flow-node { border-left-color: var(--lead); }
+        .flow-node strong { display: block; color: var(--ink); font-size: 1.04rem; margin-bottom: .28rem; }
+        .flow-node small { color: var(--muted); font-weight: 700; }
+        .flow-node::after {
+            content: "->";
+            position: absolute;
+            right: .65rem;
+            bottom: .35rem;
+            color: var(--muted);
+            font-weight: 900;
+            animation: arrowFloat 1.8s ease-in-out infinite;
+        }
+        .lane.lead .flow-node:last-child::after { content: "done"; }
+        .connector-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+            align-items: center;
+            gap: .5rem;
+            margin-top: 1rem;
+        }
+        .connector-card {
+            min-height: 92px;
+            padding: .85rem;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 800;
+            text-align: center;
+        }
+        .connector-card.user { background: var(--user); }
+        .connector-card.core { background: var(--core); }
+        .connector-card.jury { background: var(--jury); }
+        .connector-card.winner { background: var(--winner); }
+        .moving-arrow {
+            width: 72px;
+            height: 3px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            position: relative;
+            animation: pulseArrow 1.4s linear infinite;
+        }
+        .moving-arrow::after {
+            content: "";
+            position: absolute;
+            right: -2px;
+            top: -5px;
+            border-left: 10px solid var(--accent);
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+        }
+        .tabs { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1rem; }
+        .tabs button {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: .65rem .85rem;
+            background: #fff;
+            color: var(--muted);
+            font-weight: 800;
+            cursor: pointer;
+        }
+        .tabs button.active { color: #fff; border-color: var(--user); background: var(--user); }
+        .panel { display: none; }
+        .panel.active { display: block; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(235px, 1fr)); gap: .8rem; }
+        .card { padding: 1rem; min-height: 136px; }
+        .card strong { display: block; color: var(--user); font-size: 1.05rem; margin-bottom: .35rem; }
+        .card.core strong { color: var(--core); }
+        .card.jury strong { color: var(--jury); }
+        .card.lead strong { color: var(--lead); }
+        .card.data strong { color: var(--data); }
+        .card small { color: var(--muted); font-weight: 700; }
+        .storage-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(320px, .9fr); gap: 1rem; align-items: start; }
+        .doc-stack { display: grid; gap: .7rem; }
+        .doc {
+            display: grid;
+            grid-template-columns: 150px minmax(0, 1fr);
+            gap: .75rem;
+            padding: .85rem;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #fbfdff;
+        }
+        .doc strong { color: var(--data); }
+        .note-card { padding: 1rem; border-left: 5px solid var(--accent); background: #fff9eb; }
+        .cycle-map {
+            display: grid;
+            gap: .65rem;
+            padding: .9rem;
+            border: 1px dashed var(--line);
+            border-radius: 8px;
+            background: #f8fbff;
+        }
+        .cycle-map span { font-weight: 800; color: var(--data); }
+        .timeline {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(135px, 1fr));
+            gap: .55rem;
+            overflow-x: auto;
+        }
+        .timeline div {
+            min-height: 96px;
+            padding: .75rem;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #fff;
+        }
+        .timeline strong { display: block; color: var(--core); }
+        @keyframes arrowFloat {
+            0%, 100% { transform: translateX(0); opacity: .45; }
+            50% { transform: translateX(6px); opacity: 1; }
+        }
+        @keyframes pulseArrow {
+            from { background-position: -72px 0; }
+            to { background-position: 72px 0; }
+        }
+        @media (max-width: 980px) {
+            .flow-board, .storage-grid { grid-template-columns: 1fr; }
+            .connector-row { grid-template-columns: 1fr; }
+            .moving-arrow { width: 3px; height: 46px; margin: 0 auto; }
+            .moving-arrow::after { right: -5px; top: auto; bottom: -2px; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 10px solid var(--accent); border-bottom: 0; }
+            .timeline { grid-template-columns: 1fr; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+        }
     </style>
 </head>
 <body>
 <main>
     <header>
         <p class="eyebrow">GRIT Architecture</p>
-        <h1>How The App Works</h1>
-        <p>Grassroot Innovation In Technology connects public idea submission, core committee governance, and category-scoped jury scoring on MongoDB.</p>
+        <h1>End-To-End Product Flow</h1>
+        <p>Grassroot Innovation In Technology connects public idea submission, core committee governance, category-scoped jury scoring, jury lead winner confirmation, and cycle-wise data storage.</p>
+        <div class="legend" aria-label="Color legend">
+            <span class="pill user">Users</span>
+            <span class="pill core">Core Committee</span>
+            <span class="pill jury">Jury Members</span>
+            <span class="pill lead">Jury Lead</span>
+            <span class="pill winner">Final Winners</span>
+            <span class="pill data">SQLite / Mongo Data</span>
+        </div>
     </header>
 
     <section>
-        <p class="eyebrow">End-to-end flow</p>
-        <h2>Competition Lifecycle</h2>
-        <div class="flow" aria-label="Application lifecycle">
-            <div class="step"><strong>1. Core opens cycle</strong><span>Core sets one start/end window for all categories.</span></div>
-            <div class="arrow">→</div>
-            <div class="step"><strong>2. Users submit</strong><span>Public users submit before due date and edit with private token until jury release.</span></div>
-            <div class="arrow">→</div>
-            <div class="step"><strong>3. Core assigns panels</strong><span>Core adds/removes leads and members per category.</span></div>
-            <div class="arrow">→</div>
-            <div class="step"><strong>4. Release to jury</strong><span>Scoring opens only after release; release can be withdrawn for testing.</span></div>
-            <div class="arrow">→</div>
-            <div class="step"><strong>5. Jury scores</strong><span>Members score. Leads see category averages, scores, and comments.</span></div>
-            <div class="arrow">→</div>
-            <div class="step"><strong>6. Confirm/archive</strong><span>Lead confirms winners. Core reviews final winners, closes jury, and archives cycle.</span></div>
+        <p class="eyebrow">Interactive lifecycle</p>
+        <h2>How One GRIT Cycle Moves</h2>
+        <div class="connector-row" aria-label="High level lifecycle">
+            <div class="connector-card user">Users submit and edit ideas</div>
+            <div class="moving-arrow" aria-hidden="true"></div>
+            <div class="connector-card core">Core manages cycle, categories, jury panels</div>
+            <div class="moving-arrow" aria-hidden="true"></div>
+            <div class="connector-card jury">Jury scores assigned category ideas</div>
+            <div class="moving-arrow" aria-hidden="true"></div>
+            <div class="connector-card winner">Jury lead confirms winners for core</div>
         </div>
     </section>
 
     <section>
-        <p class="eyebrow">Explore by role</p>
-        <h2>Role Responsibilities</h2>
+        <p class="eyebrow">Colored swimlanes</p>
+        <h2>Role-Based Flow With Hand-Offs</h2>
+        <div class="flow-board">
+            <div class="lane user">
+                <div class="lane-title">Users</div>
+                <div class="flow-node"><strong>Browse portal</strong><small>Open <code>/users/</code>, search ideas, filter by category, view likes/comments.</small></div>
+                <div class="flow-node"><strong>Submit idea</strong><small>Submit problem, solution, Mumbai/Bangalore office, country India, contributors, sponsor, category, images, and details.</small></div>
+                <div class="flow-node"><strong>Edit before release</strong><small>New submissions close at due date. Existing ideas can be edited with the private token until core releases to jury.</small></div>
+            </div>
+            <div class="lane core">
+                <div class="lane-title">Core Committee</div>
+                <div class="flow-node"><strong>Create cycle</strong><small>Set <code>GRIT-Cycle1-YYYY</code> or <code>GRIT-Cycle2-YYYY</code>, one start/end date for all categories.</small></div>
+                <div class="flow-node"><strong>Configure categories</strong><small>Add/remove categories, set winner target per category, and manage core members.</small></div>
+                <div class="flow-node"><strong>Assign panels</strong><small>Create or add existing jury leads/members. Remove or replace category reviewers when panels change.</small></div>
+                <div class="flow-node"><strong>Release to jury</strong><small>Release locks idea/category edits. Withdraw release remains available for testing.</small></div>
+            </div>
+            <div class="lane jury">
+                <div class="lane-title">Jury Members</div>
+                <div class="flow-node"><strong>Access assigned category</strong><small>Jury accounts see only categories where their user ID is assigned.</small></div>
+                <div class="flow-node"><strong>Score every idea</strong><small>Give 1-10 score, comment, and signal. Scored rows change color; pending counts remain visible.</small></div>
+                <div class="flow-node"><strong>Update after discussion</strong><small>Scores can be changed while the jury review window remains open.</small></div>
+            </div>
+            <div class="lane lead">
+                <div class="lane-title">Jury Lead</div>
+                <div class="flow-node"><strong>Review averages</strong><small>Lead sees category averages, member scores, member comments, and pending completion.</small></div>
+                <div class="flow-node"><strong>Refresh scores</strong><small>Refresh pulls latest member updates after panel discussion.</small></div>
+                <div class="flow-node"><strong>Confirm winners</strong><small>Enabled only after every assigned reviewer scores every released idea in the category.</small></div>
+                <div class="flow-node"><strong>Core handoff</strong><small>Confirmed winners appear in core final winners, sorted by score with lead comments.</small></div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <p class="eyebrow">Explore by area</p>
+        <h2>Click A View</h2>
         <div class="tabs">
             <button class="active" data-tab="users">Users</button>
             <button data-tab="core">Core</button>
-            <button data-tab="lead">Jury Lead</button>
-            <button data-tab="member">Jury Member</button>
-            <button data-tab="data">Data</button>
+            <button data-tab="jury">Jury</button>
+            <button data-tab="winners">Winners</button>
+            <button data-tab="storage">Storage</button>
+            <button data-tab="guardrails">Guardrails</button>
         </div>
         <div id="users" class="panel active">
             <div class="grid">
-                <div class="node"><strong>Public access</strong><small>No login required for viewing, searching, submitting, commenting, or reacting.</small></div>
-                <div class="node"><strong>Idea detail</strong><small>Problem, solution, rich/plain content, images, optional image names, contributors, sponsor, and categories.</small></div>
-                <div class="node"><strong>Edit control</strong><small>Only the submitter with the private edit token/session can edit before cycle expiry.</small></div>
-                <div class="node"><strong>Feedback</strong><small>Visitors can comment and like/neutral/dislike; cached counts keep gallery loading fast.</small></div>
+                <div class="card"><strong>Public access</strong><small>No login is required for browsing, submitting during the cycle, viewing details, comments, images, and reactions.</small></div>
+                <div class="card"><strong>Submission detail</strong><small>Idea captures problem, solution, optional video, patent flags, deployed-on-PROD status, officer sponsor, contributors, office, country, categories, HTML/plain content, and images.</small></div>
+                <div class="card"><strong>Edit ownership</strong><small>The submitter receives a private edit token. Editing is allowed until core releases the cycle to jury.</small></div>
+                <div class="card"><strong>Community feedback</strong><small>Other users can like/neutral/dislike and comment. Counts are cached on the idea for fast gallery loading.</small></div>
             </div>
         </div>
         <div id="core" class="panel">
             <div class="grid">
-                <div class="node"><strong>Cycle window</strong><small>One start/end deadline applies to every category in that cycle. New submissions close at due date.</small></div>
-                <div class="node"><strong>Panels</strong><small>Create, add existing, remove, and replace jury leads/members in category panels.</small></div>
-                <div class="node"><strong>Core members</strong><small>Add or disable variable core committee members from Categories or Accounts.</small></div>
-                <div class="node"><strong>Release controls</strong><small>Release to jury, withdraw release for testing, close jury, archive cycle.</small></div>
-                <div class="node"><strong>Management view</strong><small>Total submitted ideas, counts by category, final winners, sponsor, submitter, and lead final comment.</small></div>
+                <div class="card core"><strong>Cycle command center</strong><small>Core controls cycle name, start time, end time, release, withdraw, close jury, archive, and dashboard countdown.</small></div>
+                <div class="card core"><strong>Winner targets</strong><small>Each category has an editable winner target. The jury lead confirms up to that configured count.</small></div>
+                <div class="card core"><strong>People management</strong><small>Core can add/disable core members, create jury accounts, and add/remove jury people per category.</small></div>
+                <div class="card core"><strong>Final winner view</strong><small>Core gets winners grouped by category with score, submitter, team, sponsor, and final lead comments.</small></div>
             </div>
         </div>
-        <div id="lead" class="panel">
+        <div id="jury" class="panel">
             <div class="grid">
-                <div class="node"><strong>Category scope</strong><small>Lead sees only assigned categories.</small></div>
-                <div class="node"><strong>Peer visibility</strong><small>Lead sees same-category jury member scores and comments.</small></div>
-                <div class="node"><strong>Refresh scores</strong><small>Lead can refresh after members update scores during discussion.</small></div>
-                <div class="node"><strong>Final comment</strong><small>Lead adds the overall final comment for top ideas.</small></div>
-                <div class="node"><strong>Confirm winners</strong><small>Lead confirms top ideas after all assigned reviewers score every idea, with a confirmation prompt.</small></div>
+                <div class="card jury"><strong>Category scope</strong><small>Jury access is restricted to assigned categories. Different categories cannot see each other's scoring.</small></div>
+                <div class="card jury"><strong>Scoring lifecycle</strong><small>Score 1-10, add rationale comments, update scores after discussion, and track pending/scored items.</small></div>
+                <div class="card lead"><strong>Lead override path</strong><small>Lead sees peer score/comment details, refreshes score state, adds final comments, and confirms winners only after all scoring is complete.</small></div>
+                <div class="card jury"><strong>Self-review block</strong><small>If a jury username appears as an idea contributor username, self-scoring is blocked.</small></div>
             </div>
         </div>
-        <div id="member" class="panel">
+        <div id="winners" class="panel">
+            <div class="timeline">
+                <div><strong>1. Score complete</strong><small>All assigned reviewers score every released idea.</small></div>
+                <div><strong>2. Lead refreshes</strong><small>Latest score changes are visible before final handoff.</small></div>
+                <div><strong>3. Confirm prompt</strong><small>Lead confirms the browser "are you sure" prompt.</small></div>
+                <div><strong>4. Winner IDs saved</strong><small>Category stores ordered winner IDs and confirmation metadata.</small></div>
+                <div><strong>5. Core reviews</strong><small>Final winners tab groups results per category.</small></div>
+                <div><strong>6. Archive</strong><small>Completed cycles move out of active screens and into archive.</small></div>
+            </div>
+        </div>
+        <div id="storage" class="panel">
+            <div class="storage-grid">
+                <div class="doc-stack">
+                    <div class="doc"><strong>cycles</strong><span>One document per GRIT cycle. Stores name, start/end dates, jury release state, jury close state, and archive state.</span></div>
+                    <div class="doc"><strong>categories</strong><span>One document per category per cycle. Stores category name, winner target, active flag, assigned jury lead IDs, assigned member IDs, and confirmed winner IDs.</span></div>
+                    <div class="doc"><strong>ideas</strong><span>Each idea stores its cycle ID, selected category IDs, submitter, contributors, content, images, comments, reactions, edit token, submitted date, and last edited date.</span></div>
+                    <div class="doc"><strong>evaluations</strong><span>One score/comment/signal per idea, category, and juror. This lets the same idea be evaluated separately when it belongs to two categories.</span></div>
+                    <div class="doc"><strong>users</strong><span>Core, jury lead, and jury member accounts with hashed passwords and active/disabled state.</span></div>
+                    <div class="doc"><strong>idea_reactions</strong><span>Per-visitor public like/neutral/dislike events, while cached counts stay on the idea for fast list pages.</span></div>
+                </div>
+                <aside class="cycle-map">
+                    <h3>Cycle-wise data shape</h3>
+                    <span>cycle._id -> categories.cycle_id</span>
+                    <span>cycle._id -> ideas.cycle_id</span>
+                    <span>category._id -> ideas.category_ids[]</span>
+                    <span>category._id -> evaluations.category_id</span>
+                    <span>user._id -> categories.jury_lead_ids[] / jury_member_ids[]</span>
+                    <span>idea.idea_id -> evaluations.idea_id / idea_reactions.idea_id</span>
+                    <p class="note-card">Mongo mode stores these as collections in the configured MongoDB database. SQLite demo mode stores the same logical documents as JSON rows in <code>data/grit.sqlite3</code>. Flip <code>sqlite = no</code> in <code>config.ini</code> to use MongoDB again.</p>
+                </aside>
+            </div>
+        </div>
+        <div id="guardrails" class="panel">
             <div class="grid">
-                <div class="node"><strong>Assigned review</strong><small>Members score only assigned categories after release.</small></div>
-                <div class="node"><strong>Scoring</strong><small>1-10 score, comment, and like/neutral/dislike signal.</small></div>
-                <div class="node"><strong>Progress</strong><small>Scored and pending items are colored and counted.</small></div>
-                <div class="node"><strong>Privacy</strong><small>Members do not see peer scores unless they are assigned as lead.</small></div>
+                <div class="card data"><strong>Default demo DB</strong><small>SQLite is the default local demo backend. Data persists after app restart in <code>data/grit.sqlite3</code>.</small></div>
+                <div class="card data"><strong>Mongo parity</strong><small>Routes use the shared storage API, so the same functional changes apply to SQLite and MongoDB.</small></div>
+                <div class="card data"><strong>Sync scripts</strong><small><code>sync_mongo_to_sqlite.py</code> copies Mongo data to local demo DB. <code>sync_sqlite_to_mongo.py</code> promotes approved demo data to Mongo.</small></div>
+                <div class="card data"><strong>Archive visibility</strong><small>Archived cycles disappear from active user, core, jury, and lead dashboards, while remaining in core archive.</small></div>
             </div>
-        </div>
-        <div id="data" class="panel">
-            <table>
-                <tr><th>Collection</th><th>Stores</th></tr>
-                <tr><td><code>users</code></td><td>Core, jury lead, and jury member accounts with hashed passwords.</td></tr>
-                <tr><td><code>cycles</code></td><td>Cycle name, single deadline, release/withdraw/close/archive state.</td></tr>
-                <tr><td><code>categories</code></td><td>Category names, winner target count, assigned jury lead/member IDs.</td></tr>
-                <tr><td><code>ideas</code></td><td>Submission content, edit token, contributors, image metadata, public comments, cached reactions.</td></tr>
-                <tr><td><code>evaluations</code></td><td>Category-scoped jury score, comment, and signal.</td></tr>
-                <tr><td><code>idea_reactions</code></td><td>Per-visitor public like/neutral/dislike events.</td></tr>
-            </table>
-            <p class="note">Demo mode stores these logical collections as JSON documents inside <code>data/grit.sqlite3</code>. Set <code>sqlite = no</code> in <code>config.ini</code> to switch back to MongoDB.</p>
         </div>
     </section>
 
     <section>
-        <p class="eyebrow">Key guardrails</p>
-        <h2>Access And Visibility</h2>
-        <p class="note">Protected portal access is based on login role plus optional <code>app/access_config.py</code>. Jury category access is based on IDs assigned in each category document. Category deadlines are inherited from the parent cycle. Archived cycles are hidden from active dashboards and retained in archive.</p>
+        <p class="eyebrow">Operational notes</p>
+        <h2>What To Say In A Demo</h2>
+        <div class="grid">
+            <div class="note-card"><strong>Start simple.</strong><p>Show that users can submit ideas without login, while core and jury have protected portals.</p></div>
+            <div class="note-card"><strong>Governance is cycle-based.</strong><p>Every cycle has one submission window and one jury release state. Categories inherit that cycle window.</p></div>
+            <div class="note-card"><strong>Evaluation is category-scoped.</strong><p>Jury members see only assigned categories. Jury leads see same-category peer scores and comments.</p></div>
+            <div class="note-card"><strong>Final winners are controlled.</strong><p>Core chooses winner target per category. Jury lead can confirm only after complete scoring and a confirmation prompt.</p></div>
+        </div>
     </section>
 </main>
 <script>
