@@ -166,8 +166,10 @@ def seed():
     categories = categories_for_cycle(cycle["_id"])
     automation = next(category for category in categories if category["name"] == "Automation")
     process = next(category for category in categories if category["name"] == "Process Improvement")
-    for category in categories:
-        slug = category["slug"].replace("-", ".")
+    for category in collection("categories").find({"active": True}):
+        if category["name"] not in CATEGORY_PEOPLE:
+            continue
+        slug = category.get("slug", category["name"].lower().replace(" ", ".")).replace("-", ".")
         lead_password, member_password = CATEGORY_JURY_PASSWORDS[category["name"]]
         lead_name, member_names = CATEGORY_PEOPLE[category["name"]]
         lead = upsert_seed_user(f"jury.lead.{slug}", lead_name, lead_password, "jury_lead")

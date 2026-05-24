@@ -217,6 +217,12 @@ def create_panel_user(category_id):
         user = collection("users").find_one({"_id": existing["_id"]})
     field = "jury_lead_ids" if role == "jury_lead" else "jury_member_ids"
     current_ids = set(category.get(field, []))
+    if field == "jury_lead_ids" and str(user["_id"]) not in current_ids and len(current_ids) >= 1:
+        flash("Each category can have only one jury lead. Remove the current lead before adding another.", "error")
+        return redirect(url_for("core.categories", cycle_id=category["cycle_id"]))
+    if field == "jury_member_ids" and str(user["_id"]) not in current_ids and len(current_ids) >= 5:
+        flash("Each category can have a maximum of five jury members.", "error")
+        return redirect(url_for("core.categories", cycle_id=category["cycle_id"]))
     current_ids.add(str(user["_id"]))
     collection("categories").update_one(
         {"_id": category["_id"]},
@@ -274,6 +280,22 @@ def categories():
             upsert_category(cycle["_id"], request.form["name"], request.form.get("top_ideas_required", 10))
             flash("Category saved.", "success")
             return redirect(url_for("core.categories", cycle_id=str(cycle["_id"])))
+    category_rows = categories_for_cycle(cycle["_id"], active_only=False) if cycle else []
+    panel_warnings = []
+    for category in category_rows:
+        lead_count = len(category.get("jury_lead_ids", []))
+        member_count = len(category.get("jury_member_ids", []))
+        if lead_count != 1 or member_count < 3 or member_count > 5:
+            details = []
+            if lead_count == 0:
+                details.append("missing jury lead")
+            elif lead_count > 1:
+                details.append(f"{lead_count} jury leads assigned; keep exactly 1")
+            if member_count < 3:
+                details.append(f"only {member_count} jury member(s); add at least {3 - member_count}")
+            elif member_count > 5:
+                details.append(f"{member_count} jury members assigned; remove {member_count - 5}")
+            panel_warnings.append({"category": category["name"], "details": "; ".join(details)})
     jury_users = list(collection("users").find({"active": True, "role": {"$in": ["jury", "jury_lead"]}}).sort("name", 1))
     core_users = list(collection("users").find({"active": True, "role": "core"}).sort("name", 1))
     jury_user_map = {str(user["_id"]): user for user in jury_users}
@@ -281,10 +303,11 @@ def categories():
         "core/categories.html",
         cycle=cycle,
         cycles=list(collection("cycles").find().sort("start_at", -1)),
-        categories=categories_for_cycle(cycle["_id"], active_only=False) if cycle else [],
+        categories=category_rows,
         jury_users=jury_users,
         core_users=core_users,
         jury_user_map=jury_user_map,
+        panel_warnings=panel_warnings,
     )
 
 
@@ -330,9 +353,10 @@ def save_panel(category_id):
     category = collection("categories").find_one({"_id": ObjectId(category_id)})
     member_ids = request.form.getlist("jury_member_ids")
     lead_ids = request.form.getlist("jury_lead_ids")
-    panel_size = len(set(member_ids + lead_ids))
-    if panel_size and not 3 <= panel_size <= 7:
-        flash("A jury panel must contain three to seven unique people.", "error")
+    if len(lead_ids) != 1:
+        flash("Select exactly one jury lead for the category.", "error")
+    elif not 3 <= len(member_ids) <= 5:
+        flash("Select three to five jury members for the category.", "error")
     else:
         collection("categories").update_one(
             {"_id": ObjectId(category_id)},
@@ -352,7 +376,19 @@ def add_panel_user(category_id):
     user = collection("users").find_one({"_id": ObjectId(user_id), "active": True}) if user_id else None
     if not category or not user or not field:
         abort(400, "Valid category, user, and panel role are required.")
+    if field == "jury_lead_ids" and user.get("role") != "jury_lead":
+        flash("Select a jury lead account for the lead slot.", "error")
+        return redirect(url_for("core.categories", cycle_id=category["cycle_id"]))
+    if field == "jury_member_ids" and user.get("role") != "jury":
+        flash("Select a jury member account for the member slot.", "error")
+        return redirect(url_for("core.categories", cycle_id=category["cycle_id"]))
     ids = set(category.get(field, []))
+    if field == "jury_lead_ids" and str(user["_id"]) not in ids and len(ids) >= 1:
+        flash("Each category can have only one jury lead. Remove the current lead before adding another.", "error")
+        return redirect(url_for("core.categories", cycle_id=category["cycle_id"]))
+    if field == "jury_member_ids" and str(user["_id"]) not in ids and len(ids) >= 5:
+        flash("Each category can have a maximum of five jury members.", "error")
+        return redirect(url_for("core.categories", cycle_id=category["cycle_id"]))
     ids.add(str(user["_id"]))
     collection("categories").update_one(
         {"_id": ObjectId(category_id)},
@@ -414,10 +450,11 @@ def remove_checked_panel_users(category_id):
         abort(404, "Category not found.")
     checked_leads = set(request.form.getlist("jury_lead_ids"))
     checked_members = set(request.form.getlist("jury_member_ids"))
+    selected_ids = checked_leads | checked_members
     assigned_leads = set(category.get("jury_lead_ids", []))
     assigned_members = set(category.get("jury_member_ids", []))
-    lead_remove_ids = checked_leads & assigned_leads
-    member_remove_ids = checked_members & assigned_members
+    lead_remove_ids = selected_ids & assigned_leads
+    member_remove_ids = selected_ids & assigned_members
     if not lead_remove_ids and not member_remove_ids:
         flash("Select an assigned jury lead/member checkbox before clicking Remove selected.", "error")
         return redirect(url_for("core.categories", cycle_id=category["cycle_id"]))

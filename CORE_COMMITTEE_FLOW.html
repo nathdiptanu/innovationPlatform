@@ -50,14 +50,14 @@
         <li>Review categories, winner target counts, and category names before entrants submit. Winner targets can be increased or decreased per category from <code>/core/categories</code>.</li>
         <li>Create core, jury lead, and jury member logins in <code>/core/users</code>.</li>
         <li>Add protected usernames to <code>app/access_config.py</code>: core gets <code>{"core"}</code>; jury lead and jury member accounts get <code>{"jury"}</code>.</li>
-        <li>Assign jury leads and jury members in <code>/core/categories</code>. You can add an existing jury account, create a new jury account directly from the category panel, remove old panel members, and save replacements. Each active jury panel must contain three to seven unique people.</li>
+        <li>Assign jury leads and jury members in <code>/core/categories</code>. Each category must have exactly one jury lead and three to five jury members. The page shows a warning when a lead is missing or the member count is outside range. Remove old panel members with the red remove icon beside the assigned name and confirm twice.</li>
         <li>Add or disable core committee members from the Core members panel on <code>/core/categories</code> or from <code>/core/users</code>. Core committee size is variable.</li>
         <li>Watch the management dashboard countdown, then release the cycle to jury from the core dashboard when the committee is ready. During pre-production testing, use Withdraw release to block jury scoring again.</li>
         <li>Jury leads can confirm winners only after every assigned reviewer has scored every idea in that category; the confirmation action asks for an are-you-sure approval.</li>
         <li>After jury lead confirmation, open Final Winners to review grouped category winners with scores and lead final comments, then close jury visibility and archive the cycle.</li>
     </ol>
     <h2>Account Removal</h2>
-    <p>Disable the login in <code>/core/users</code>, remove the username from <code>app/access_config.py</code>, and uncheck it from category panel assignments when it should no longer review that cycle.</p>
+    <p>Disable the login in <code>/core/users</code>, remove the username from <code>app/access_config.py</code>, and use the red remove icon in category panel assignments when it should no longer review that cycle.</p>
     <h2>Credential Handling</h2>
     <p>Portal accounts are stored in MongoDB collection <code>users</code>. Passwords are hashed before storage. Do not grant access by putting usernames in URLs; protected views require login, the username access map, and category assignment for jury users. The seeded <code>diptanun</code> account is an intentional test account with both core and jury access.</p>
     <p>For category-specific jury sign-in, create separate jury lead and jury member accounts per category with distinct passwords, add those usernames to <code>app/access_config.py</code>, then assign them only to the category panel they should review.</p>

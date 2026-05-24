@@ -42,17 +42,18 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.appendChild(popup);
         window.setTimeout(() => popup.remove(), 5200);
     });
-    document.querySelectorAll("form:has([data-confirm-twice])").forEach((form) => {
+    document.querySelectorAll("form[data-confirm-twice], form:has([data-confirm-twice])").forEach((form) => {
         form.addEventListener("submit", (event) => {
             const submitter = event.submitter;
-            if (!submitter?.matches("[data-confirm-twice]")) return;
+            if (!form.matches("[data-confirm-twice]") && !submitter?.matches("[data-confirm-twice]")) return;
+            const needsSelection = form.dataset.requiresSelection === "true" || submitter?.dataset.requiresSelection === "true";
             const selected = form.querySelectorAll("input[type='checkbox']:checked").length;
-            if (!selected) {
+            if (needsSelection && !selected) {
                 event.preventDefault();
                 window.alert("Select at least one assigned jury lead or member to remove.");
                 return;
             }
-            const message = submitter.dataset.confirmTwice || "Remove selected assignment?";
+            const message = form.dataset.confirmTwice || submitter?.dataset.confirmTwice || "Remove selected assignment?";
             if (!window.confirm(message) || !window.confirm("Final confirmation: this will remove the selected jury assignment(s). Continue?")) {
                 event.preventDefault();
             }

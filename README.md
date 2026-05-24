@@ -298,7 +298,7 @@ Current implementation covers:
 - Categories can be added, renamed, deactivated, assigned to jury panels, and configured with a required winner target.
 - Category dashboards show idea counts and category tabs with paginated entries.
 - Core screens have tabs for dashboard, cycles, categories, accounts, and archive so operators can move between management flows without overloading a single page.
-- Core operators must assign jury leads and jury members to each category before releasing ideas to the jury screen. Add/edit/disable accounts in `/core/users`, or create a category-specific lead/member directly in `/core/categories`. On `/core/categories`, use **Add existing jury account** to select a current lead/member, **Create new jury account and assign** for a new person, and the visible **Remove** button to take someone off a category panel.
+- Core operators must assign exactly 1 jury lead and 3-5 jury members to each category before releasing ideas to the jury screen. Add/edit/disable accounts in `/core/users`, or create a category-specific lead/member directly in `/core/categories`. On `/core/categories`, panel warnings appear when a category is missing its lead or has too few/many members. Use **Add existing jury lead** or **Add existing jury member** to assign an available account, **Save panel** for bulk checkbox edits, and the red remove icon beside an assigned lead/member to remove that person with double confirmation.
 
 ### Jury
 
@@ -385,14 +385,14 @@ Jury member:
    Give each category panel account a distinct password when you want category-specific sign-in.
 2. Add the lowercase username in `app/access_config.py` with `{"jury"}`.
 3. Open `/core/categories` and check that account under the category jury members panel for exactly the categories that person should score.
-4. Save a panel of three to seven unique jury people.
+4. Save a panel with three to five assigned jury members.
 
 Jury lead:
 
 1. Create an account in `/core/users` with role `Jury lead`.
    Give the lead a distinct category-specific password.
 2. Add the lowercase username in `app/access_config.py` with `{"jury"}`.
-3. Open `/core/categories` and check that account under the category jury leads panel for exactly the categories that person should lead.
+3. Open `/core/categories` and check that account under the category jury leads panel for exactly the category that person should lead. Each category should have only one assigned lead.
 4. Save the panel.
 
 ### Category-specific jury credentials in the seed

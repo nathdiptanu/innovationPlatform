@@ -104,10 +104,11 @@ Each category has 1 jury lead and 4 jury members. Jury leads can see same-catego
    This is the single deadline for all categories in that cycle.
 
 5. Open http://127.0.0.1:5000/core/categories and review category panels.
-   Add or remove jury access by checking or unchecking jury leads/members under a category and clicking **Save panel**.
-   You can also use the visible **Remove** button beside assigned leads/members, then select a replacement and save the panel.
+   Each category should have exactly 1 jury lead and 3-5 jury members; the page shows a warning at the top when a panel is missing a lead or has too few/many members.
+   Add jury access by checking the required lead/member and clicking **Save panel**.
+   Remove jury access by clicking the red remove icon beside the assigned lead/member name and confirming twice.
    To add a new person directly from this page, use **Create and assign jury account**, enter name, username, temporary password, and role, then click **Add to panel**.
-   To add an existing jury lead/member, use **Add existing jury account**, select the user, select lead/member role, and click **Add selected**.
+   To add an existing jury lead/member, use **Add existing jury lead** or **Add existing jury member**, select the available account, and click **Assign lead** or **Assign member**.
    Core committee members can also be added or disabled from the Core members panel on this same page.
 
 6. Open http://127.0.0.1:5000/core/users to add, edit, disable, or change passwords for core/jury accounts.
