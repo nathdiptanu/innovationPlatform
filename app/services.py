@@ -178,12 +178,12 @@ def validate_idea(payload):
     required_fields = {
         "problem_statement": "Problem statement",
         "solution_summary": "Solution",
-        "production_readiness": "Production readiness",
+        "production_readiness": "Deployed on PROD",
         "officer_sponsor": "Officer sponsor",
         "owner_name": "Submitter FTE name",
         "owner_employee_id": "Employee ID",
         "office_location": "Office location",
-        "india_region": "India region",
+        "india_region": "Country",
         "content": "Solution content",
     }
     for field, label in required_fields.items():
@@ -194,7 +194,11 @@ def validate_idea(payload):
     if len(payload.get("category_ids", [])) not in {1, 2}:
         errors.append("Select one or two categories.")
     if payload.get("production_readiness") not in {"yes", "no", "in_6_months"}:
-        errors.append("Production readiness must be yes, no, or in 6 months.")
+        errors.append("Deployed on PROD must be yes, no, or planned in 6 months.")
+    if payload.get("office_location") not in current_app.config["OFFICE_LOCATIONS"]:
+        errors.append("Office location must be Mumbai or Bangalore.")
+    if payload.get("india_region") != "India":
+        errors.append("Country must be India.")
     if bson_size(payload) >= current_app.config["MAX_BSON_BYTES"]:
         errors.append("The idea content is too large for a MongoDB document. Reduce text or attachments.")
     return errors

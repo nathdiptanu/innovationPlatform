@@ -44,7 +44,7 @@
         <tr><th>Need</th><th>Coverage</th></tr>
         <tr><td>Browse other ideas quickly</td><td>The user portal shows a simplified idea gallery with category tabs, server-side pagination, and lightweight list fields.</td></tr>
         <tr><td>Submit and edit ideas</td><td>Two annual cycle windows such as <code>GRIT-Cycle1-2026</code> control new submission; each idea gets a unique GRIT submission ID and an edit token. Edits stay open until core releases to jury.</td></tr>
-        <tr><td>Required idea detail</td><td>Problem, solution, contributors, sponsor, employee ID, India office location/region, production readiness, one or two categories, and content are captured.</td></tr>
+        <tr><td>Required idea detail</td><td>Problem, solution, contributors, VP-and-above sponsor, employee ID, Mumbai/Bangalore office, country India, deployed-on-PROD status, one or two categories, and content are captured.</td></tr>
         <tr><td>Optional media and patent data</td><td>Video link, patent flags, team name, and image uploads are supported; image thumbnails open a larger preview.</td></tr>
         <tr><td>Fast UI boundaries</td><td>User category tabs, core management tabs, jury category tabs, indexed queries, projections, and pagination keep screens scoped.</td></tr>
     </table>
@@ -53,7 +53,7 @@
         <tr><th>Portal</th><th>Coverage</th></tr>
         <tr><td>Public</td><td>Cycle-aware submission, search, category browse tabs, edit tokens, contributors, category limits, image lightbox preview, HTML/plain content preview.</td></tr>
         <tr><td>Core</td><td>Tabbed dashboard, accounts, six-month cycle windows, categories, create/remove jury panel members, release/close/archive actions, total counts, final winners, tabs, pagination.</td></tr>
-        <tr><td>Jury</td><td>Category entitlement, score/comment/signal, average ranking, lead comments, and lead-only winner confirmation using the core-set winner target.</td></tr>
+        <tr><td>Jury</td><td>Category entitlement, score/comment/signal, average ranking, refresh scores, lead comments, and lead-only winner confirmation after all assigned reviewers complete scoring.</td></tr>
         <tr><td>Swagger</td><td>Core-only <code>/api/docs</code> and <code>/api/openapi.json</code>.</td></tr>
     </table>
     <h2>MongoDB</h2>
@@ -67,6 +67,7 @@
     <p>Seeded jury accounts are category-specific. For example, Automation lead uses <code>jury.lead.automation</code> and a separate Automation password, while Process Improvement has its own lead/member usernames and passwords. Category funneling is enforced by category jury assignments, and only the lead assignment can confirm winners.</p>
     <p>The public countdown updates every second while entries are open. Core controls the active window from <code>/core/cycles</code> by selecting Cycle 1 or Cycle 2, the year, start time, and expiry time for each six-month GRIT cycle.</p>
     <p>Archiving removes submitted ideas from active user/core/jury screens and keeps them in the core archive. After due date, users cannot submit new ideas but can edit existing ideas until release to jury; after release, edits and category changes are locked.</p>
+    <p>Demo idea IDs use the cleaner format <code>GRIT-Cycle1-2026-045</code>. Core management dashboard has a countdown, and each winner target links back to the category settings screen.</p>
     <h2>Run</h2>
     <pre>py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1

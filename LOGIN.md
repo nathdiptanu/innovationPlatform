@@ -124,6 +124,8 @@ Each category has 1 jury lead and 4 jury members. Jury leads can see same-catego
 
 10. Log in as the category jury lead to see same-category averages, peer review counts, peer comments/scores, and the **Confirm top ideas** button.
     The category dashboard shows member scores/comments and the lead final comment column.
+    Use **Refresh scores** after jury discussion if members update ratings.
+    **Confirm top ideas** unlocks only after every assigned reviewer scores every idea, and asks for confirmation before finalizing.
 
 11. Log back in as core and open http://127.0.0.1:5000/core/final-winners to see final winners grouped by category, sorted by score, with jury lead comments.
 

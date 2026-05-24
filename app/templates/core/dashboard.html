@@ -22,6 +22,10 @@
             </select>
         </label>
     </form>
+    <div class="countdown compact-countdown" data-countdown data-deadline="{{ cycle.end_at.isoformat() }}">
+        <span>Time remaining for this cycle</span>
+        <strong data-countdown-value>Calculating...</strong>
+    </div>
     <div class="button-row">
         <form method="post" action="{{ url_for('core.release_jury', cycle_id=cycle._id) }}"><button class="button" type="submit"><i data-lucide="send"></i>Release to jury</button></form>
         <form method="post" action="{{ url_for('core.withdraw_jury', cycle_id=cycle._id) }}"><button class="button ghost" type="submit"><i data-lucide="undo-2"></i>Withdraw release</button></form>
@@ -41,7 +45,7 @@
             <p class="eyebrow">{{ cycle.name }}</p>
             <strong>{{ category_counts.get(category._id|string, 0) }}</strong>
             <span>{{ category.name }}</span>
-            <small>Winner target {{ category.top_ideas_required }}</small>
+            <small>Winner target {{ category.top_ideas_required }} | <a href="{{ url_for('core.categories', cycle_id=cycle._id) }}">Edit</a></small>
         </article>
     {% endfor %}
 </section>

@@ -50,7 +50,7 @@
                     <div>
                         <div class="idea-meta-line">
                             <a href="{{ url_for('public.idea_detail', idea_id=idea.idea_id) }}"><strong>{{ idea.idea_id }}</strong></a>
-                            <span class="readiness">{{ idea.production_readiness|replace("_", " ")|title }}</span>
+                            <span class="readiness">PROD: {{ idea.production_readiness|replace("_", " ")|title }}</span>
                         </div>
                         <h3>{{ idea.problem_statement|truncate(82, True) }}</h3>
                         <p>{{ idea.solution_summary|truncate(110, True) }}</p>

@@ -59,6 +59,27 @@ def attach_peer_evaluations(category, ideas):
         idea["peer_evaluations"] = grouped.get(idea["idea_id"], [])
 
 
+def review_completion(category, idea_ids):
+    reviewer_ids = sorted(set(category.get("jury_member_ids", []) + category.get("jury_lead_ids", [])))
+    expected = len(idea_ids) * len(reviewer_ids)
+    if not expected:
+        return {"expected": expected, "completed": 0, "pending": expected, "ready": False, "reviewer_count": len(reviewer_ids)}
+    rows = list(collection("evaluations").find({
+        "idea_id": {"$in": idea_ids},
+        "category_id": str(category["_id"]),
+        "juror_id": {"$in": reviewer_ids},
+    }))
+    completed_pairs = {(row.get("idea_id"), row.get("juror_id")) for row in rows if row.get("score")}
+    completed = len(completed_pairs)
+    return {
+        "expected": expected,
+        "completed": completed,
+        "pending": max(expected - completed, 0),
+        "ready": completed >= expected,
+        "reviewer_count": len(reviewer_ids),
+    }
+
+
 @jury_bp.get("/")
 @require_screen("jury")
 def dashboard():
@@ -68,11 +89,13 @@ def dashboard():
     total = 0
     scored_total = 0
     pending_total = 0
+    completion = {"expected": 0, "completed": 0, "pending": 0, "ready": False, "reviewer_count": 0}
     is_lead = bool(category and is_assigned_to_category(g.user, category, lead_only=True))
     if category and cycle_accepts_jury(cycle):
         query = {"cycle_id": str(cycle["_id"]), "category_ids": str(category["_id"]), "archived": {"$ne": True}}
         total = collection("ideas").count_documents(query)
         category_idea_ids = [row["idea_id"] for row in collection("ideas").find(query, {"idea_id": 1})]
+        completion = review_completion(category, category_idea_ids)
         scored_total = collection("evaluations").count_documents(
             {"idea_id": {"$in": category_idea_ids}, "category_id": str(category["_id"]), "juror_id": str(g.user["_id"])}
         ) if category_idea_ids else 0
@@ -97,6 +120,7 @@ def dashboard():
         is_lead=is_lead,
         scored_total=scored_total,
         pending_total=pending_total,
+        completion=completion,
     )
 
 
@@ -185,6 +209,10 @@ def confirm_winners(category_id):
         list(collection("ideas").find({"cycle_id": str(cycle["_id"]), "category_ids": str(category["_id"]), "archived": {"$ne": True}})),
         str(category["_id"]),
     )
+    completion = review_completion(category, [idea["idea_id"] for idea in ideas])
+    if not completion["ready"]:
+        flash("Top ideas can be confirmed only after every assigned jury lead/member has scored every released idea in this category.", "error")
+        return redirect(url_for("jury.dashboard", category_id=category_id))
     winner_ids = [idea["idea_id"] for idea in ideas[: category.get("top_ideas_required", 10)]]
     collection("categories").update_one(
         {"_id": category["_id"]},

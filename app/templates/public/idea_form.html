@@ -14,21 +14,21 @@
             <label>Problem statement<textarea name="problem_statement" required>{{ idea.problem_statement if idea else "" }}</textarea></label>
             <label>Solution<textarea name="solution_summary" required>{{ idea.solution_summary if idea else "" }}</textarea></label>
             <label>Video link<input type="url" name="video_link" value="{{ idea.video_link if idea else '' }}" placeholder="https://"></label>
-            <label>Officer sponsor<input name="officer_sponsor" value="{{ idea.officer_sponsor if idea else '' }}" required></label>
+            <label>Officer sponsor <span class="help-tooltip" title="Sponsor should be VP and above.">?</span><input name="officer_sponsor" value="{{ idea.officer_sponsor if idea else '' }}" required></label>
             <label>Submitter FTE name<input name="owner_name" value="{{ idea.owner_name if idea else '' }}" required></label>
             <label>Employee ID<input name="owner_employee_id" value="{{ idea.owner_employee_id if idea else '' }}" required></label>
-            <label>Office location<input name="office_location" value="{{ idea.office_location if idea else '' }}" required></label>
-            <label>India region
-                <select name="india_region" required>
-                    <option value="">Select region</option>
-                    {% for region in config.INDIA_REGIONS %}
-                        <option value="{{ region }}" {% if idea and idea.india_region == region %}selected{% endif %}>{{ region }}</option>
+            <label>Office location
+                <select name="office_location" required>
+                    <option value="">Select office</option>
+                    {% for location in config.OFFICE_LOCATIONS %}
+                        <option value="{{ location }}" {% if idea and idea.office_location == location %}selected{% endif %}>{{ location }}</option>
                     {% endfor %}
                 </select>
             </label>
-            <label>Production readiness
+            <label>Country<input name="india_region" value="India" readonly required></label>
+            <label>Deployed on PROD <span class="help-tooltip" title="Select yes only when other users can already use this idea in production.">?</span>
                 <select name="production_readiness" required>
-                    {% for value, label in [("yes", "Yes"), ("no", "No"), ("in_6_months", "In 6 months")] %}
+                    {% for value, label in [("yes", "Yes, live and reusable"), ("no", "No, not deployed"), ("in_6_months", "Planned within 6 months")] %}
                         <option value="{{ value }}" {% if idea and idea.production_readiness == value %}selected{% endif %}>{{ label }}</option>
                     {% endfor %}
                 </select>

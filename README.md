@@ -4,7 +4,7 @@ GRIT is a Flask and MongoDB competition app for **Grassroot Innovation In Techno
 
 - A public idea submission portal with search, edit tokens, HTML/plain-text preview, image attachments, cycle-aware closure, category limits, and pagination.
 - A core committee portal for cycle windows, categories, jury panels, portal users, release/close controls, dashboards, and archive views.
-- A jury portal for category-scoped review, 1-10 scoring, comments, like/neutral/dislike signals, average-score ranking, lead comments, and top-idea confirmation.
+- A jury portal for category-scoped review, 1-10 scoring, comments, like/neutral/dislike signals, average-score ranking, lead comments, refreshable score review, and gated top-idea confirmation.
 - OpenAPI definitions at `/api/openapi.json` and Swagger UI at `/api/docs`.
 
 ## Runtime
@@ -247,7 +247,7 @@ The entrant/user experience covers the requirements that make submissions practi
 - Every visitor can open `/users/`, browse other visible ideas in a simplified idea gallery, and switch category tabs without loading the full cycle result set.
 - Each public idea list tab is paginated and only loads lightweight list fields; a user opens the detail page only for the idea they want to inspect.
 - A user can submit during the configured cycle window, receive a unique GRIT submission ID, edit before expiry with the private edit token, and view after expiry.
-- Submission fields include problem statement, solution, optional video link, patent flags, production readiness, officer sponsor, contributor usernames/FTE names, team name for larger teams, office location, India region, employee ID, one or two categories, rich/plain content, uploaded images, and optional image display names.
+- Submission fields include problem statement, solution, optional video link, patent flags, deployed-on-PROD status, officer sponsor, contributor usernames/FTE names, team name for larger teams, office location limited to Mumbai/Bangalore, country India, employee ID, one or two categories, rich/plain content, uploaded images, and optional image display names.
 - Other users can add optional public feedback on an idea with a comment and like/neutral/dislike signal; feedback is stored with the idea and shown on the idea detail page.
 - Users can also react directly to an idea with like/neutral/dislike buttons. Reaction events are stored separately and cached counts are shown on the idea gallery and detail page for quick loading.
 - HTML/plain solution content supports preview before submission, Mongo document size is checked before write, and uploaded image thumbnails open a full preview on idea detail.
@@ -269,7 +269,7 @@ Current implementation covers:
 - Public and core dashboards show the total number of ideas submitted so far for the active cycle.
 - Core dashboard summary tiles show total cycle submissions, per-category submission count, and the category winner target.
 - Core final winners tab shows jury-lead-confirmed winners grouped by category, sorted by score descending, with idea ID/name, submitter username/employee ID, team name when present, officer sponsor, score, and jury lead final comment.
-- Jury score, comment, average sorting for assigned jury leads, jury lead winner comment, confirmation, sentiment icons, scored/pending color states, pending review counts, and pagination.
+- Jury score, comment, average sorting for assigned jury leads, jury lead winner comment, confirmation prompt, refresh scores action, sentiment icons, scored/pending color states, pending review counts, and pagination.
 - Username-based protected access config, core/jury URL separation, and DB-backed portal accounts.
 
 ### Public entrant
@@ -277,10 +277,10 @@ Current implementation covers:
 - Submission window is driven by the cycle `start_at` and `end_at`.
 - All categories in the same cycle use that single cycle start/end window; there is no category-specific deadline.
 - Closed windows keep ideas visible and block creation/editing.
-- Required fields cover problem statement, solution, production readiness, submitter FTE name, employee ID, India office region/location, sponsor, contributors, content, and one or two categories.
+- Required fields cover problem statement, solution, deployed-on-PROD status, submitter FTE name, employee ID, office location, country India, VP-and-above officer sponsor, contributors, content, and one or two categories.
 - Optional fields cover video link, patent flags, team name, and uploaded images.
 - Uploaded thumbnails open a larger image preview when clicked from an idea detail page.
-- Ideas receive a unique `idea_id` and private `edit_token`.
+- Ideas receive a unique `idea_id` and private `edit_token`. Seeded demo ideas use IDs like `GRIT-Cycle1-2026-045`.
 - The content editor supports plain text or sanitized HTML with a browser preview.
 - Mongo document size is checked before insert/update and stops content near the BSON document ceiling.
 
@@ -306,7 +306,8 @@ Current implementation covers:
 - Review visibility closes after the cycle end time or after core committee closure.
 - Every juror can record a score, comment, and signal.
 - Jury members see their own scored/pending state and counts.
-- Assigned jury leads see same-category averages, peer review counts, same-category peer comments/scores, store reference comments, and confirm the top ideas for their category.
+- Assigned jury leads see same-category averages, peer review counts, same-category peer comments/scores, store reference comments, refresh scores after discussion, and confirm the top ideas for their category.
+- Confirm top ideas is enabled only after every assigned reviewer has scored every released idea in that category. The lead receives a browser confirmation prompt before finalizing.
 - Jury lead confirmation uses the category winner target chosen by core. Jury members contribute scores/comments, but only the assigned lead finalizes the category winner handoff.
 - Jury category tabs keep reviews scoped and paginated by assigned category.
 - Jury accounts may still use the public user portal to submit ideas. Self-scoring is blocked when the jury username is present in the idea contributor usernames.

@@ -56,10 +56,9 @@ class Config:
         "Technical Debt",
     ]
     INDIA_REGIONS = [
-        "North India",
-        "South India",
-        "East India",
-        "West India",
-        "Central India",
-        "North-East India",
+        "India",
+    ]
+    OFFICE_LOCATIONS = [
+        "Mumbai",
+        "Bangalore",
     ]

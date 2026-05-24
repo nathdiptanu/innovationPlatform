@@ -42,13 +42,13 @@ CORE_MEMBERS = [
     ("core.member10", "Vivek Srinivasan"),
 ]
 OWNER_NAMES = [
-    ("Asha Raman", "asha.raman", "Meera Nair", "Bengaluru", "South India"),
-    ("Vikram Singh", "vikram.singh", "Suresh Menon", "Pune", "West India"),
-    ("Neha Kulkarni", "neha.kulkarni", "Anita Rao", "Mumbai", "West India"),
-    ("Rahul Iyer", "rahul.iyer", "Prakash Nair", "Chennai", "South India"),
-    ("Priya Menon", "priya.menon", "Devika Pillai", "Hyderabad", "South India"),
-    ("Arjun Nair", "arjun.nair", "Rohit Sethi", "Gurugram", "North India"),
-    ("Sanjana Kapoor", "sanjana.kapoor", "Manisha Joshi", "Noida", "North India"),
+    ("Asha Raman", "asha.raman", "Meera Nair", "Bangalore", "India"),
+    ("Vikram Singh", "vikram.singh", "Suresh Menon", "Mumbai", "India"),
+    ("Neha Kulkarni", "neha.kulkarni", "Anita Rao", "Mumbai", "India"),
+    ("Rahul Iyer", "rahul.iyer", "Prakash Nair", "Bangalore", "India"),
+    ("Priya Menon", "priya.menon", "Devika Pillai", "Bangalore", "India"),
+    ("Arjun Nair", "arjun.nair", "Rohit Sethi", "Mumbai", "India"),
+    ("Sanjana Kapoor", "sanjana.kapoor", "Manisha Joshi", "Bangalore", "India"),
 ]
 CATEGORY_JURY_PASSWORDS = {
     "Unique Idea": ("UniqueLead123!", "UniqueJury123!"),
@@ -101,8 +101,9 @@ def ensure_demo_cycle():
 
 
 def ensure_demo_idea(cycle, category_ids, suffix, problem, readiness, employee_id, attachment_index=0):
-    idea_id = f"{cycle['name']}-DEMO-{suffix}"
-    existing = collection("ideas").find_one({"idea_id": idea_id})
+    idea_id = f"{cycle['name']}-{suffix}"
+    legacy_id = f"{cycle['name']}-DEMO-{suffix}"
+    existing = collection("ideas").find_one({"idea_id": idea_id}) or collection("ideas").find_one({"idea_id": legacy_id})
     owner_name, owner_username, sponsor, office_location, india_region = OWNER_NAMES[attachment_index % len(OWNER_NAMES)]
     co_owner = OWNER_NAMES[(attachment_index + 2) % len(OWNER_NAMES)]
     document = {
@@ -147,6 +148,9 @@ def ensure_demo_idea(cycle, category_ids, suffix, problem, readiness, employee_i
         "updated_at": utcnow(),
     }
     if existing:
+        if existing.get("idea_id") == legacy_id:
+            collection("evaluations").update_many({"idea_id": legacy_id}, {"$set": {"idea_id": idea_id, "updated_at": utcnow()}})
+            collection("idea_reactions").update_many({"idea_id": legacy_id}, {"$set": {"idea_id": idea_id, "updated_at": utcnow()}})
         collection("ideas").update_one({"_id": existing["_id"]}, {"$set": document})
         return collection("ideas").find_one({"_id": existing["_id"]})
     document["created_at"] = utcnow()
@@ -193,6 +197,13 @@ def seed():
                 index - 1,
             )
         )
+    for category in categories:
+        winner_ids = category.get("winner_ids", [])
+        if winner_ids:
+            collection("categories").update_one(
+                {"_id": category["_id"]},
+                {"$set": {"winner_ids": [idea_id.replace("-DEMO-", "-") for idea_id in winner_ids], "updated_at": utcnow()}},
+            )
     evaluations = [
         (ideas[0], collection("users").find_one({"username": "jury.lead.automation"}), automation, 9, "Strong reuse potential.", "like"),
         (ideas[0], collection("users").find_one({"username": "jury.member1.automation"}), automation, 8, "Clear operating benefit.", "like"),

@@ -89,6 +89,13 @@ def field_matches(actual, expected):
                         return False
                 elif str(actual) not in choices:
                     return False
+            if operator == "$nin":
+                choices = {str(item) for item in operand}
+                if isinstance(actual, list):
+                    if any(str(item) in choices for item in actual):
+                        return False
+                elif str(actual) in choices:
+                    return False
             if operator == "$lte" and not (actual <= operand):
                 return False
             if operator == "$gte" and not (actual >= operand):

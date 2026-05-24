@@ -73,7 +73,7 @@
             {% endfor %}
         </div>
         <dl>
-            <dt>Production</dt><dd>{{ idea.production_readiness|replace("_", " ")|title }}</dd>
+            <dt>Deployed on PROD</dt><dd>{{ idea.production_readiness|replace("_", " ")|title }}</dd>
             <dt>Officer sponsor</dt><dd>{{ idea.officer_sponsor }}</dd>
             <dt>Office</dt><dd>{{ idea.office_location }}, {{ idea.india_region }}</dd>
             <dt>Submitted</dt><dd>{{ idea.created_at.strftime("%d %b %Y %H:%M UTC") if idea.created_at else "Unavailable" }}</dd>
