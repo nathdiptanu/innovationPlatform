@@ -46,10 +46,10 @@ def owns_edit_session(idea):
 
 
 def unlock_edit_session(idea):
-    supplied_token = (request.values.get("token") or request.values.get("edit_token") or "").strip()
+    supplied_employee_id = (request.values.get("owner_employee_id") or "").strip().upper()
     supplied_pin = (request.values.get("edit_pin") or "").strip()
     pin_hash = idea.get("edit_pin_hash")
-    if supplied_token == idea.get("edit_token") and pin_hash and check_password_hash(pin_hash, supplied_pin):
+    if supplied_employee_id == idea.get("owner_employee_id") and pin_hash and check_password_hash(pin_hash, supplied_pin):
         current_visitor = visitor_id()
         session[f"edit:{idea['idea_id']}"] = idea["edit_token"]
         collection("ideas").update_one(
@@ -137,8 +137,8 @@ def create():
             collection("ideas").update_one({"_id": idea["_id"]}, {"$set": {"submitter_visitor_id": submitter_id, "updated_at": utcnow()}})
             idea["submitter_visitor_id"] = submitter_id
             session[f"edit:{idea['idea_id']}"] = idea["edit_token"]
-            flash(f"Idea {idea['idea_id']} submitted. Keep the edit link for this cycle.", "success")
-            return redirect(url_for("public.idea_detail", idea_id=idea["idea_id"], token=idea["edit_token"]))
+            flash(f"Idea {idea['idea_id']} submitted. Keep your Employee ID and private edit passcode to edit it later.", "success")
+            return redirect(url_for("public.idea_detail", idea_id=idea["idea_id"]))
         for error in errors:
             flash(error, "error")
     return render_template("public/idea_form.html", cycle=cycle, categories=categories, idea=None)
@@ -227,10 +227,10 @@ def edit(idea_id):
     if not owns_edit_session(idea):
         if unlock_edit_session(idea):
             flash("Edit access restored for this browser session.", "success")
-            return redirect(url_for("public.edit", idea_id=idea_id, token=idea["edit_token"]))
+            return redirect(url_for("public.edit", idea_id=idea_id))
         if request.method == "POST" and request.form.get("unlock_edit"):
-            flash("Edit token or private passcode did not match this idea.", "error")
-        return render_template("public/edit_unlock.html", idea=idea, token=request.values.get("token", "")), 403
+            flash("Employee ID or private passcode did not match this idea.", "error")
+        return render_template("public/edit_unlock.html", idea=idea), 403
     if cycle.get("jury_released_at") or cycle.get("archived"):
         flash("This idea is locked because it has been released to jury or archived.", "error")
         return redirect(url_for("public.idea_detail", idea_id=idea_id))

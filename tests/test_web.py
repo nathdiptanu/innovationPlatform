@@ -48,7 +48,7 @@ class FlaskIntegrationTests(unittest.TestCase):
 
         unlocked = self.client.post(
             f"/ideas/{idea['idea_id']}/edit",
-            data={"unlock_edit": "1", "edit_token": idea["edit_token"], "edit_pin": "DemoEdit123!"},
+            data={"unlock_edit": "1", "owner_employee_id": idea["owner_employee_id"], "edit_pin": "DemoEdit123!"},
             follow_redirects=False,
         )
         self.assertEqual(unlocked.status_code, 302)

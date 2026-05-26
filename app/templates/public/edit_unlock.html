@@ -5,12 +5,12 @@
     <div>
         <p class="eyebrow">{{ idea.idea_id }}</p>
         <h1>Unlock idea editing</h1>
-        <p class="muted">For security, editing requires the private edit token and edit passcode created during submission. The token is shown in the submit success link and can be retrieved by core committee if the submitter forgets it.</p>
+        <p class="muted">For security, editing requires the submitter Employee ID and the private edit passcode created during submission. Core committee can reset the passcode if the submitter forgets it.</p>
     </div>
     <form class="panel form-stack" method="post">
         <input type="hidden" name="unlock_edit" value="1">
-        <label>Edit token
-            <input name="edit_token" value="{{ token }}" placeholder="Paste token from submission receipt or core committee" required>
+        <label>Employee ID
+            <input name="owner_employee_id" placeholder="Enter submitter Employee ID" required>
         </label>
         <label>Edit passcode
             <span class="password-control">

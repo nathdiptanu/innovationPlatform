@@ -20,7 +20,7 @@
             <dt>Edit token</dt>
             <dd>
                 <code class="token-code">{{ idea.edit_token }}</code>
-                <small class="muted">Share this only with the verified submitter. It works with the private passcode to unlock editing.</small>
+                <small class="muted">Internal recovery/API token. Public edit unlock uses submitter Employee ID plus private passcode.</small>
             </dd>
             <dt>Edit passcode</dt><dd>Stored as a one-way hash. Not viewable.</dd>
             <dt>Edit status</dt><dd>{{ "Locked after jury release/archive" if cycle and (cycle.jury_released_at or cycle.archived) else "Open before jury release" }}</dd>
@@ -43,7 +43,7 @@
                 {% if categories.get(category_id) %}<span class="tag">{{ categories[category_id].name }}</span>{% endif %}
             {% endfor %}
         </div>
-        <p class="muted">Share the edit token and temporary passcode only through an approved internal channel. The passcode should be changed again by core if it is accidentally exposed.</p>
+        <p class="muted">Share the temporary passcode only through an approved internal channel. Public edit unlock uses submitter Employee ID plus private passcode.</p>
     </article>
 </section>
 {% endblock %}

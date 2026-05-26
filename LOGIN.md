@@ -142,9 +142,9 @@ Each category has 1 jury lead and 4 jury members. Jury leads can see same-catego
 - Public users can search ideas from the gallery by idea ID, problem, solution, owner name, employee ID, or team name.
 - All categories in a cycle share the same start and expiry date from `/core/cycles`.
 - Public users can like/neutral/dislike an idea from the detail page. Counts are visible on both the gallery and detail page.
-- Only the submitter with the private edit token and edit passcode/session can edit an idea before cycle expiry. Employee ID is not used as edit proof because it may be discoverable internally.
-- The edit token is generated at submission time and appears in the submit success edit/detail URL. If a submitter loses it, a core committee member can open the idea support page from the core dashboard/archive and read the token.
-- Core committee can open an idea from the core dashboard/archive to view the saved edit token and reset the private edit passcode when the submitter forgets it.
+- Only the submitter with the submitter Employee ID plus private edit passcode/session can edit an idea before jury release/archive.
+- The edit token is generated at submission time for internal/API recovery and is visible only to core committee on the idea support page.
+- Core committee can open an idea from the core dashboard/archive to view the saved internal edit token and reset the private edit passcode when the submitter forgets it.
 - After the due date, new submissions are blocked, but the submitter can still edit an existing idea until core releases the cycle to jury.
 - After core releases the cycle to jury, idea edits and category changes are locked.
 - Idea detail pages show submitted date and last edited date.

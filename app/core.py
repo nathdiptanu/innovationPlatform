@@ -147,7 +147,7 @@ def reset_idea_edit_access(idea_id):
             {"_id": idea["_id"]},
             {"$set": {"edit_pin_hash": generate_password_hash(edit_pin), "updated_at": utcnow()}},
         )
-        flash("Temporary edit passcode updated. Share the edit token and temporary passcode only with the submitter.", "success")
+        flash("Temporary edit passcode updated. Share the temporary passcode only with the verified submitter.", "success")
     return redirect(url_for("core.idea_support", idea_id=idea_id))
 
 

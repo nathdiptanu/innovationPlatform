@@ -18,7 +18,7 @@
             <label>Submitter FTE name<input name="owner_name" value="{{ idea.owner_name if idea else '' }}" required></label>
             <label>Employee ID<input name="owner_employee_id" value="{{ idea.owner_employee_id if idea else '' }}" required></label>
             {% if not idea %}
-                <label>Edit passcode <span class="help-tooltip" title="Private passcode used with the edit token if your browser session expires. It is stored only as a hash.">?</span>
+                <label>Edit passcode <span class="help-tooltip" title="Private passcode used with the submitter Employee ID if your browser session expires. It is stored only as a hash.">?</span>
                     <span class="password-control">
                         <input type="password" name="edit_pin" minlength="8" placeholder="Create private edit passcode" required>
                         <button class="icon-button password-toggle" type="button" data-password-toggle aria-label="Show password"><i data-lucide="eye"></i></button>

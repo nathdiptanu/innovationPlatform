@@ -85,7 +85,7 @@ def ideas():
     idea, errors = create_idea(json_form(request.get_json(silent=True) or {}), cycle, categories_for_cycle(cycle["_id"]), [])
     if errors:
         return jsonify({"errors": errors}), 400
-    return jsonify({"idea_id": idea["idea_id"], "edit_token": idea["edit_token"], "edit_url": url_for("public.edit", idea_id=idea["idea_id"], token=idea["edit_token"], _external=True)}), 201
+    return jsonify({"idea_id": idea["idea_id"], "edit_token": idea["edit_token"], "edit_url": url_for("public.edit", idea_id=idea["idea_id"], _external=True)}), 201
 
 
 @api_bp.route("/ideas/<idea_id>", methods=["GET", "PUT"])

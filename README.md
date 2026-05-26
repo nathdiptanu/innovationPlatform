@@ -1,8 +1,8 @@
 # GRIT
 
-GRIT is a Flask and MongoDB competition app for **Grassroot Innovation In Technology**. It provides:
+GRIT is a Flask and MongoDB/SQLite competition app for **Grassroot Innovation In Technology**. It provides:
 
-- A public idea submission portal with search, edit tokens, HTML/plain-text preview, image attachments, cycle-aware closure, category limits, and pagination.
+- A public idea submission portal with search, Employee ID plus passcode edit unlock, HTML/plain-text preview, image attachments, cycle-aware closure, category limits, and pagination.
 - A core committee portal for cycle windows, categories, jury panels, portal users, release/close controls, dashboards, and archive views.
 - A jury portal for category-scoped review, 1-10 scoring, comments, like/neutral/dislike signals, average-score ranking, lead comments, refreshable score review, and gated top-idea confirmation.
 - OpenAPI definitions at `/api/openapi.json` and Swagger UI at `/api/docs`.
@@ -256,7 +256,7 @@ The entrant/user experience covers the requirements that make submissions practi
 
 - Every visitor can open `/users/`, browse other visible ideas in a simplified idea gallery, and switch category tabs without loading the full cycle result set.
 - Each public idea list tab is paginated and only loads lightweight list fields; a user opens the detail page only for the idea they want to inspect.
-- A user can submit during the configured cycle window, receive a unique GRIT submission ID, edit before expiry with the private edit token, and view after expiry.
+- A user can submit during the configured cycle window, receive a unique GRIT submission ID, edit with submitter Employee ID plus private edit passcode, and view after expiry.
 - Submission fields include problem statement, solution, optional video link, patent flags, deployed-on-PROD status, officer sponsor, contributor usernames/FTE names, team name for larger teams, office location limited to Mumbai/Bangalore, country India, employee ID, one or two categories, rich/plain content, uploaded images, and optional image display names.
 - Other users can add optional public feedback on an idea with a comment and like/neutral/dislike signal; feedback is stored with the idea and shown on the idea detail page.
 - Users can also react directly to an idea with like/neutral/dislike buttons. Reaction events are stored separately and cached counts are shown on the idea gallery and detail page for quick loading.
@@ -289,12 +289,12 @@ Current implementation covers:
 - Closed windows keep ideas visible and block creation/editing.
 - Required fields cover problem statement, solution, deployed-on-PROD status, submitter FTE name, employee ID, office location, country India, VP-and-above officer sponsor, contributors, content, and one or two categories.
 - New submissions require a private edit passcode. The passcode is never stored as plaintext; only a hash is saved.
-- The edit token is a private random token generated when the idea is submitted. The submit success page includes it in the edit/detail URL; core committee can retrieve it from `/core/ideas/<idea_id>` if the submitter forgets it.
+- The edit token is a private random internal/API token generated when the idea is submitted. It is visible only on the core idea support page and is not required for the public edit unlock form.
 - Optional fields cover video link, patent flags, team name, and uploaded images.
 - Uploaded thumbnails open a larger image preview when clicked from an idea detail page.
-- Ideas receive a unique `idea_id` and private `edit_token`. Seeded demo ideas use IDs like `GRIT-Cycle1-2026-045`.
-- Only the submitter can edit by using the same browser session, or by unlocking edit access with the private edit token plus the private edit passcode. Employee ID is not used as edit proof.
-- Core committee can open `/core/ideas/<idea_id>` from the dashboard/archive to see the saved edit token and reset the private edit passcode. The existing passcode is never shown because only its hash is stored.
+- Ideas receive a unique `idea_id` and private internal `edit_token`. Seeded demo ideas use IDs like `GRIT-Cycle1-2026-045`.
+- Only the submitter can edit by using the same browser session, or by unlocking edit access with submitter Employee ID plus the private edit passcode.
+- Core committee can open `/core/ideas/<idea_id>` from the dashboard/archive to see the saved internal edit token and reset the private edit passcode. The existing passcode is never shown because only its hash is stored.
 - The content editor supports plain text or sanitized HTML with a browser preview.
 - Mongo document size is checked before insert/update and stops content near the BSON document ceiling.
 
