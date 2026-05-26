@@ -156,7 +156,14 @@ def build_openapi():
                 "get": _op("API", "Core dashboard counts JSON", "Returns current cycle category counts for core dashboards and management reporting.", {"200": _response("Dashboard counts", {"$ref": "#/components/schemas/CoreDashboard"}), "403": _response("Core access required")}, security=core_security)
             },
             "/core/": {
-                "get": _op("Core", "Core dashboard", "Management dashboard with total submissions, per-category counts, countdown, release controls, and cycle state.", {"200": _html_response(), "302": _redirect("Login required"), "403": _html_response("Core access required")}, security=core_security)
+                "get": _op(
+                    "Core",
+                    "Core dashboard",
+                    "Management dashboard with total submissions, per-category counts, countdown, release controls, cycle state, patent/location filters, and governance watchlist.",
+                    {"200": _html_response(), "302": _redirect("Login required"), "403": _html_response("Core access required")},
+                    [_query_param("cycle_id", "Optional cycle ID."), _query_param("category_id", "Optional category ID."), _query_param("q", "Search idea ID, problem, owner, employee ID, or team."), _query_param("patent", "Patent filter.", {"type": "string", "enum": ["", "can_be_patented", "is_patented", "not_marked"]}), _query_param("office_location", "Office location filter.", {"type": "string", "enum": ["", "Mumbai", "Bangalore"]}), _query_param("page", "Page number.", {"type": "integer", "minimum": 1})],
+                    security=core_security,
+                )
             },
             "/core/final-winners": {
                 "get": _op("Core", "Final winners", "Shows jury-lead-confirmed winners grouped by category, sorted by score, with lead comments.", {"200": _html_response(), "403": _html_response("Core access required")}, security=core_security)
@@ -181,7 +188,14 @@ def build_openapi():
                 "post": _op("Core", "Archive cycle", "Moves a cycle and its ideas out of active user, core, and jury dashboards while preserving archive history.", {"302": _redirect()}, [cycle_id], security=core_security)
             },
             "/core/archive": {
-                "get": _op("Core", "Archive view", "Shows archived cycle ideas for core committee historical review.", {"200": _html_response()}, security=core_security)
+                "get": _op(
+                    "Core",
+                    "Archive view",
+                    "Shows archived cycle ideas with search, patent status, and office location filters for historical review.",
+                    {"200": _html_response()},
+                    [_query_param("cycle_id", "Archived cycle ID."), _query_param("q", "Search idea ID, problem, owner, employee ID, or team."), _query_param("patent", "Patent filter.", {"type": "string", "enum": ["", "can_be_patented", "is_patented", "not_marked"]}), _query_param("office_location", "Office location filter.", {"type": "string", "enum": ["", "Mumbai", "Bangalore"]}), _query_param("page", "Page number.", {"type": "integer", "minimum": 1})],
+                    security=core_security,
+                )
             },
             "/core/users": {
                 "get": _op("Core", "Manage portal accounts", "Shows active core, jury lead, and jury member accounts.", {"200": _html_response()}, security=core_security),

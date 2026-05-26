@@ -59,6 +59,17 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
+    document.querySelectorAll("[data-password-toggle]").forEach((button) => {
+        button.addEventListener("click", () => {
+            const input = button.parentElement?.querySelector("input");
+            if (!input) return;
+            const showing = input.type === "text";
+            input.type = showing ? "password" : "text";
+            button.setAttribute("aria-label", showing ? "Show password" : "Hide password");
+            button.innerHTML = showing ? '<i data-lucide="eye"></i>' : '<i data-lucide="eye-off"></i>';
+            if (window.lucide) window.lucide.createIcons();
+        });
+    });
     document.querySelectorAll("[data-content-input], input[name='content_format']").forEach((node) => {
         node.addEventListener("input", renderPreview);
         node.addEventListener("change", renderPreview);

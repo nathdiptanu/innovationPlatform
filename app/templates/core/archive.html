@@ -4,17 +4,59 @@
 {% include "core/tabs.html" %}
 <section class="section-head dashboard-head">
     <div><p class="eyebrow">Archive</p><h1>Previous cycles</h1></div>
-    <form method="get" class="inline-form">{% if cycles %}<select name="cycle_id" onchange="this.form.submit()">{% for cycle in cycles %}<option value="{{ cycle._id }}" {% if cycle_id == cycle._id|string %}selected{% endif %}>{{ cycle.name }}</option>{% endfor %}</select>{% endif %}</form>
+</section>
+<section class="panel filter-panel">
+    <form method="get" class="filter-grid">
+        {% if cycles %}
+            <label>Cycle
+                <select name="cycle_id">
+                    {% for cycle in cycles %}<option value="{{ cycle._id }}" {% if cycle_id == cycle._id|string %}selected{% endif %}>{{ cycle.name }}</option>{% endfor %}
+                </select>
+            </label>
+        {% endif %}
+        <label>Search<input name="q" value="{{ filters.q }}" placeholder="Idea ID, problem, owner, employee ID"></label>
+        <label>Patent status
+            <select name="patent">
+                <option value="" {% if not filters.patent %}selected{% endif %}>All patent statuses</option>
+                <option value="can_be_patented" {% if filters.patent == "can_be_patented" %}selected{% endif %}>Can be patented</option>
+                <option value="is_patented" {% if filters.patent == "is_patented" %}selected{% endif %}>Already patented</option>
+                <option value="not_marked" {% if filters.patent == "not_marked" %}selected{% endif %}>Not marked</option>
+            </select>
+        </label>
+        <label>Office location
+            <select name="office_location">
+                <option value="" {% if not filters.office_location %}selected{% endif %}>All locations</option>
+                {% for location in office_locations %}
+                    <option value="{{ location }}" {% if filters.office_location == location %}selected{% endif %}>{{ location }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <button class="button" type="submit"><i data-lucide="search"></i>Search archive</button>
+        <a class="button ghost" href="{{ url_for('core.archive', cycle_id=cycle_id) }}"><i data-lucide="rotate-ccw"></i>Clear</a>
+    </form>
 </section>
 <section class="panel">
+    <div class="section-head">
+        <div>
+            <p class="eyebrow">Archived ideas</p>
+            <h2>{{ total }} result{{ "" if total == 1 else "s" }}</h2>
+        </div>
+    </div>
     <div class="table-shell">
         <table>
-            <thead><tr><th>Idea</th><th>Problem</th><th>Submitter</th><th>Created</th></tr></thead>
+            <thead><tr><th>Idea</th><th>Problem</th><th>Submitter</th><th>Location</th><th>Patent</th><th>Created</th></tr></thead>
             <tbody>
             {% for idea in ideas %}
-                <tr><td>{{ idea.idea_id }}</td><td class="idea-cell"><span class="clamp-text">{{ idea.problem_statement|truncate(320, True) }}</span></td><td>{{ idea.owner_name }}</td><td>{{ idea.created_at.strftime("%d %b %Y") }}</td></tr>
+                <tr>
+                    <td>{{ idea.idea_id }}</td>
+                    <td class="idea-cell"><span class="clamp-text">{{ idea.problem_statement|truncate(320, True) }}</span></td>
+                    <td>{{ idea.owner_name }}<span>{{ idea.owner_employee_id }}</span></td>
+                    <td>{{ idea.office_location }}</td>
+                    <td>{{ "Patented" if idea.is_patented else "Patent candidate" if idea.can_be_patented else "Not marked" }}</td>
+                    <td>{{ idea.created_at.strftime("%d %b %Y") }}</td>
+                </tr>
             {% else %}
-                <tr><td colspan="4">No archived ideas.</td></tr>
+                <tr><td colspan="6">No archived ideas match the selected filters.</td></tr>
             {% endfor %}
             </tbody>
         </table>

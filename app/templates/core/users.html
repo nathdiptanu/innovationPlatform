@@ -10,7 +10,12 @@
             <p class="muted">Create core, jury lead, and jury member logins here. Passwords are stored as one-way hashes only.</p>
             <label>Name<input name="name" required></label>
             <label>Username<input name="username" required></label>
-            <label>Password<input type="password" name="password" minlength="8" required></label>
+            <label>Password
+                <span class="password-control">
+                    <input type="password" name="password" minlength="8" required>
+                    <button class="icon-button password-toggle" type="button" data-password-toggle aria-label="Show password"><i data-lucide="eye"></i></button>
+                </span>
+            </label>
             <label>Role
                 <select name="role">
                     <option value="core">Core member</option>
@@ -54,7 +59,10 @@
                             </select>
                         </td>
                         <td>
-                            <input form="edit-user-{{ user._id }}" type="password" name="password" placeholder="New password optional" minlength="8">
+                            <span class="password-control compact-password">
+                                <input form="edit-user-{{ user._id }}" type="password" name="password" placeholder="New password optional" minlength="8">
+                                <button class="icon-button password-toggle" type="button" data-password-toggle aria-label="Show password"><i data-lucide="eye"></i></button>
+                            </span>
                             <button form="edit-user-{{ user._id }}" class="button ghost compact" type="submit"><i data-lucide="save"></i>Save</button>
                         </td>
                         <td><form method="post" action="{{ url_for('core.delete_user', user_id=user._id) }}"><button class="icon-button danger" aria-label="Disable user"><i data-lucide="trash-2"></i></button></form></td>

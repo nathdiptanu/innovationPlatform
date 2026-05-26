@@ -52,7 +52,7 @@
         <li>Add protected usernames to <code>app/access_config.py</code>: core gets <code>{"core"}</code>; jury lead and jury member accounts get <code>{"jury"}</code>.</li>
         <li>Assign jury leads and jury members in <code>/core/categories</code>. Each category must have exactly one jury lead and three to five jury members. The page shows a warning when a lead is missing or the member count is outside range. Remove old panel members with the red remove icon beside the assigned name and confirm twice.</li>
         <li>Add or disable core committee members from the Core members panel on <code>/core/categories</code> or from <code>/core/users</code>. Core committee size is variable.</li>
-        <li>Watch the management dashboard countdown, then release the cycle to jury from the core dashboard when the committee is ready. During pre-production testing, use Withdraw release to block jury scoring again.</li>
+        <li>Watch the management dashboard countdown, filter by patent status and Mumbai/Bangalore location, then release the cycle to jury from the core dashboard when the committee is ready. During pre-production testing, use Withdraw release to block jury scoring again.</li>
         <li>Jury leads can confirm winners only after every assigned reviewer has scored every idea in that category; the confirmation action asks for an are-you-sure approval.</li>
         <li>After jury lead confirmation, open Final Winners to review grouped category winners with scores and lead final comments, then close jury visibility and archive the cycle.</li>
     </ol>
@@ -64,7 +64,7 @@
     <h2>SQLite Demo Mode</h2>
     <p>The local approval demo uses <code>data/grit.sqlite3</code> when <code>config.ini</code> has <code>sqlite = yes</code>. The same logical collections are retained as JSON documents and survive restart. Use <code>sync_mongo_to_sqlite.py</code> to copy Mongo data into SQLite, and <code>sync_sqlite_to_mongo.py</code> to promote approved SQLite data back to Mongo later.</p>
     <h2>Archive And Edit Rules</h2>
-    <p>Archiving marks the cycle and ideas as archived, removes them from active user/core/jury dashboards, and keeps them visible in core archive. After the due date, users cannot submit new ideas but can edit an existing idea with the edit token until core releases to jury. After jury release, idea edits and category changes are locked.</p>
+    <p>Archiving marks the cycle and ideas as archived, removes them from active user/core/jury dashboards, and keeps them visible in core archive. The archive view can be searched and filtered by patent status and office location. After the due date, users cannot submit new ideas but can edit an existing idea with the edit token until core releases to jury. After jury release, idea edits and category changes are locked.</p>
     <h2>Integrity Note</h2>
     <p>A person may submit ideas through the public entrant portal and also have a protected core or jury portal account. Jury self-scoring is blocked when the logged-in jury username appears as a contributor username on the idea. Keep ordinary core and jury protected usernames separate unless governance explicitly approves an overlap.</p>
     <h2>Production Hardening</h2>

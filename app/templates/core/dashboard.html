@@ -38,8 +38,22 @@
         <p class="eyebrow">{{ cycle.name }}</p>
         <strong>{{ cycle_total }}</strong>
         <span>Total ideas submitted</span>
-        <small>Across all categories</small>
+        <small>{{ filtered_total }} match current filters</small>
     </article>
+    <article class="panel summary-tile">
+        <p class="eyebrow">Patent view</p>
+        <strong>{{ patent_candidates }}</strong>
+        <span>Can be patented</span>
+        <small>{{ patented_total }} already patented</small>
+    </article>
+    {% for location, count in location_counts.items() %}
+        <article class="panel summary-tile">
+            <p class="eyebrow">Location</p>
+            <strong>{{ count }}</strong>
+            <span>{{ location }}</span>
+            <small>Ideas submitted from {{ location }}</small>
+        </article>
+    {% endfor %}
     {% for category in categories %}
         <article class="panel summary-tile">
             <p class="eyebrow">{{ cycle.name }}</p>
@@ -49,11 +63,36 @@
         </article>
     {% endfor %}
 </section>
+<section class="panel filter-panel">
+    <form method="get" class="filter-grid">
+        <input type="hidden" name="cycle_id" value="{{ cycle._id }}">
+        <input type="hidden" name="category_id" value="{{ selected_category_id or '' }}">
+        <label>Search<input name="q" value="{{ filters.q }}" placeholder="Idea ID, owner, employee ID, team"></label>
+        <label>Patent status
+            <select name="patent">
+                <option value="" {% if not filters.patent %}selected{% endif %}>All patent statuses</option>
+                <option value="can_be_patented" {% if filters.patent == "can_be_patented" %}selected{% endif %}>Can be patented</option>
+                <option value="is_patented" {% if filters.patent == "is_patented" %}selected{% endif %}>Already patented</option>
+                <option value="not_marked" {% if filters.patent == "not_marked" %}selected{% endif %}>Not marked</option>
+            </select>
+        </label>
+        <label>Office location
+            <select name="office_location">
+                <option value="" {% if not filters.office_location %}selected{% endif %}>All locations</option>
+                {% for location in config.OFFICE_LOCATIONS %}
+                    <option value="{{ location }}" {% if filters.office_location == location %}selected{% endif %}>{{ location }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <button class="button" type="submit"><i data-lucide="filter"></i>Apply</button>
+        <a class="button ghost" href="{{ url_for('core.dashboard', cycle_id=cycle._id, category_id=selected_category_id) }}"><i data-lucide="rotate-ccw"></i>Clear</a>
+    </form>
+</section>
 <section class="dashboard-grid">
     <aside class="panel category-tabs">
         <p class="eyebrow">Categories</p>
         {% for category in categories %}
-            <a class="tab-link {% if selected_category_id == category._id|string %}active{% endif %}" href="{{ url_for('core.dashboard', cycle_id=cycle._id, category_id=category._id) }}">
+            <a class="tab-link {% if selected_category_id == category._id|string %}active{% endif %}" href="{{ url_for('core.dashboard', cycle_id=cycle._id, category_id=category._id, q=filters.q, patent=filters.patent, office_location=filters.office_location) }}">
                 <span>{{ category.name }}</span><strong>{{ category_counts.get(category._id|string, 0) }}</strong>
             </a>
         {% endfor %}
@@ -73,7 +112,7 @@
                 {% for idea in ideas %}
                     <tr>
                         <td class="idea-cell"><a href="{{ url_for('public.idea_detail', idea_id=idea.idea_id) }}">{{ idea.idea_id }}</a><span class="clamp-text">{{ idea.problem_statement|truncate(320, True) }}</span></td>
-                        <td>{{ idea.owner_name }}<span>{{ idea.office_location }}</span></td>
+                        <td>{{ idea.owner_name }}<span>{{ idea.office_location }} | {{ "Patented" if idea.is_patented else "Patent candidate" if idea.can_be_patented else "Not marked" }}</span></td>
                         <td>{{ idea.average_score }}<span>{{ idea.score_count }} scores</span></td>
                         <td>{{ idea.updated_at.strftime("%d %b %H:%M") }}</td>
                     </tr>
@@ -85,6 +124,20 @@
         </div>
         {% include "pagination.html" %}
     </section>
+</section>
+<section class="panel governance-panel">
+    <div class="section-head">
+        <div>
+            <p class="eyebrow">Useful next views</p>
+            <h2>Core committee watchlist</h2>
+        </div>
+    </div>
+    <div class="watchlist-grid">
+        <div><strong>Export pack</strong><span>Download filtered ideas and winner results to Excel/PDF for steering meetings.</span></div>
+        <div><strong>Reviewer completion SLA</strong><span>Track category-wise reviewers pending, average scoring age, and reminders.</span></div>
+        <div><strong>Patent triage lane</strong><span>Route patented/can-be-patented ideas to legal/IP review with status tracking.</span></div>
+        <div><strong>Audit trail</strong><span>Show who changed cycles, panels, passwords, releases, and winner confirmations.</span></div>
+    </div>
 </section>
 <section class="panel confirmed-results">
     <div class="section-head">

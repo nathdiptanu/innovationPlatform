@@ -52,7 +52,7 @@
     <table>
         <tr><th>Portal</th><th>Coverage</th></tr>
         <tr><td>Public</td><td>Cycle-aware submission, search, category browse tabs, edit tokens, contributors, category limits, image lightbox preview, HTML/plain content preview.</td></tr>
-        <tr><td>Core</td><td>Tabbed dashboard, accounts, six-month cycle windows, categories, one-lead/three-to-five-member jury panels, panel warnings, create/remove jury panel members, release/close/archive actions, total counts, final winners, tabs, pagination.</td></tr>
+        <tr><td>Core</td><td>Tabbed dashboard, accounts, six-month cycle windows, categories, one-lead/three-to-five-member jury panels, panel warnings, patent/location filters, governance watchlist, create/remove jury panel members, release/close/archive actions, total counts, final winners, tabs, pagination.</td></tr>
         <tr><td>Jury</td><td>Category entitlement, score/comment/signal, average ranking, refresh scores, lead comments, and lead-only winner confirmation after all assigned reviewers complete scoring.</td></tr>
         <tr><td>Swagger</td><td>Core-only <code>/api/docs</code> and <code>/api/openapi.json</code>.</td></tr>
     </table>
@@ -68,7 +68,7 @@
     <p>Seeded jury accounts are category-specific. For example, Automation lead uses <code>jury.lead.automation</code> and a separate Automation password, while Process Improvement has its own lead/member usernames and passwords. Each category is seeded with exactly one lead and four members. Category funneling is enforced by category jury assignments, and only the lead assignment can confirm winners.</p>
     <p>The public countdown updates every second while entries are open. Core controls the active window from <code>/core/cycles</code> by selecting Cycle 1 or Cycle 2, the year, start time, and expiry time for each six-month GRIT cycle.</p>
     <p>Archiving removes submitted ideas from active user/core/jury screens and keeps them in the core archive. After due date, users cannot submit new ideas but can edit existing ideas until release to jury; after release, edits and category changes are locked.</p>
-    <p>Demo idea IDs use the cleaner format <code>GRIT-Cycle1-2026-045</code>. Core management dashboard has a countdown, and each winner target links back to the category settings screen.</p>
+    <p>Demo idea IDs use the cleaner format <code>GRIT-Cycle1-2026-045</code>. Core management dashboard has a countdown, patent/location filters, governance watchlist, and each winner target links back to the category settings screen.</p>
     <h2>Run</h2>
     <pre>py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1

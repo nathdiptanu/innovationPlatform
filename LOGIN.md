@@ -132,6 +132,8 @@ Each category has 1 jury lead and 4 jury members. Jury leads can see same-catego
 
 12. Close jury visibility or archive the cycle when the review is complete.
 
+13. Use the core dashboard or archive filters to review patent candidates, already-patented ideas, and Mumbai/Bangalore location distribution.
+
 ## How Access Is Controlled
 
 - Public user pages do not need login.
@@ -143,6 +145,7 @@ Each category has 1 jury lead and 4 jury members. Jury leads can see same-catego
 - After core releases the cycle to jury, idea edits and category changes are locked.
 - Idea detail pages show submitted date and last edited date.
 - Archived cycles are removed from active user, core, jury, and jury lead dashboards, and remain available from core archive.
+- Core dashboard and archive pages include search, patent status, and office location filters for committee review.
 - Core and jury login accounts live in MongoDB collection `users`.
 - Passwords are stored as hashes, not plaintext.
 - Jury leads and jury members can use `/auth/forgot-password`; core sees open reset requests on `/core/users`.

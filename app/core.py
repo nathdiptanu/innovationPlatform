@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 
 from bson import ObjectId
@@ -11,6 +12,34 @@ from .utils import paged, parse_datetime, utcnow
 
 
 core_bp = Blueprint("core", __name__, url_prefix="/core")
+
+
+def idea_filter_query(prefix=None):
+    q = (request.args.get("q") or "").strip()
+    patent = request.args.get("patent", "")
+    location = request.args.get("office_location", "")
+    filters = {}
+    if q:
+        q = re.escape(q)
+        filters["$or"] = [
+            {"idea_id": {"$regex": q, "$options": "i"}},
+            {"problem_statement": {"$regex": q, "$options": "i"}},
+            {"solution_summary": {"$regex": q, "$options": "i"}},
+            {"owner_name": {"$regex": q, "$options": "i"}},
+            {"owner_employee_id": {"$regex": q, "$options": "i"}},
+            {"team_name": {"$regex": q, "$options": "i"}},
+        ]
+    if patent == "is_patented":
+        filters["is_patented"] = True
+    elif patent == "can_be_patented":
+        filters["can_be_patented"] = True
+        filters["is_patented"] = {"$ne": True}
+    elif patent == "not_marked":
+        filters["can_be_patented"] = {"$ne": True}
+        filters["is_patented"] = {"$ne": True}
+    if location:
+        filters["office_location"] = location
+    return filters
 
 
 def selected_cycle():
@@ -27,16 +56,32 @@ def dashboard():
     categories = categories_for_cycle(cycle["_id"], active_only=False) if cycle else []
     selected_category_id = request.args.get("category_id") or (str(categories[0]["_id"]) if categories else None)
     page = int(request.args.get("page", 1))
+    filters = idea_filter_query()
     category_counts = {
         str(category["_id"]): collection("ideas").count_documents(
-            {"cycle_id": str(cycle["_id"]), "category_ids": str(category["_id"]), "archived": {"$ne": True}}
+            {"cycle_id": str(cycle["_id"]), "category_ids": str(category["_id"]), "archived": {"$ne": True}, **filters}
         )
         for category in categories
     } if cycle else {}
     cycle_total = collection("ideas").count_documents(
         {"cycle_id": str(cycle["_id"]), "archived": {"$ne": True}}
     ) if cycle else 0
-    ideas_query = {"cycle_id": str(cycle["_id"]), "archived": {"$ne": True}} if cycle else {}
+    filtered_total = collection("ideas").count_documents(
+        {"cycle_id": str(cycle["_id"]), "archived": {"$ne": True}, **filters}
+    ) if cycle else 0
+    patent_candidates = collection("ideas").count_documents(
+        {"cycle_id": str(cycle["_id"]), "archived": {"$ne": True}, "can_be_patented": True, "is_patented": {"$ne": True}}
+    ) if cycle else 0
+    patented_total = collection("ideas").count_documents(
+        {"cycle_id": str(cycle["_id"]), "archived": {"$ne": True}, "is_patented": True}
+    ) if cycle else 0
+    location_counts = {
+        location: collection("ideas").count_documents(
+            {"cycle_id": str(cycle["_id"]), "archived": {"$ne": True}, "office_location": location}
+        )
+        for location in current_app.config["OFFICE_LOCATIONS"]
+    } if cycle else {}
+    ideas_query = {"cycle_id": str(cycle["_id"]), "archived": {"$ne": True}, **filters} if cycle else {}
     if selected_category_id:
         ideas_query["category_ids"] = selected_category_id
     total = collection("ideas").count_documents(ideas_query) if cycle else 0
@@ -62,6 +107,11 @@ def dashboard():
         confirmed_ideas=confirmed_ideas,
         total=total,
         cycle_total=cycle_total,
+        filtered_total=filtered_total,
+        patent_candidates=patent_candidates,
+        patented_total=patented_total,
+        location_counts=location_counts,
+        filters={"q": request.args.get("q", ""), "patent": request.args.get("patent", ""), "office_location": request.args.get("office_location", "")},
         page=page,
         per_page=current_app.config["PER_PAGE"],
     )
@@ -172,12 +222,23 @@ def archive():
     cycles = list(collection("cycles").find({"archived": True}).sort("start_at", -1))
     cycle_id = request.args.get("cycle_id") or (str(cycles[0]["_id"]) if cycles else None)
     page = int(request.args.get("page", 1))
-    query = {"archived": True}
+    filters = idea_filter_query()
+    query = {"archived": True, **filters}
     if cycle_id:
         query["cycle_id"] = cycle_id
     total = collection("ideas").count_documents(query)
     ideas = list(paged(collection("ideas").find(query).sort("created_at", -1), page, current_app.config["PER_PAGE"]))
-    return render_template("core/archive.html", cycles=cycles, cycle_id=cycle_id, ideas=ideas, page=page, total=total, per_page=current_app.config["PER_PAGE"])
+    return render_template(
+        "core/archive.html",
+        cycles=cycles,
+        cycle_id=cycle_id,
+        ideas=ideas,
+        page=page,
+        total=total,
+        per_page=current_app.config["PER_PAGE"],
+        filters={"q": request.args.get("q", ""), "patent": request.args.get("patent", ""), "office_location": request.args.get("office_location", "")},
+        office_locations=current_app.config["OFFICE_LOCATIONS"],
+    )
 
 
 @core_bp.route("/users", methods=["GET", "POST"])

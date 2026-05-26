@@ -43,7 +43,12 @@
             <form class="form-stack" method="post" action="{{ url_for('core.create_core_user_from_categories', cycle_id=cycle._id) }}">
                 <label>Name<input name="name" required></label>
                 <label>Username<input name="username" required></label>
-                <label>Password<input type="password" name="password" minlength="8" required></label>
+                <label>Password
+                    <span class="password-control">
+                        <input type="password" name="password" minlength="8" required>
+                        <button class="icon-button password-toggle" type="button" data-password-toggle aria-label="Show password"><i data-lucide="eye"></i></button>
+                    </span>
+                </label>
                 <button class="button ghost" type="submit"><i data-lucide="user-plus"></i>Add core member</button>
             </form>
             <div class="assignment-chip-row vertical">
@@ -111,7 +116,10 @@
                 <p class="eyebrow">Create new jury account and assign</p>
                 <input name="name" placeholder="Full name" required>
                 <input name="username" placeholder="username for login" required>
-                <input name="password" placeholder="temporary password" required>
+                <span class="password-control">
+                    <input type="password" name="password" placeholder="temporary password" required>
+                    <button class="icon-button password-toggle" type="button" data-password-toggle aria-label="Show password"><i data-lucide="eye"></i></button>
+                </span>
                 <select name="role" required>
                     <option value="jury_lead">Jury lead</option>
                     <option value="jury">Jury member</option>
@@ -150,8 +158,18 @@
 
             <form class="quick-add-panel password-reset-panel" method="post" action="{{ url_for('core.reset_category_passwords', category_id=category._id) }}">
                 <p class="eyebrow">Category password reset</p>
-                <label>Jury lead password<input type="password" name="jury_lead_password" minlength="8" placeholder="Optional new lead password"></label>
-                <label>All jury members password<input type="password" name="jury_member_password" minlength="8" placeholder="Optional shared member password"></label>
+                <label>Jury lead password
+                    <span class="password-control">
+                        <input type="password" name="jury_lead_password" minlength="8" placeholder="Optional new lead password">
+                        <button class="icon-button password-toggle" type="button" data-password-toggle aria-label="Show password"><i data-lucide="eye"></i></button>
+                    </span>
+                </label>
+                <label>All jury members password
+                    <span class="password-control">
+                        <input type="password" name="jury_member_password" minlength="8" placeholder="Optional shared member password">
+                        <button class="icon-button password-toggle" type="button" data-password-toggle aria-label="Show password"><i data-lucide="eye"></i></button>
+                    </span>
+                </label>
                 <button class="button ghost" type="submit"><i data-lucide="key-round"></i>Update passwords</button>
                 <small class="muted">Members in this category can share one login password; each stored value is hashed separately.</small>
             </form>

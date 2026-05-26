@@ -303,6 +303,9 @@ Current implementation covers:
 - The cycle window is the single source of truth for submission visibility across every category in that cycle.
 - Categories can be added, renamed, deactivated, assigned to jury panels, and configured with a required winner target.
 - Category dashboards show idea counts and category tabs with paginated entries.
+- Core dashboard and archive screens support search plus patent status and office location filters, including patent candidates, already-patented ideas, and Mumbai/Bangalore distribution.
+- Core dashboard summary tiles show total cycle submissions, filtered matches, patent candidate count, already-patented count, location counts, per-category submission count, and winner targets.
+- Core dashboard includes a governance watchlist for useful next views: export pack, reviewer completion SLA, patent triage lane, and audit trail.
 - Core screens have tabs for dashboard, cycles, categories, accounts, and archive so operators can move between management flows without overloading a single page.
 - Core operators must assign exactly 1 jury lead and 3-5 jury members to each category before releasing ideas to the jury screen. Add/edit/disable accounts in `/core/users`, or create a category-specific lead/member directly in `/core/categories`. On `/core/categories`, panel warnings appear when a category is missing its lead or has too few/many members. Use **Add existing jury lead** or **Add existing jury member** to assign an available account, **Save panel** for bulk checkbox edits, and the red remove icon beside an assigned lead/member to remove that person with double confirmation.
 
