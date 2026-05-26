@@ -5,16 +5,16 @@
     <div>
         <p class="eyebrow">{{ idea.idea_id }}</p>
         <h1>Unlock idea editing</h1>
-        <p class="muted">For security, editing requires the submitter Employee ID and the private edit passcode created during submission. Core committee can reset the passcode if the submitter forgets it.</p>
+        <p class="muted">For security, editing requires the submitter Employee ID and the private edit access key created during submission. Core committee can reset the access key if the submitter forgets it.</p>
     </div>
     <form class="panel form-stack" method="post">
         <input type="hidden" name="unlock_edit" value="1">
         <label>Employee ID
             <input name="owner_employee_id" placeholder="Enter submitter Employee ID" required>
         </label>
-        <label>Edit passcode
+        <label>Edit access key
             <span class="password-control">
-                <input type="password" name="edit_pin" placeholder="Private passcode created during submission" required>
+                <input type="password" name="edit_pin" placeholder="Private access key created during submission" required>
                 <button class="icon-button password-toggle" type="button" data-password-toggle aria-label="Show password"><i data-lucide="eye"></i></button>
             </span>
         </label>

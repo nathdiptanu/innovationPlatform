@@ -38,7 +38,7 @@ class FlaskIntegrationTests(unittest.TestCase):
 
     def test_edit_link_requires_unlock_when_session_is_missing(self):
         with self.app.app_context():
-            idea = collection("ideas").find_one({"edit_token": {"$ne": None}, "archived": {"$ne": True}})
+            idea = collection("ideas").find_one({"owner_employee_id": {"$regex": "^GRIT[0-9]+$"}, "edit_token": {"$ne": None}, "archived": {"$ne": True}})
         if not idea:
             self.skipTest("No seeded idea with edit token available.")
 
@@ -48,7 +48,7 @@ class FlaskIntegrationTests(unittest.TestCase):
 
         unlocked = self.client.post(
             f"/ideas/{idea['idea_id']}/edit",
-            data={"unlock_edit": "1", "owner_employee_id": idea["owner_employee_id"], "edit_pin": "DemoEdit123!"},
+            data={"unlock_edit": "1", "owner_employee_id": idea["owner_employee_id"], "edit_pin": "GRIT-9K7X-42QF"},
             follow_redirects=False,
         )
         self.assertEqual(unlocked.status_code, 302)

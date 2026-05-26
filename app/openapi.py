@@ -103,7 +103,7 @@ def build_openapi():
                 "post": _op(
                     "Public",
                     "Submit new idea with attachments",
-                    "Creates a GRIT idea, stores contributors, optional HTML/plain detail content, image attachments, and returns a success page. The submitter uses Employee ID plus private edit passcode for later browser unlock.",
+                    "Creates a GRIT idea, stores contributors, optional HTML/plain detail content, image attachments, and returns a success page. The submitter uses Employee ID plus private edit access key for later browser unlock.",
                     {"200": _html_response("Submission receipt"), "400": _html_response("Validation errors"), "409": _html_response("Submission window closed")},
                     request_body=_form({"problem_statement": {"type": "string"}, "solution_summary": {"type": "string"}, "video_link": {"type": "string"}, "can_be_patented": {"type": "string"}, "is_patented": {"type": "string"}, "production_readiness": {"type": "string"}, "officer_sponsor": {"type": "string"}, "content_format": {"type": "string"}, "content": {"type": "string"}, "owner_name": {"type": "string"}, "owner_employee_id": {"type": "string"}, "edit_pin": {"type": "string", "format": "password", "minLength": 8}, "office_location": {"type": "string"}, "country": {"type": "string"}, "team_name": {"type": "string"}, "category_ids": {"type": "array", "items": {"type": "string"}}}),
                 ),
@@ -118,7 +118,7 @@ def build_openapi():
                 "post": _op("Public", "Like/dislike/neutral reaction", "Stores a visitor reaction and updates visible reaction counts.", {"302": _redirect(), "404": _html_response("Idea not found")}, [idea_id], _form({"reaction": {"type": "string", "enum": ["like", "dislike", "neutral"]}}, ["reaction"]))
             },
             "/ideas/{idea_id}/edit": {
-                "get": _op("Public", "Render edit idea form", "Shows the edit form when the submitter browser session is active. If the session expired, returns an unlock form that requires submitter Employee ID plus private edit passcode.", {"200": _html_response(), "403": _html_response("Unlock form or invalid edit proof"), "409": _html_response("Editing locked")}, [idea_id]),
+                "get": _op("Public", "Render edit idea form", "Shows the edit form when the submitter browser session is active. If the session expired, returns an unlock form that requires submitter Employee ID plus private edit access key.", {"200": _html_response(), "403": _html_response("Unlock form or invalid edit proof"), "409": _html_response("Editing locked")}, [idea_id]),
                 "post": _op("Public", "Edit existing idea", "Updates idea fields before jury release locks editing. If the browser session expired, posting owner_employee_id plus edit_pin restores the session before editing.", {"302": _redirect(), "400": _html_response("Validation errors"), "403": _html_response("Invalid edit proof"), "409": _html_response("Editing locked")}, [idea_id]),
             },
             "/auth/login": {
@@ -169,10 +169,10 @@ def build_openapi():
                 "get": _op("Core", "Final winners", "Shows jury-lead-confirmed winners grouped by category, sorted by score, with lead comments.", {"200": _html_response(), "403": _html_response("Core access required")}, security=core_security)
             },
             "/core/ideas/{idea_id}": {
-                "get": _op("Core", "Core idea edit support", "Core-only page showing the saved edit token for an idea and whether editing is locked. The edit passcode remains hashed and is not viewable.", {"200": _html_response(), "404": _html_response("Idea not found")}, [idea_id], security=core_security)
+                "get": _op("Core", "Core idea edit support", "Core-only page showing the saved edit token for an idea and whether editing is locked. The edit access key remains hashed and is not viewable.", {"200": _html_response(), "404": _html_response("Idea not found")}, [idea_id], security=core_security)
             },
             "/core/ideas/{idea_id}/edit-access": {
-                "post": _op("Core", "Reset idea edit passcode", "Core-only action that sets a new temporary edit passcode hash for a submitter who forgot their private passcode. Public unlock uses Employee ID plus this passcode.", {"302": _redirect(), "404": _html_response("Idea not found")}, [idea_id], _form({"edit_pin": {"type": "string", "format": "password", "minLength": 8}}, ["edit_pin"]), core_security)
+                "post": _op("Core", "Reset idea edit access key", "Core-only action that sets a new temporary edit access key hash for a submitter who forgot their private key. Public unlock uses Employee ID plus this key.", {"302": _redirect(), "404": _html_response("Idea not found")}, [idea_id], _form({"edit_pin": {"type": "string", "format": "password", "minLength": 8}}, ["edit_pin"]), core_security)
             },
             "/core/cycles": {
                 "get": _op("Core", "Manage cycles", "Shows cycle setup, six-month naming, start/end window, and active cycle controls.", {"200": _html_response()}, security=core_security),
@@ -289,7 +289,7 @@ def build_openapi():
                         "category_ids": {"type": "array", "minItems": 1, "maxItems": 2, "items": {"type": "string"}},
                         "owner_name": {"type": "string"},
                         "owner_employee_id": {"type": "string"},
-                        "edit_pin": {"type": "string", "format": "password", "minLength": 8, "description": "Private edit passcode for session recovery with submitter Employee ID. Stored only as a hash."},
+                        "edit_pin": {"type": "string", "format": "password", "minLength": 8, "description": "Private edit access key for session recovery with submitter Employee ID. Stored only as a hash."},
                         "office_location": {"type": "string", "enum": ["Mumbai", "Bangalore"]},
                         "country": {"type": "string", "default": "India"},
                     },

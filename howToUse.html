@@ -100,7 +100,7 @@
         <div class="grid">
             <div class="card"><strong>No login required</strong><span>Users can browse, search, view, react, comment, and submit ideas without a password.</span></div>
             <div class="card"><strong>Cycle aware</strong><span>Submissions are accepted only during the cycle start/expiry window set by core committee. All categories in a cycle share the same deadline.</span></div>
-            <div class="card"><strong>Edit protection</strong><span>Only the submitter with the submitter Employee ID plus private passcode/session can edit an idea. Edits remain open after due date until core releases to jury.</span></div>
+            <div class="card"><strong>Edit protection</strong><span>Only the submitter with the submitter Employee ID plus private edit access key/session can edit an idea. Edits remain open after due date until core releases to jury.</span></div>
         </div>
         <h3>User Features</h3>
         <ul>
@@ -113,7 +113,7 @@
             <li>Open image previews from the idea detail page.</li>
             <li>Add public feedback comments with like/neutral/dislike signal.</li>
             <li>React directly with like/neutral/dislike buttons. Counts show on both gallery and detail pages.</li>
-            <li>The edit passcode field is blank by default, so the submitter creates their own private passcode. If the browser session expires, editing unlocks with Employee ID plus that passcode.</li>
+            <li>The edit access key field is blank by default, so the submitter creates their own private key. If the browser session expires, editing unlocks with Employee ID plus that key.</li>
         </ul>
     </section>
 
@@ -268,9 +268,9 @@
             <li>Jury leads and jury members can click Forgot password; the request is stored for core review without revealing account existence on the login screen.</li>
             <li>Category jury members can share one password, while the category jury lead has a separate password. Only hashes are stored.</li>
             <li>Public users do not need accounts.</li>
-            <li>Idea edits require submitter Employee ID and edit passcode/session. The edit token remains an internal/API recovery value.</li>
-            <li><code>GirtDemo123!</code> is only the seeded demo password for protected core accounts, not an idea edit passcode.</li>
-            <li>Core can open an idea from the core dashboard/archive to view its internal edit token and reset the private edit passcode for the submitter.</li>
+            <li>Idea edits require submitter Employee ID and edit access key/session. The edit token remains an internal/API recovery value.</li>
+            <li><code>GirtDemo123!</code> is only the seeded demo password for protected core accounts, not an idea edit access key.</li>
+            <li>Core can open an idea from the core dashboard/archive to view its internal edit token and reset the private edit access key for the submitter.</li>
             <li>Protected URL visibility is maintained in <code>app/access_config.py</code>.</li>
             <li>Core/jury accounts are stored in MongoDB collection <code>users</code>.</li>
             <li>Ideas are stored in <code>ideas</code>; jury scores are stored in <code>evaluations</code>; public reactions are stored in <code>idea_reactions</code>.</li>

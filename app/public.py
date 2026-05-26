@@ -137,7 +137,7 @@ def create():
             collection("ideas").update_one({"_id": idea["_id"]}, {"$set": {"submitter_visitor_id": submitter_id, "updated_at": utcnow()}})
             idea["submitter_visitor_id"] = submitter_id
             session[f"edit:{idea['idea_id']}"] = idea["edit_token"]
-            flash(f"Idea {idea['idea_id']} submitted. Keep your Employee ID and private edit passcode to edit it later.", "success")
+            flash(f"Idea {idea['idea_id']} submitted. Keep your Employee ID and private edit access key to edit it later.", "success")
             return redirect(url_for("public.idea_detail", idea_id=idea["idea_id"]))
         for error in errors:
             flash(error, "error")
@@ -229,7 +229,7 @@ def edit(idea_id):
             flash("Edit access restored for this browser session.", "success")
             return redirect(url_for("public.edit", idea_id=idea_id))
         if request.method == "POST" and request.form.get("unlock_edit"):
-            flash("Employee ID or private passcode did not match this idea.", "error")
+            flash("Employee ID or private edit access key did not match this idea.", "error")
         return render_template("public/edit_unlock.html", idea=idea), 403
     if cycle.get("jury_released_at") or cycle.get("archived"):
         flash("This idea is locked because it has been released to jury or archived.", "error")

@@ -20,19 +20,19 @@
             <dt>Edit token</dt>
             <dd>
                 <code class="token-code">{{ idea.edit_token }}</code>
-                <small class="muted">Internal recovery/API token. Public edit unlock uses submitter Employee ID plus private passcode.</small>
+                <small class="muted">Internal recovery/API token. Public edit unlock uses submitter Employee ID plus private access key.</small>
             </dd>
-            <dt>Edit passcode</dt><dd>Stored as a one-way hash. Not viewable.</dd>
+            <dt>Edit access key</dt><dd>Stored as a one-way hash. Not viewable.</dd>
             <dt>Edit status</dt><dd>{{ "Locked after jury release/archive" if cycle and (cycle.jury_released_at or cycle.archived) else "Open before jury release" }}</dd>
         </dl>
         <form class="form-stack" method="post" action="{{ url_for('core.reset_idea_edit_access', idea_id=idea.idea_id) }}">
-            <label>New temporary edit passcode
+            <label>New temporary edit access key
                 <span class="password-control">
                     <input type="password" name="edit_pin" minlength="8" required>
                     <button class="icon-button password-toggle" type="button" data-password-toggle aria-label="Show password"><i data-lucide="eye"></i></button>
                 </span>
             </label>
-            <button class="button" type="submit"><i data-lucide="key-round"></i>Reset passcode</button>
+            <button class="button" type="submit"><i data-lucide="key-round"></i>Reset access key</button>
         </form>
     </article>
     <article class="panel prose">
@@ -43,7 +43,7 @@
                 {% if categories.get(category_id) %}<span class="tag">{{ categories[category_id].name }}</span>{% endif %}
             {% endfor %}
         </div>
-        <p class="muted">Share the temporary passcode only through an approved internal channel. Public edit unlock uses submitter Employee ID plus private passcode.</p>
+        <p class="muted">Share the temporary access key only through an approved internal channel. Public edit unlock uses submitter Employee ID plus private access key.</p>
     </article>
 </section>
 {% endblock %}

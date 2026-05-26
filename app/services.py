@@ -209,7 +209,7 @@ def create_idea(form, cycle, categories, attachments):
     errors = validate_idea(payload)
     edit_pin = form.get("edit_pin", "").strip()
     if len(edit_pin) < 8:
-        errors.append("Create an edit passcode of at least eight characters.")
+        errors.append("Create an edit access key of at least eight characters.")
     if errors:
         return None, errors
     payload["edit_pin_hash"] = generate_password_hash(edit_pin)

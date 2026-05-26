@@ -141,13 +141,13 @@ def reset_idea_edit_access(idea_id):
         abort(404, "Idea not found.")
     edit_pin = request.form.get("edit_pin", "").strip()
     if len(edit_pin) < 8:
-        flash("Temporary edit passcode must be at least eight characters.", "error")
+        flash("Temporary edit access key must be at least eight characters.", "error")
     else:
         collection("ideas").update_one(
             {"_id": idea["_id"]},
             {"$set": {"edit_pin_hash": generate_password_hash(edit_pin), "updated_at": utcnow()}},
         )
-        flash("Temporary edit passcode updated. Share the temporary passcode only with the verified submitter.", "success")
+        flash("Temporary edit access key updated. Share the temporary access key only with the verified submitter.", "success")
     return redirect(url_for("core.idea_support", idea_id=idea_id))
 
 
