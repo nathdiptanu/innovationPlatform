@@ -187,6 +187,9 @@ Optional dual-write is available in `config.ini` with `dual_write_mongo = yes`. 
 - Usernames are normalized to lowercase in the login flow and are used for protected access config and jury contributor self-review checks.
 - Passwords are **not** stored as plaintext. `app/services.py` uses Werkzeug password hashing when a core operator creates an account or when the bootstrap/seed scripts create demo accounts.
 - Login checks the password hash in `app/auth.py` and stores the Mongo user ID in the Flask session after authentication.
+- Core can reset a single account password from `/core/users`.
+- Core can reset category passwords from `/core/categories`: one password for the assigned jury lead and one shared plaintext password for all assigned jury members in that category. Even when jury members share the same login password, each account stores only a generated hash.
+- Jury leads and jury members can click `/auth/forgot-password`. The app records a generic reset request for core review without revealing whether a username exists.
 - Public entrant submission does not require a portal login; contributors still enter FTE names and usernames on the idea form.
 - Do not put usernames in URLs to grant access. A URL such as `/jury/?username=name` would be spoofable. Use login + `app/access_config.py` + category assignment instead.
 
@@ -203,6 +206,7 @@ Direct database meaning:
 - Add: the Accounts screen inserts a `users` document with `username`, `name`, `password_hash`, `role`, and `active`.
 - Remove: the Accounts screen performs a soft delete by setting `active: false`; it does not erase history.
 - Jury assignment is stored on each `categories` document in `jury_member_ids` and `jury_lead_ids`.
+- Forgot-password requests are stored in `password_reset_requests` with `open` or `resolved` status.
 
 ## Main URLs
 

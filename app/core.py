@@ -194,7 +194,19 @@ def users():
             create_user(username, name, password, role)
             flash("Portal account added.", "success")
             return redirect(url_for("core.users"))
-    return render_template("core/users.html", users=list(collection("users").find({"active": True}).sort("name", 1)))
+    reset_requests = list(collection("password_reset_requests").find({"status": "open"}).sort("created_at", -1))
+    return render_template("core/users.html", users=list(collection("users").find({"active": True}).sort("name", 1)), reset_requests=reset_requests)
+
+
+@core_bp.post("/password-requests/<request_id>/resolve")
+@require_screen("core")
+def resolve_password_request(request_id):
+    collection("password_reset_requests").update_one(
+        {"_id": ObjectId(request_id)},
+        {"$set": {"status": "resolved", "resolved_at": utcnow(), "updated_at": utcnow()}},
+    )
+    flash("Password reset request marked resolved.", "success")
+    return redirect(url_for("core.users"))
 
 
 @core_bp.post("/categories/<category_id>/panel/users")
@@ -395,6 +407,49 @@ def add_panel_user(category_id):
         {"$set": {field: sorted(ids), "updated_at": utcnow()}},
     )
     flash("Panel assignment added.", "success")
+    return redirect(url_for("core.categories", cycle_id=category["cycle_id"]))
+
+
+@core_bp.post("/categories/<category_id>/passwords")
+@require_screen("core")
+def reset_category_passwords(category_id):
+    category = collection("categories").find_one({"_id": ObjectId(category_id)})
+    if not category:
+        abort(404, "Category not found.")
+    lead_password = request.form.get("jury_lead_password", "")
+    member_password = request.form.get("jury_member_password", "")
+    if not lead_password and not member_password:
+        flash("Enter a jury lead password or a jury member password to update.", "error")
+        return redirect(url_for("core.categories", cycle_id=category["cycle_id"]))
+    if lead_password and len(lead_password) < 8:
+        flash("Jury lead password must be at least eight characters.", "error")
+        return redirect(url_for("core.categories", cycle_id=category["cycle_id"]))
+    if member_password and len(member_password) < 8:
+        flash("Jury member password must be at least eight characters.", "error")
+        return redirect(url_for("core.categories", cycle_id=category["cycle_id"]))
+
+    changed_user_ids = []
+    if lead_password:
+        for user_id in category.get("jury_lead_ids", []):
+            collection("users").update_one(
+                {"_id": ObjectId(user_id)},
+                {"$set": {"password_hash": generate_password_hash(lead_password), "password_updated_at": utcnow(), "updated_at": utcnow()}},
+            )
+            changed_user_ids.append(user_id)
+    if member_password:
+        for user_id in category.get("jury_member_ids", []):
+            collection("users").update_one(
+                {"_id": ObjectId(user_id)},
+                {"$set": {"password_hash": generate_password_hash(member_password), "password_updated_at": utcnow(), "updated_at": utcnow()}},
+            )
+            changed_user_ids.append(user_id)
+
+    if changed_user_ids:
+        collection("password_reset_requests").update_many(
+            {"user_id": {"$in": changed_user_ids}, "status": "open"},
+            {"$set": {"status": "resolved", "resolved_at": utcnow(), "updated_at": utcnow()}},
+        )
+    flash(f"Updated passwords for {len(changed_user_ids)} assigned jury account(s). Passwords are stored as hashes only.", "success")
     return redirect(url_for("core.categories", cycle_id=category["cycle_id"]))
 
 

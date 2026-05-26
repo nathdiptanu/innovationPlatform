@@ -261,6 +261,9 @@
         <ul>
             <li>Portal passwords are stored as hashes in MongoDB, not plaintext.</li>
             <li>In SQLite demo mode, the same logical collections are persisted as JSON documents inside <code>data/grit.sqlite3</code>.</li>
+            <li>Core can reset individual passwords in Accounts and category-level jury passwords in Categories.</li>
+            <li>Jury leads and jury members can click Forgot password; the request is stored for core review without revealing account existence on the login screen.</li>
+            <li>Category jury members can share one password, while the category jury lead has a separate password. Only hashes are stored.</li>
             <li>Public users do not need accounts.</li>
             <li>Protected URL visibility is maintained in <code>app/access_config.py</code>.</li>
             <li>Core/jury accounts are stored in MongoDB collection <code>users</code>.</li>

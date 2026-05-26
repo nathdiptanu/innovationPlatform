@@ -3,22 +3,36 @@
 {% block content %}
 {% include "core/tabs.html" %}
 <section class="split-layout">
-    <form class="panel form-stack" method="post">
-        <p class="eyebrow">Entitlements</p>
-        <h1>Add portal account</h1>
-        <p class="muted">Create core, jury lead, and jury member logins here. After adding a jury account, assign it to the right category in Categories and jury panels.</p>
-        <label>Name<input name="name" required></label>
-        <label>Username<input name="username" required></label>
-        <label>Password<input type="password" name="password" minlength="8" required></label>
-        <label>Role
-            <select name="role">
-                <option value="core">Core member</option>
-                <option value="jury_lead">Jury lead</option>
-                <option value="jury">Jury member</option>
-            </select>
-        </label>
-        <button class="button" type="submit"><i data-lucide="user-plus"></i>Add account</button>
-    </form>
+    <aside class="form-stack">
+        <form class="panel form-stack" method="post">
+            <p class="eyebrow">Entitlements</p>
+            <h1>Add portal account</h1>
+            <p class="muted">Create core, jury lead, and jury member logins here. Passwords are stored as one-way hashes only.</p>
+            <label>Name<input name="name" required></label>
+            <label>Username<input name="username" required></label>
+            <label>Password<input type="password" name="password" minlength="8" required></label>
+            <label>Role
+                <select name="role">
+                    <option value="core">Core member</option>
+                    <option value="jury_lead">Jury lead</option>
+                    <option value="jury">Jury member</option>
+                </select>
+            </label>
+            <button class="button" type="submit"><i data-lucide="user-plus"></i>Add account</button>
+        </form>
+        <section class="panel form-stack">
+            <p class="eyebrow">Forgot password</p>
+            <h2>Open reset requests</h2>
+            {% for item in reset_requests %}
+                <form class="assignment-chip wide" method="post" action="{{ url_for('core.resolve_password_request', request_id=item._id) }}">
+                    <span>{{ item.username }}</span><small>{{ item.role|replace("_", " ")|title }}</small>
+                    <button class="text-button" type="submit">Mark resolved</button>
+                </form>
+            {% else %}
+                <p class="muted">No open jury password reset requests.</p>
+            {% endfor %}
+        </section>
+    </aside>
     <section class="panel">
         <div class="section-head"><div><p class="eyebrow">Accounts</p><h2>Active users</h2></div></div>
         <div class="table-shell">

@@ -69,7 +69,7 @@ def build_openapi():
         "openapi": "3.0.3",
         "info": {
             "title": "GRIT Competition API",
-            "version": "1.1.0",
+            "version": "1.2.0",
             "description": (
                 "Complete API and portal route contract for Grassroot Innovation In Technology. "
                 "JSON endpoints are under /api. HTML form endpoints are also listed because they "
@@ -124,6 +124,10 @@ def build_openapi():
             "/auth/login": {
                 "get": _op("Auth", "Render login page", "Shows protected portal login for core committee and jury users.", {"200": _html_response()}),
                 "post": _op("Auth", "Create session", "Validates username/password from the users collection and starts a Flask session.", {"302": _redirect("Redirects to the user's allowed portal."), "200": _html_response("Login failed and page re-rendered")}, request_body=_form({"username": {"type": "string"}, "password": {"type": "string", "format": "password"}}, ["username", "password"])),
+            },
+            "/auth/forgot-password": {
+                "get": _op("Auth", "Render forgot password page", "Shows the jury password reset request form.", {"200": _html_response()}),
+                "post": _op("Auth", "Submit password reset request", "Records an open reset request for active jury/jury lead accounts without revealing whether the username exists.", {"302": _redirect("Redirects back to login with a generic success message.")}, request_body=_form({"username": {"type": "string"}}, ["username"])),
             },
             "/auth/logout": {
                 "get": _op("Auth", "Clear session", "Logs out the current protected portal user.", {"302": _redirect("Redirects to public home.")}, security=cookie_security)
@@ -189,6 +193,9 @@ def build_openapi():
             "/core/users/{user_id}/delete": {
                 "post": _op("Core", "Disable portal account", "Soft-disables an account and removes it from all category jury assignments.", {"302": _redirect()}, [user_id], _form({"next": {"type": "string"}}), core_security)
             },
+            "/core/password-requests/{request_id}/resolve": {
+                "post": _op("Core", "Resolve password reset request", "Marks a jury forgot-password request as resolved after core resets or handles the account password.", {"302": _redirect()}, [_path_param("request_id", "Password reset request ID.")], security=core_security)
+            },
             "/core/categories": {
                 "get": _op("Core", "Manage categories and panels", "Shows category settings, winner target, panel warnings, add/remove jury lead/member controls, and core committee shortcuts.", {"200": _html_response()}, [_query_param("cycle_id", "Optional cycle ID to manage.")], security=core_security),
                 "post": _op("Core", "Create category", "Adds a category to the selected cycle with a winner target.", {"302": _redirect()}, request_body=_form({"name": {"type": "string"}, "top_ideas_required": {"type": "integer", "minimum": 1}}, ["name", "top_ideas_required"]), security=core_security),
@@ -204,6 +211,9 @@ def build_openapi():
             },
             "/core/categories/{category_id}/panel/add": {
                 "post": _op("Core", "Assign existing jury account", "Adds an existing jury lead or jury member account to a category panel while enforcing one lead and at most five members.", {"302": _redirect()}, [category_id], _form({"user_id": {"type": "string"}, "panel_role": {"type": "string", "enum": ["lead", "member"]}}, ["user_id", "panel_role"]), core_security)
+            },
+            "/core/categories/{category_id}/passwords": {
+                "post": _op("Core", "Reset category jury passwords", "Core-only action to reset the assigned lead password and/or all assigned jury member passwords for one category. Passwords are hashed before storage.", {"302": _redirect()}, [category_id], _form({"jury_lead_password": {"type": "string", "format": "password"}, "jury_member_password": {"type": "string", "format": "password"}}), core_security)
             },
             "/core/categories/{category_id}/panel/remove": {
                 "post": _op("Core", "Remove jury assignment", "Removes one assigned jury lead or jury member from a category panel. The UI double-confirms this action.", {"302": _redirect()}, [category_id], _form({"user_id": {"type": "string"}, "panel_role": {"type": "string", "enum": ["lead", "member"]}}, ["user_id", "panel_role"]), core_security)

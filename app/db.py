@@ -12,6 +12,7 @@ COLLECTIONS = {
     "evaluations": "evaluations",
     "idea_reactions": "idea_reactions",
     "audit_events": "audit_events",
+    "password_reset_requests": "password_reset_requests",
 }
 
 
@@ -109,6 +110,8 @@ def ensure_indexes():
     collection("evaluations").create_index([("category_id", ASCENDING), ("juror_id", ASCENDING)])
     collection("idea_reactions").create_index([("idea_id", ASCENDING), ("visitor_id", ASCENDING)], unique=True)
     collection("idea_reactions").create_index([("idea_id", ASCENDING), ("sentiment", ASCENDING)])
+    collection("password_reset_requests").create_index([("status", ASCENDING), ("created_at", DESCENDING)])
+    collection("password_reset_requests").create_index("username")
 
 
 def ensure_collections():

@@ -453,6 +453,11 @@ tbody tr { min-height: 76px; }
     align-items: end;
 }
 .existing-panel-add select { min-width: 0; }
+.password-reset-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+    align-items: end;
+}
+.password-reset-panel small { grid-column: 1 / -1; }
 .pagination { display: flex; justify-content: space-between; align-items: center; gap: .8rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--line); }
 .pagination a { font-weight: 800; color: var(--brand); }
 .flash-stack { display: grid; gap: .55rem; margin-bottom: 1rem; }
@@ -527,7 +532,7 @@ output { display: inline-grid; place-items: center; width: 38px; height: 38px; m
     .topbar { align-items: start; flex-direction: column; }
     .topbar nav { justify-content: start; }
     .field-grid, .choice-grid, .assignment-grid, .contributor-row, .existing-panel-actions { grid-template-columns: 1fr; }
-    .quick-add-panel { grid-template-columns: 1fr; }
+    .quick-add-panel, .password-reset-panel { grid-template-columns: 1fr; }
     .idea-row, .detail-head { grid-template-columns: 1fr; display: grid; }
     .searchbar { min-width: 100%; }
     .section-head { align-items: start; flex-direction: column; }

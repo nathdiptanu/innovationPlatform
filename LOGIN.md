@@ -145,6 +145,9 @@ Each category has 1 jury lead and 4 jury members. Jury leads can see same-catego
 - Archived cycles are removed from active user, core, jury, and jury lead dashboards, and remain available from core archive.
 - Core and jury login accounts live in MongoDB collection `users`.
 - Passwords are stored as hashes, not plaintext.
+- Jury leads and jury members can use `/auth/forgot-password`; core sees open reset requests on `/core/users`.
+- Core can change an individual password on `/core/users`, or reset a category lead/member password set on `/core/categories`.
+- For a category, all assigned jury members may share one password, while the assigned jury lead can have a different password. The app still stores only password hashes.
 - Protected URL access is allowed in `app/access_config.py`.
 - Category-level jury access is controlled in `/core/categories`.
 - Jury lead/member add/remove is available in `/core/categories` with visible Add selected, Add to panel, and Remove controls.

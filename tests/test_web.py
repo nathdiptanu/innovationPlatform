@@ -13,6 +13,13 @@ class FlaskIntegrationTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Core and jury access", response.data)
+        self.assertIn(b"Forgot password?", response.data)
+
+    def test_forgot_password_page_renders(self):
+        response = self.client.get("/auth/forgot-password")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Request jury password reset", response.data)
 
     def test_user_portal_url_renders_public_workspace(self):
         rules = {rule.rule for rule in self.app.url_map.iter_rules()}

@@ -4,6 +4,7 @@ from werkzeug.security import check_password_hash
 
 from .db import collection
 from .entitlements import home_for_user, load_current_user
+from .utils import utcnow
 
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
@@ -26,6 +27,27 @@ def login():
             return redirect(request.args.get("next") or home_for_user(user))
         flash("Login failed. Check the username and password.", "error")
     return render_template("auth/login.html")
+
+
+@auth_bp.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+    if request.method == "POST":
+        username = request.form.get("username", "").strip().lower()
+        user = collection("users").find_one({"username": username, "active": True}) if username else None
+        if user and user.get("role") in {"jury", "jury_lead"}:
+            collection("password_reset_requests").insert_one(
+                {
+                    "username": username,
+                    "user_id": str(user["_id"]),
+                    "role": user["role"],
+                    "status": "open",
+                    "created_at": utcnow(),
+                    "updated_at": utcnow(),
+                }
+            )
+        flash("If this is an active jury account, a password reset request has been sent to the core committee.", "success")
+        return redirect(url_for("auth.login"))
+    return render_template("auth/forgot_password.html")
 
 
 @auth_bp.get("/logout")
