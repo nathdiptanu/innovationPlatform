@@ -387,6 +387,16 @@ tbody tr { min-height: 76px; }
     justify-content: center;
 }
 .compact-password { min-width: 220px; }
+.token-code {
+    display: inline-block;
+    max-width: 100%;
+    padding: .3rem .45rem;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: #f4f9ff;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
 .stretch input:first-child { flex: 1 1 220px; }
 .category-layout { grid-template-columns: 320px minmax(0, 1fr); }
 .category-editor { display: grid; gap: .8rem; }

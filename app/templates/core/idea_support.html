@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Core Idea Support | {{ idea.idea_id }}{% endblock %}
+{% block content %}
+{% include "core/tabs.html" %}
+<section class="section-head dashboard-head">
+    <div>
+        <p class="eyebrow">Core edit support</p>
+        <h1>{{ idea.idea_id }}</h1>
+        <p class="muted">Use this only when the submitter needs help restoring edit access.</p>
+    </div>
+    <a class="button ghost" href="{{ url_for('core.dashboard', cycle_id=cycle._id) if cycle else url_for('core.dashboard') }}"><i data-lucide="arrow-left"></i>Dashboard</a>
+</section>
+<section class="detail-grid">
+    <article class="panel metadata">
+        <h2>Submitter proof</h2>
+        <dl>
+            <dt>Idea ID</dt><dd>{{ idea.idea_id }}</dd>
+            <dt>Submitter</dt><dd>{{ idea.owner_name }} | {{ idea.owner_employee_id }}</dd>
+            <dt>Cycle</dt><dd>{{ cycle.name if cycle else "Unavailable" }}</dd>
+            <dt>Edit token</dt><dd><code class="token-code">{{ idea.edit_token }}</code></dd>
+            <dt>Edit passcode</dt><dd>Stored as a one-way hash. Not viewable.</dd>
+            <dt>Edit status</dt><dd>{{ "Locked after jury release/archive" if cycle and (cycle.jury_released_at or cycle.archived) else "Open before jury release" }}</dd>
+        </dl>
+        <form class="form-stack" method="post" action="{{ url_for('core.reset_idea_edit_access', idea_id=idea.idea_id) }}">
+            <label>New temporary edit passcode
+                <span class="password-control">
+                    <input type="password" name="edit_pin" minlength="8" required>
+                    <button class="icon-button password-toggle" type="button" data-password-toggle aria-label="Show password"><i data-lucide="eye"></i></button>
+                </span>
+            </label>
+            <button class="button" type="submit"><i data-lucide="key-round"></i>Reset passcode</button>
+        </form>
+    </article>
+    <article class="panel prose">
+        <h2>{{ idea.problem_statement }}</h2>
+        <p>{{ idea.solution_summary }}</p>
+        <div class="tag-stack">
+            {% for category_id in idea.category_ids %}
+                {% if categories.get(category_id) %}<span class="tag">{{ categories[category_id].name }}</span>{% endif %}
+            {% endfor %}
+        </div>
+        <p class="muted">Share the edit token and temporary passcode only through an approved internal channel. The passcode should be changed again by core if it is accidentally exposed.</p>
+    </article>
+</section>
+{% endblock %}

@@ -117,6 +117,40 @@ def dashboard():
     )
 
 
+@core_bp.get("/ideas/<idea_id>")
+@require_screen("core")
+def idea_support(idea_id):
+    idea = collection("ideas").find_one({"idea_id": idea_id})
+    if not idea:
+        abort(404, "Idea not found.")
+    cycle = collection("cycles").find_one({"_id": ObjectId(idea["cycle_id"])})
+    categories = categories_for_cycle(cycle["_id"], active_only=False) if cycle else []
+    return render_template(
+        "core/idea_support.html",
+        idea=idea,
+        cycle=cycle,
+        categories={str(category["_id"]): category for category in categories},
+    )
+
+
+@core_bp.post("/ideas/<idea_id>/edit-access")
+@require_screen("core")
+def reset_idea_edit_access(idea_id):
+    idea = collection("ideas").find_one({"idea_id": idea_id})
+    if not idea:
+        abort(404, "Idea not found.")
+    edit_pin = request.form.get("edit_pin", "").strip()
+    if len(edit_pin) < 8:
+        flash("Temporary edit passcode must be at least eight characters.", "error")
+    else:
+        collection("ideas").update_one(
+            {"_id": idea["_id"]},
+            {"$set": {"edit_pin_hash": generate_password_hash(edit_pin), "updated_at": utcnow()}},
+        )
+        flash("Temporary edit passcode updated. Share the edit token and temporary passcode only with the submitter.", "success")
+    return redirect(url_for("core.idea_support", idea_id=idea_id))
+
+
 @core_bp.get("/final-winners")
 @require_screen("core")
 def final_winners():

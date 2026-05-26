@@ -168,6 +168,12 @@ def build_openapi():
             "/core/final-winners": {
                 "get": _op("Core", "Final winners", "Shows jury-lead-confirmed winners grouped by category, sorted by score, with lead comments.", {"200": _html_response(), "403": _html_response("Core access required")}, security=core_security)
             },
+            "/core/ideas/{idea_id}": {
+                "get": _op("Core", "Core idea edit support", "Core-only page showing the saved edit token for an idea and whether editing is locked. The edit passcode remains hashed and is not viewable.", {"200": _html_response(), "404": _html_response("Idea not found")}, [idea_id], security=core_security)
+            },
+            "/core/ideas/{idea_id}/edit-access": {
+                "post": _op("Core", "Reset idea edit passcode", "Core-only action that sets a new temporary edit passcode hash for a submitter who forgot their private passcode.", {"302": _redirect(), "404": _html_response("Idea not found")}, [idea_id], _form({"edit_pin": {"type": "string", "format": "password", "minLength": 8}}, ["edit_pin"]), core_security)
+            },
             "/core/cycles": {
                 "get": _op("Core", "Manage cycles", "Shows cycle setup, six-month naming, start/end window, and active cycle controls.", {"200": _html_response()}, security=core_security),
                 "post": _op("Core", "Create cycle", "Creates a new GRIT cycle with shared start/end dates across all categories.", {"302": _redirect()}, request_body=_form({"cycle_number": {"type": "integer", "enum": [1, 2]}, "year": {"type": "integer"}, "start_at": {"type": "string"}, "end_at": {"type": "string"}}), security=core_security),

@@ -291,6 +291,7 @@ Current implementation covers:
 - Uploaded thumbnails open a larger image preview when clicked from an idea detail page.
 - Ideas receive a unique `idea_id` and private `edit_token`. Seeded demo ideas use IDs like `GRIT-Cycle1-2026-045`.
 - Only the submitter can edit by using the same browser session, or by unlocking edit access with the private edit token plus the private edit passcode. Employee ID is not used as edit proof.
+- Core committee can open `/core/ideas/<idea_id>` from the dashboard/archive to see the saved edit token and reset the private edit passcode. The existing passcode is never shown because only its hash is stored.
 - The content editor supports plain text or sanitized HTML with a browser preview.
 - Mongo document size is checked before insert/update and stops content near the BSON document ceiling.
 

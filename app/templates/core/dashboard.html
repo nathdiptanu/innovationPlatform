@@ -111,7 +111,7 @@
                 <tbody>
                 {% for idea in ideas %}
                     <tr>
-                        <td class="idea-cell"><a href="{{ url_for('public.idea_detail', idea_id=idea.idea_id) }}">{{ idea.idea_id }}</a><span class="clamp-text">{{ idea.problem_statement|truncate(320, True) }}</span></td>
+                        <td class="idea-cell"><a href="{{ url_for('core.idea_support', idea_id=idea.idea_id) }}">{{ idea.idea_id }}</a><span class="clamp-text">{{ idea.problem_statement|truncate(320, True) }}</span></td>
                         <td>{{ idea.owner_name }}<span>{{ idea.office_location }} | {{ "Patented" if idea.is_patented else "Patent candidate" if idea.can_be_patented else "Not marked" }}</span></td>
                         <td>{{ idea.average_score }}<span>{{ idea.score_count }} scores</span></td>
                         <td>{{ idea.updated_at.strftime("%d %b %H:%M") }}</td>
@@ -156,7 +156,7 @@
                 <tbody>
                 {% for idea in confirmed_ideas %}
                     <tr>
-                        <td class="idea-cell"><a href="{{ url_for('public.idea_detail', idea_id=idea.idea_id) }}">{{ idea.idea_id }}</a><span class="clamp-text">{{ idea.problem_statement|truncate(320, True) }}</span></td>
+                        <td class="idea-cell"><a href="{{ url_for('core.idea_support', idea_id=idea.idea_id) }}">{{ idea.idea_id }}</a><span class="clamp-text">{{ idea.problem_statement|truncate(320, True) }}</span></td>
                         <td>{{ idea.owner_name }}<span>{{ idea.owner_employee_id }}</span></td>
                         <td>{{ idea.team_name or "Individual / named contributors" }}</td>
                         <td>{{ idea.officer_sponsor }}</td>

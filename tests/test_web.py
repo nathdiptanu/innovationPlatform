@@ -53,6 +53,19 @@ class FlaskIntegrationTests(unittest.TestCase):
         )
         self.assertEqual(unlocked.status_code, 302)
 
+    def test_core_can_view_edit_token_support_page(self):
+        with self.app.app_context():
+            idea = collection("ideas").find_one({"edit_token": {"$ne": None}})
+        if not idea:
+            self.skipTest("No seeded idea with edit token available.")
+
+        self.client.post("/auth/login", data={"username": "core.demo", "password": "GirtDemo123!"})
+        response = self.client.get(f"/core/ideas/{idea['idea_id']}")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(idea["edit_token"].encode(), response.data)
+        self.assertIn(b"Stored as a one-way hash", response.data)
+
 
 if __name__ == "__main__":
     unittest.main()

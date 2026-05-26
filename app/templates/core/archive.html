@@ -48,7 +48,7 @@
             <tbody>
             {% for idea in ideas %}
                 <tr>
-                    <td>{{ idea.idea_id }}</td>
+                    <td><a href="{{ url_for('core.idea_support', idea_id=idea.idea_id) }}">{{ idea.idea_id }}</a></td>
                     <td class="idea-cell"><span class="clamp-text">{{ idea.problem_statement|truncate(320, True) }}</span></td>
                     <td>{{ idea.owner_name }}<span>{{ idea.owner_employee_id }}</span></td>
                     <td>{{ idea.office_location }}</td>
