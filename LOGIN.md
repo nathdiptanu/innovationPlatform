@@ -22,6 +22,8 @@ GRIT is **Grassroot Innovation In Technology**.
 
 All seeded core committee accounts use password `GirtDemo123!`.
 
+This is only the seeded demo login password for core accounts. It is not used as a default idea edit passcode; the idea submission passcode field is blank, and each submitter creates a private passcode for that idea.
+
 | Name | Username | Password |
 | --- | --- | --- |
 | Soma Chakraborty | `core.demo` | `GirtDemo123!` |
@@ -141,6 +143,7 @@ Each category has 1 jury lead and 4 jury members. Jury leads can see same-catego
 - All categories in a cycle share the same start and expiry date from `/core/cycles`.
 - Public users can like/neutral/dislike an idea from the detail page. Counts are visible on both the gallery and detail page.
 - Only the submitter with the private edit token and edit passcode/session can edit an idea before cycle expiry. Employee ID is not used as edit proof because it may be discoverable internally.
+- The edit token is generated at submission time and appears in the submit success edit/detail URL. If a submitter loses it, a core committee member can open the idea support page from the core dashboard/archive and read the token.
 - Core committee can open an idea from the core dashboard/archive to view the saved edit token and reset the private edit passcode when the submitter forgets it.
 - After the due date, new submissions are blocked, but the submitter can still edit an existing idea until core releases the cycle to jury.
 - After core releases the cycle to jury, idea edits and category changes are locked.

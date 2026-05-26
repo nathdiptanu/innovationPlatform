@@ -41,7 +41,7 @@
         <nav class="browse-tabs" aria-label="Idea categories">
             <a class="{% if not selected_category_id %}active{% endif %}" href="{{ url_for('public.user_portal', q=q) }}">All</a>
             {% for category in category_tabs %}
-                <a class="{% if selected_category_id == category._id|string %}active{% endif %}" href="{{ url_for('public.user_portal', category_id=category._id, q=q) }}">{{ category.name }}</a>
+                <a class="{% if selected_category_id == category._id|string %}active{% endif %}" href="{{ url_for('public.user_portal', category_id=category._id, q=q) }}"><i data-lucide="tag"></i>{{ category.name }}</a>
             {% endfor %}
         </nav>
         <div class="idea-list">
@@ -67,7 +67,7 @@
                                 {% if categories.get(category_id) %}<span class="tag">{{ categories[category_id].name }}</span>{% endif %}
                             {% endfor %}
                         </div>
-                        <a class="button ghost compact" href="{{ url_for('public.idea_detail', idea_id=idea.idea_id) }}">View</a>
+                        <a class="button ghost compact" href="{{ url_for('public.idea_detail', idea_id=idea.idea_id) }}"><i data-lucide="eye"></i>View</a>
                     </div>
                 </article>
             {% else %}

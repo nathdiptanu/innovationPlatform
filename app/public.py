@@ -229,7 +229,7 @@ def edit(idea_id):
             flash("Edit access restored for this browser session.", "success")
             return redirect(url_for("public.edit", idea_id=idea_id, token=idea["edit_token"]))
         if request.method == "POST" and request.form.get("unlock_edit"):
-            flash("Edit token and employee ID did not match this idea.", "error")
+            flash("Edit token or private passcode did not match this idea.", "error")
         return render_template("public/edit_unlock.html", idea=idea, token=request.values.get("token", "")), 403
     if cycle.get("jury_released_at") or cycle.get("archived"):
         flash("This idea is locked because it has been released to jury or archived.", "error")

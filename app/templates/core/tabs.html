@@ -1,8 +1,8 @@
 <nav class="surface-tabs" aria-label="Core committee screens">
-    <a class="{% if request.endpoint == 'core.dashboard' %}active{% endif %}" href="{{ url_for('core.dashboard') }}">Dashboard</a>
-    <a class="{% if request.endpoint == 'core.cycles' %}active{% endif %}" href="{{ url_for('core.cycles') }}">Cycles</a>
-    <a class="{% if request.endpoint == 'core.categories' %}active{% endif %}" href="{{ url_for('core.categories') }}">Categories</a>
-    <a class="{% if request.endpoint == 'core.final_winners' %}active{% endif %}" href="{{ url_for('core.final_winners') }}">Final Winners</a>
-    <a class="{% if request.endpoint == 'core.users' %}active{% endif %}" href="{{ url_for('core.users') }}">Accounts</a>
-    <a class="{% if request.endpoint == 'core.archive' %}active{% endif %}" href="{{ url_for('core.archive') }}">Archive</a>
+    <a class="{% if request.endpoint == 'core.dashboard' %}active{% endif %}" href="{{ url_for('core.dashboard') }}"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+    <a class="{% if request.endpoint == 'core.cycles' %}active{% endif %}" href="{{ url_for('core.cycles') }}"><i data-lucide="calendar-range"></i>Cycles</a>
+    <a class="{% if request.endpoint == 'core.categories' %}active{% endif %}" href="{{ url_for('core.categories') }}"><i data-lucide="panel-top"></i>Categories</a>
+    <a class="{% if request.endpoint == 'core.final_winners' %}active{% endif %}" href="{{ url_for('core.final_winners') }}"><i data-lucide="trophy"></i>Final Winners</a>
+    <a class="{% if request.endpoint == 'core.users' %}active{% endif %}" href="{{ url_for('core.users') }}"><i data-lucide="user-cog"></i>Accounts</a>
+    <a class="{% if request.endpoint == 'core.archive' %}active{% endif %}" href="{{ url_for('core.archive') }}"><i data-lucide="archive"></i>Archive</a>
 </nav>

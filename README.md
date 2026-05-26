@@ -139,6 +139,8 @@ The seed creates 10 realistic core committee names. All seeded core accounts use
 
 `core.demo`, `core.member2`, `core.member3`, `core.member4`, `core.member5`, `core.member6`, `core.member7`, `core.member8`, `core.member9`, `core.member10`.
 
+`GirtDemo123!` is only the seeded demo login password for protected core accounts. It is not an idea edit passcode. New idea submissions start with an empty edit passcode field, and the submitter creates their own private passcode during submission.
+
 ## Tests
 
 GRIT uses the standard library test runner for the included unit and Flask route integration checks:
@@ -287,6 +289,7 @@ Current implementation covers:
 - Closed windows keep ideas visible and block creation/editing.
 - Required fields cover problem statement, solution, deployed-on-PROD status, submitter FTE name, employee ID, office location, country India, VP-and-above officer sponsor, contributors, content, and one or two categories.
 - New submissions require a private edit passcode. The passcode is never stored as plaintext; only a hash is saved.
+- The edit token is a private random token generated when the idea is submitted. The submit success page includes it in the edit/detail URL; core committee can retrieve it from `/core/ideas/<idea_id>` if the submitter forgets it.
 - Optional fields cover video link, patent flags, team name, and uploaded images.
 - Uploaded thumbnails open a larger image preview when clicked from an idea detail page.
 - Ideas receive a unique `idea_id` and private `edit_token`. Seeded demo ideas use IDs like `GRIT-Cycle1-2026-045`.

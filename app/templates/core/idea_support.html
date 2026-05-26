@@ -17,7 +17,11 @@
             <dt>Idea ID</dt><dd>{{ idea.idea_id }}</dd>
             <dt>Submitter</dt><dd>{{ idea.owner_name }} | {{ idea.owner_employee_id }}</dd>
             <dt>Cycle</dt><dd>{{ cycle.name if cycle else "Unavailable" }}</dd>
-            <dt>Edit token</dt><dd><code class="token-code">{{ idea.edit_token }}</code></dd>
+            <dt>Edit token</dt>
+            <dd>
+                <code class="token-code">{{ idea.edit_token }}</code>
+                <small class="muted">Share this only with the verified submitter. It works with the private passcode to unlock editing.</small>
+            </dd>
             <dt>Edit passcode</dt><dd>Stored as a one-way hash. Not viewable.</dd>
             <dt>Edit status</dt><dd>{{ "Locked after jury release/archive" if cycle and (cycle.jury_released_at or cycle.archived) else "Open before jury release" }}</dd>
         </dl>

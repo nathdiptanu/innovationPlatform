@@ -63,7 +63,8 @@ pre {
     box-shadow: var(--shadow);
 }
 .topbar nav { gap: .45rem; flex-wrap: wrap; justify-content: end; }
-.topbar nav a { padding: .7rem .85rem; border-radius: 8px; color: var(--muted); }
+.topbar nav a { display: inline-flex; align-items: center; gap: .38rem; padding: .7rem .85rem; border-radius: 8px; color: var(--muted); }
+.topbar nav a svg, .surface-tabs a svg, .browse-tabs a svg, .pagination a svg, .inline-link svg, .text-button svg { width: 16px; height: 16px; }
 .topbar nav a:hover, .nav-action { background: var(--surface); color: var(--ink); }
 .shell { width: min(1380px, calc(100vw - 2rem)); margin: 0 auto; padding: clamp(1rem, 3vw, 2rem) 0 4rem; }
 .panel, .status-panel, .empty-state {
@@ -189,6 +190,7 @@ label input, label textarea, label select { color: var(--ink); font-weight: 500;
     min-height: 42px;
     display: inline-flex;
     align-items: center;
+    gap: .38rem;
     padding: .55rem .8rem;
     border: 1px solid var(--line);
     border-radius: 8px;
@@ -202,6 +204,7 @@ label input, label textarea, label select { color: var(--ink); font-weight: 500;
     min-height: 34px;
     display: inline-flex;
     align-items: center;
+    gap: .32rem;
     border: 1px solid var(--line);
     border-radius: 8px;
     padding: .4rem .6rem;
@@ -483,6 +486,7 @@ tbody tr { min-height: 76px; }
 }
 .password-reset-panel small { grid-column: 1 / -1; }
 .pagination { display: flex; justify-content: space-between; align-items: center; gap: .8rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.pagination a, .inline-link, .text-button { display: inline-flex; align-items: center; gap: .35rem; }
 .pagination a { font-weight: 800; color: var(--brand); }
 .filter-panel { margin-bottom: 1rem; }
 .filter-grid {
