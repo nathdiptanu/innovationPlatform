@@ -3,6 +3,7 @@ from uuid import uuid4
 
 from bson import ObjectId
 from flask import Blueprint, abort, current_app, flash, redirect, render_template, request, session, url_for
+from werkzeug.security import check_password_hash
 
 from .db import collection
 from .services import active_cycle, categories_for_cycle, create_idea, cycle_is_open, update_idea
@@ -35,6 +36,29 @@ def visitor_id():
     if "visitor_id" not in session:
         session["visitor_id"] = uuid4().hex
     return session["visitor_id"]
+
+
+def owns_edit_session(idea):
+    session_token = session.get(f"edit:{idea['idea_id']}")
+    submitter_visitor_id = idea.get("submitter_visitor_id")
+    visitor_matches = not submitter_visitor_id or submitter_visitor_id == visitor_id()
+    return bool(session_token and session_token == idea.get("edit_token") and visitor_matches)
+
+
+def unlock_edit_session(idea):
+    supplied_token = (request.values.get("token") or request.values.get("edit_token") or "").strip()
+    supplied_pin = (request.values.get("edit_pin") or "").strip()
+    pin_hash = idea.get("edit_pin_hash")
+    if supplied_token == idea.get("edit_token") and pin_hash and check_password_hash(pin_hash, supplied_pin):
+        current_visitor = visitor_id()
+        session[f"edit:{idea['idea_id']}"] = idea["edit_token"]
+        collection("ideas").update_one(
+            {"_id": idea["_id"]},
+            {"$set": {"submitter_visitor_id": current_visitor, "updated_at": utcnow()}},
+        )
+        idea["submitter_visitor_id"] = current_visitor
+        return True
+    return False
 
 
 def search_query(cycle, text, category_id=None):
@@ -109,6 +133,9 @@ def create():
             save_images(request.files.getlist("images"), image_display_names(request.form)),
         )
         if not errors:
+            submitter_id = visitor_id()
+            collection("ideas").update_one({"_id": idea["_id"]}, {"$set": {"submitter_visitor_id": submitter_id, "updated_at": utcnow()}})
+            idea["submitter_visitor_id"] = submitter_id
             session[f"edit:{idea['idea_id']}"] = idea["edit_token"]
             flash(f"Idea {idea['idea_id']} submitted. Keep the edit link for this cycle.", "success")
             return redirect(url_for("public.idea_detail", idea_id=idea["idea_id"], token=idea["edit_token"]))
@@ -124,8 +151,7 @@ def idea_detail(idea_id):
         abort(404, "Idea not found.")
     cycle = collection("cycles").find_one({"_id": ObjectId(idea["cycle_id"])})
     categories = categories_for_cycle(cycle["_id"], active_only=False)
-    token = request.args.get("token") or session.get(f"edit:{idea_id}")
-    can_edit = not cycle.get("jury_released_at") and not cycle.get("archived") and token == idea.get("edit_token")
+    can_edit = not cycle.get("jury_released_at") and not cycle.get("archived") and owns_edit_session(idea)
     return render_template(
         "public/idea_detail.html",
         idea=idea,
@@ -195,9 +221,14 @@ def edit(idea_id):
     if not idea:
         abort(404, "Idea not found.")
     cycle = collection("cycles").find_one({"_id": ObjectId(idea["cycle_id"])})
-    token = request.args.get("token") or session.get(f"edit:{idea_id}")
-    if token != idea.get("edit_token"):
-        abort(403, "The edit token for this idea is missing.")
+    token = request.args.get("token") or request.form.get("token") or session.get(f"edit:{idea_id}")
+    if not owns_edit_session(idea):
+        if unlock_edit_session(idea):
+            flash("Edit access restored for this browser session.", "success")
+            return redirect(url_for("public.edit", idea_id=idea_id, token=idea["edit_token"]))
+        if request.method == "POST" and request.form.get("unlock_edit"):
+            flash("Edit token and employee ID did not match this idea.", "error")
+        return render_template("public/edit_unlock.html", idea=idea, token=request.values.get("token", "")), 403
     if cycle.get("jury_released_at") or cycle.get("archived"):
         flash("This idea is locked because it has been released to jury or archived.", "error")
         return redirect(url_for("public.idea_detail", idea_id=idea_id))

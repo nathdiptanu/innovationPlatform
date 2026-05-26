@@ -64,7 +64,8 @@
     <h2>SQLite Demo Mode</h2>
     <p>The local approval demo uses <code>data/grit.sqlite3</code> when <code>config.ini</code> has <code>sqlite = yes</code>. The same logical collections are retained as JSON documents and survive restart. Use <code>sync_mongo_to_sqlite.py</code> to copy Mongo data into SQLite, and <code>sync_sqlite_to_mongo.py</code> to promote approved SQLite data back to Mongo later.</p>
     <h2>Archive And Edit Rules</h2>
-    <p>Archiving marks the cycle and ideas as archived, removes them from active user/core/jury dashboards, and keeps them visible in core archive. The archive view can be searched and filtered by patent status and office location. After the due date, users cannot submit new ideas but can edit an existing idea with the edit token until core releases to jury. After jury release, idea edits and category changes are locked.</p>
+    <p>Archiving marks the cycle and ideas as archived, removes them from active user/core/jury dashboards, and keeps them visible in core archive. The archive view can be searched and filtered by patent status and office location. After the due date, users cannot submit new ideas but can edit an existing idea with the edit token and private edit passcode until core releases to jury. After jury release, idea edits and category changes are locked.</p>
+    <p>Server restart does not clear SQLite or MongoDB data. The startup command seeds demo data only if the ideas collection is empty.</p>
     <h2>Integrity Note</h2>
     <p>A person may submit ideas through the public entrant portal and also have a protected core or jury portal account. Jury self-scoring is blocked when the logged-in jury username appears as a contributor username on the idea. Keep ordinary core and jury protected usernames separate unless governance explicitly approves an overlap.</p>
     <h2>Production Hardening</h2>

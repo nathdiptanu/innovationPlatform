@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Unlock Edit | GRIT{% endblock %}
+{% block content %}
+<section class="auth-layout">
+    <div>
+        <p class="eyebrow">{{ idea.idea_id }}</p>
+        <h1>Unlock idea editing</h1>
+        <p class="muted">For security, editing requires the private edit token and edit passcode created during submission. This restores edit access if the browser session expired.</p>
+    </div>
+    <form class="panel form-stack" method="post">
+        <input type="hidden" name="unlock_edit" value="1">
+        <label>Edit token<input name="edit_token" value="{{ token }}" required></label>
+        <label>Edit passcode
+            <span class="password-control">
+                <input type="password" name="edit_pin" required>
+                <button class="icon-button password-toggle" type="button" data-password-toggle aria-label="Show password"><i data-lucide="eye"></i></button>
+            </span>
+        </label>
+        <button class="button" type="submit"><i data-lucide="unlock"></i>Unlock edit</button>
+        <a class="text-button" href="{{ url_for('public.idea_detail', idea_id=idea.idea_id) }}">Back to idea</a>
+    </form>
+</section>
+{% endblock %}

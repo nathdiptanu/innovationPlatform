@@ -43,7 +43,7 @@
     <table>
         <tr><th>Need</th><th>Coverage</th></tr>
         <tr><td>Browse other ideas quickly</td><td>The user portal shows a simplified idea gallery with category tabs, server-side pagination, and lightweight list fields.</td></tr>
-        <tr><td>Submit and edit ideas</td><td>Two annual cycle windows such as <code>GRIT-Cycle1-2026</code> control new submission; each idea gets a unique GRIT submission ID and an edit token. Edits stay open until core releases to jury.</td></tr>
+        <tr><td>Submit and edit ideas</td><td>Two annual cycle windows such as <code>GRIT-Cycle1-2026</code> control new submission; each idea gets a unique GRIT submission ID, edit token, and hashed edit passcode. Edits stay open until core releases to jury.</td></tr>
         <tr><td>Required idea detail</td><td>Problem, solution, contributors, VP-and-above sponsor, employee ID, Mumbai/Bangalore office, country India, deployed-on-PROD status, one or two categories, and content are captured.</td></tr>
         <tr><td>Optional media and patent data</td><td>Video link, patent flags, team name, and image uploads are supported; image thumbnails open a larger preview.</td></tr>
         <tr><td>Fast UI boundaries</td><td>User category tabs, core management tabs, jury category tabs, indexed queries, projections, and pagination keep screens scoped.</td></tr>
@@ -69,6 +69,7 @@
     <p>The public countdown updates every second while entries are open. Core controls the active window from <code>/core/cycles</code> by selecting Cycle 1 or Cycle 2, the year, start time, and expiry time for each six-month GRIT cycle.</p>
     <p>Archiving removes submitted ideas from active user/core/jury screens and keeps them in the core archive. After due date, users cannot submit new ideas but can edit existing ideas until release to jury; after release, edits and category changes are locked.</p>
     <p>Demo idea IDs use the cleaner format <code>GRIT-Cycle1-2026-045</code>. Core management dashboard has a countdown, patent/location filters, governance watchlist, and each winner target links back to the category settings screen.</p>
+    <p><code>start_grit.py</code> preserves persisted data on restart. It seeds demo records only when the ideas collection is empty, so user submissions and review data are not reset on every server start.</p>
     <h2>Run</h2>
     <pre>py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1

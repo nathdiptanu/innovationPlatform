@@ -181,6 +181,8 @@ python sync_sqlite_to_mongo.py
 
 Optional dual-write is available in `config.ini` with `dual_write_mongo = yes`. Keep it off for offline demos. When enabled, SQLite remains the read source and the app also attempts to write changes to MongoDB.
 
+`start_grit.py` preserves persisted data on restart. It bootstraps defaults and seeds demo records only when the ideas collection is empty, so user-submitted ideas, scores, comments, reactions, account changes, and reset requests remain in `data/grit.sqlite3` or MongoDB across server restarts.
+
 ## Username and password handling
 
 - Portal accounts are stored in MongoDB collection `users`.
@@ -284,9 +286,11 @@ Current implementation covers:
 - All categories in the same cycle use that single cycle start/end window; there is no category-specific deadline.
 - Closed windows keep ideas visible and block creation/editing.
 - Required fields cover problem statement, solution, deployed-on-PROD status, submitter FTE name, employee ID, office location, country India, VP-and-above officer sponsor, contributors, content, and one or two categories.
+- New submissions require a private edit passcode. The passcode is never stored as plaintext; only a hash is saved.
 - Optional fields cover video link, patent flags, team name, and uploaded images.
 - Uploaded thumbnails open a larger image preview when clicked from an idea detail page.
 - Ideas receive a unique `idea_id` and private `edit_token`. Seeded demo ideas use IDs like `GRIT-Cycle1-2026-045`.
+- Only the submitter can edit by using the same browser session, or by unlocking edit access with the private edit token plus the private edit passcode. Employee ID is not used as edit proof.
 - The content editor supports plain text or sanitized HTML with a browser preview.
 - Mongo document size is checked before insert/update and stops content near the BSON document ceiling.
 

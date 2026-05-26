@@ -1,6 +1,7 @@
 import unittest
 
 from app import create_app
+from app.db import collection
 
 
 class FlaskIntegrationTests(unittest.TestCase):
@@ -34,6 +35,23 @@ class FlaskIntegrationTests(unittest.TestCase):
         self.assertIn("/auth/login", docs.headers["Location"])
         self.assertEqual(spec.status_code, 302)
         self.assertIn("/auth/login", spec.headers["Location"])
+
+    def test_edit_link_requires_unlock_when_session_is_missing(self):
+        with self.app.app_context():
+            idea = collection("ideas").find_one({"edit_token": {"$ne": None}, "archived": {"$ne": True}})
+        if not idea:
+            self.skipTest("No seeded idea with edit token available.")
+
+        locked = self.client.get(f"/ideas/{idea['idea_id']}/edit?token={idea['edit_token']}")
+        self.assertEqual(locked.status_code, 403)
+        self.assertIn(b"Unlock idea editing", locked.data)
+
+        unlocked = self.client.post(
+            f"/ideas/{idea['idea_id']}/edit",
+            data={"unlock_edit": "1", "edit_token": idea["edit_token"], "edit_pin": "DemoEdit123!"},
+            follow_redirects=False,
+        )
+        self.assertEqual(unlocked.status_code, 302)
 
 
 if __name__ == "__main__":

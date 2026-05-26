@@ -105,7 +105,7 @@ def build_openapi():
                     "Submit new idea with attachments",
                     "Creates a GRIT idea, stores contributors, optional HTML/plain detail content, image attachments, and returns a success page with edit token.",
                     {"200": _html_response("Submission receipt"), "400": _html_response("Validation errors"), "409": _html_response("Submission window closed")},
-                    request_body=_form({"problem_statement": {"type": "string"}, "solution_summary": {"type": "string"}, "video_link": {"type": "string"}, "can_be_patented": {"type": "string"}, "is_patented": {"type": "string"}, "production_readiness": {"type": "string"}, "officer_sponsor": {"type": "string"}, "content_format": {"type": "string"}, "content": {"type": "string"}, "owner_name": {"type": "string"}, "owner_employee_id": {"type": "string"}, "office_location": {"type": "string"}, "country": {"type": "string"}, "team_name": {"type": "string"}, "category_ids": {"type": "array", "items": {"type": "string"}}}),
+                    request_body=_form({"problem_statement": {"type": "string"}, "solution_summary": {"type": "string"}, "video_link": {"type": "string"}, "can_be_patented": {"type": "string"}, "is_patented": {"type": "string"}, "production_readiness": {"type": "string"}, "officer_sponsor": {"type": "string"}, "content_format": {"type": "string"}, "content": {"type": "string"}, "owner_name": {"type": "string"}, "owner_employee_id": {"type": "string"}, "edit_pin": {"type": "string", "format": "password", "minLength": 8}, "office_location": {"type": "string"}, "country": {"type": "string"}, "team_name": {"type": "string"}, "category_ids": {"type": "array", "items": {"type": "string"}}}),
                 ),
             },
             "/ideas/{idea_id}": {
@@ -118,8 +118,8 @@ def build_openapi():
                 "post": _op("Public", "Like/dislike/neutral reaction", "Stores a visitor reaction and updates visible reaction counts.", {"302": _redirect(), "404": _html_response("Idea not found")}, [idea_id], _form({"reaction": {"type": "string", "enum": ["like", "dislike", "neutral"]}}, ["reaction"]))
             },
             "/ideas/{idea_id}/edit": {
-                "get": _op("Public", "Render edit idea form", "Shows the edit form when a valid edit token is provided and editing is allowed.", {"200": _html_response(), "403": _html_response("Invalid edit token"), "409": _html_response("Editing locked")}, [idea_id, _query_param("token", "Edit token returned on submission.")]),
-                "post": _op("Public", "Edit existing idea", "Updates idea fields, contributors, categories, detail content, and images before jury release locks editing.", {"302": _redirect(), "400": _html_response("Validation errors"), "403": _html_response("Invalid edit token"), "409": _html_response("Editing locked")}, [idea_id, _query_param("token", "Edit token returned on submission.")]),
+                "get": _op("Public", "Render edit idea form", "Shows the edit form when the submitter browser session is active. If the session expired, returns an unlock form that requires edit token plus private edit passcode.", {"200": _html_response(), "403": _html_response("Unlock form or invalid edit proof"), "409": _html_response("Editing locked")}, [idea_id, _query_param("token", "Edit token returned on submission.")]),
+                "post": _op("Public", "Edit existing idea", "Updates idea fields before jury release locks editing. If the browser session expired, posting edit_token plus edit_pin restores the session before editing.", {"302": _redirect(), "400": _html_response("Validation errors"), "403": _html_response("Invalid edit proof"), "409": _html_response("Editing locked")}, [idea_id, _query_param("token", "Edit token returned on submission.")]),
             },
             "/auth/login": {
                 "get": _op("Auth", "Render login page", "Shows protected portal login for core committee and jury users.", {"200": _html_response()}),
@@ -267,7 +267,7 @@ def build_openapi():
                 "Contributor": {"type": "object", "required": ["name"], "properties": {"name": {"type": "string"}, "username": {"type": "string"}}},
                 "IdeaInput": {
                     "type": "object",
-                    "required": ["problem_statement", "solution_summary", "production_readiness", "contributors", "officer_sponsor", "content", "category_ids", "owner_name", "owner_employee_id", "office_location"],
+                    "required": ["problem_statement", "solution_summary", "production_readiness", "contributors", "officer_sponsor", "content", "category_ids", "owner_name", "owner_employee_id", "office_location", "edit_pin"],
                     "properties": {
                         "problem_statement": {"type": "string", "description": "Problem being solved."},
                         "solution_summary": {"type": "string", "description": "Short proposed solution."},
@@ -283,6 +283,7 @@ def build_openapi():
                         "category_ids": {"type": "array", "minItems": 1, "maxItems": 2, "items": {"type": "string"}},
                         "owner_name": {"type": "string"},
                         "owner_employee_id": {"type": "string"},
+                        "edit_pin": {"type": "string", "format": "password", "minLength": 8, "description": "Private edit passcode for session recovery. Stored only as a hash."},
                         "office_location": {"type": "string", "enum": ["Mumbai", "Bangalore"]},
                         "country": {"type": "string", "default": "India"},
                     },

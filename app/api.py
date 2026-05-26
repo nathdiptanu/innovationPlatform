@@ -35,6 +35,7 @@ def json_form(data):
 def idea_json(idea):
     item = serialize_id(idea)
     item.pop("edit_token", None)
+    item.pop("edit_pin_hash", None)
     return item
 
 

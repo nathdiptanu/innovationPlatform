@@ -4,9 +4,11 @@ from app import create_app
 from app.db import collection
 from app.services import categories_for_cycle, create_cycle, upsert_seed_user
 from app.utils import utcnow
+from werkzeug.security import generate_password_hash
 
 
 SAMPLE_PASSWORD = "GirtDemo123!"
+SAMPLE_EDIT_PIN = "DemoEdit123!"
 SAMPLE_ATTACHMENTS = [
     {"original_name": "sample-automation.png", "display_name": "Automation workflow preview", "path": "uploads/sample-automation.png"},
     {"original_name": "sample-process.png", "display_name": "Process improvement snapshot", "path": "uploads/sample-process.png"},
@@ -109,6 +111,7 @@ def ensure_demo_idea(cycle, category_ids, suffix, problem, readiness, employee_i
     document = {
         "idea_id": idea_id,
         "edit_token": f"demo-edit-{suffix.lower()}",
+        "edit_pin_hash": existing.get("edit_pin_hash") if existing and existing.get("edit_pin_hash") else generate_password_hash(SAMPLE_EDIT_PIN),
         "cycle_id": str(cycle["_id"]),
         "problem_statement": problem,
         "solution_summary": SOLUTIONS[attachment_index % len(SOLUTIONS)],

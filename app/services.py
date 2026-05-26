@@ -207,8 +207,12 @@ def validate_idea(payload):
 def create_idea(form, cycle, categories, attachments):
     payload = idea_payload(form, cycle, categories, attachments)
     errors = validate_idea(payload)
+    edit_pin = form.get("edit_pin", "").strip()
+    if len(edit_pin) < 8:
+        errors.append("Create an edit passcode of at least eight characters.")
     if errors:
         return None, errors
+    payload["edit_pin_hash"] = generate_password_hash(edit_pin)
     payload.update(
         {
             "idea_id": idea_code(cycle["name"]),
@@ -217,7 +221,8 @@ def create_idea(form, cycle, categories, attachments):
             "created_at": utcnow(),
         }
     )
-    collection("ideas").insert_one(payload)
+    result = collection("ideas").insert_one(payload)
+    payload["_id"] = result.inserted_id
     return payload, []
 
 
