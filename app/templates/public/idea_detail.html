@@ -8,8 +8,10 @@
         <p>{{ idea.idea_id }} | {{ idea.owner_name }} | {{ idea.owner_employee_id }}</p>
         <p class="muted">Submitted {{ idea.created_at.strftime("%d %b %Y %H:%M UTC") if idea.created_at else "date unavailable" }} | Last edited {{ idea.updated_at.strftime("%d %b %Y %H:%M UTC") if idea.updated_at else "date unavailable" }}</p>
     </div>
-    {% if can_edit %}
-        <a class="button" href="{{ url_for('public.edit', idea_id=idea.idea_id, token=request.args.get('token')) }}"><i data-lucide="pencil"></i>Edit</a>
+    {% if edit_allowed %}
+        <a class="button" href="{{ url_for('public.edit', idea_id=idea.idea_id, token=request.args.get('token', '')) }}"><i data-lucide="pencil"></i>{{ "Edit" if can_edit else "Edit / unlock" }}</a>
+    {% else %}
+        <span class="status-chip pending">Editing locked</span>
     {% endif %}
 </section>
 <section class="detail-grid">

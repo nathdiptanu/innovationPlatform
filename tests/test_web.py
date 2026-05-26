@@ -66,6 +66,17 @@ class FlaskIntegrationTests(unittest.TestCase):
         self.assertIn(idea["edit_token"].encode(), response.data)
         self.assertIn(b"Stored as a one-way hash", response.data)
 
+    def test_idea_detail_shows_edit_unlock_entry(self):
+        with self.app.app_context():
+            idea = collection("ideas").find_one({"archived": {"$ne": True}})
+        if not idea:
+            self.skipTest("No seeded idea available.")
+
+        response = self.client.get(f"/ideas/{idea['idea_id']}")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Edit / unlock", response.data)
+
 
 if __name__ == "__main__":
     unittest.main()

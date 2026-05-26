@@ -151,12 +151,14 @@ def idea_detail(idea_id):
         abort(404, "Idea not found.")
     cycle = collection("cycles").find_one({"_id": ObjectId(idea["cycle_id"])})
     categories = categories_for_cycle(cycle["_id"], active_only=False)
-    can_edit = not cycle.get("jury_released_at") and not cycle.get("archived") and owns_edit_session(idea)
+    edit_allowed = not cycle.get("archived")
+    can_edit = edit_allowed and owns_edit_session(idea)
     return render_template(
         "public/idea_detail.html",
         idea=idea,
         cycle=cycle,
         can_edit=can_edit,
+        edit_allowed=edit_allowed,
         visitor_reaction=collection("idea_reactions").find_one({"idea_id": idea_id, "visitor_id": visitor_id()}),
         categories={str(category["_id"]): category for category in categories},
     )
